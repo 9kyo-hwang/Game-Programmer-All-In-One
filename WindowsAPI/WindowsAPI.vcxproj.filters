@@ -15,9 +15,6 @@
     <Filter Include="소스 파일\99. Headers">
       <UniqueIdentifier>{d9934b00-c651-43ff-a67c-a98a4c2ebc5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\01. Manager">
-      <UniqueIdentifier>{e6bc4630-14e3-4d8d-b9f6-aa774ec972a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\99. Headers\Andromeda">
       <UniqueIdentifier>{0e13f06f-2f42-4ac5-b6eb-3ce2f2339102}</UniqueIdentifier>
     </Filter>
@@ -29,6 +26,12 @@
     </Filter>
     <Filter Include="소스 파일\02. Scenes\Game">
       <UniqueIdentifier>{9c1ec2df-802f-4289-992d-f686f47d7d88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03. Objects\Game">
+      <UniqueIdentifier>{19fefec0-f7c1-4c0c-a475-8a54caa703f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\01. Managers">
+      <UniqueIdentifier>{e6bc4630-14e3-4d8d-b9f6-aa774ec972a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,13 +63,13 @@
       <Filter>소스 파일\00. MainGame</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="TimerManager.h">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>소스 파일\99. Headers</Filter>
@@ -75,13 +78,28 @@
       <Filter>소스 파일\02. Scenes</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="DevelopmentScene.h">
       <Filter>소스 파일\02. Scenes\Game</Filter>
     </ClInclude>
     <ClInclude Include="GameplayScene.h">
       <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>소스 파일\03. Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>소스 파일\03. Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>소스 파일\03. Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>소스 파일\03. Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>소스 파일\01. Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -108,10 +126,10 @@
       <Filter>소스 파일\00. MainGame</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="TimerManager.cpp">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>소스 파일\99. Headers</Filter>
@@ -120,13 +138,28 @@
       <Filter>소스 파일\02. Scenes</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>소스 파일\01. Manager</Filter>
+      <Filter>소스 파일\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="DevelopmentScene.cpp">
       <Filter>소스 파일\02. Scenes\Game</Filter>
     </ClCompile>
     <ClCompile Include="GameplayScene.cpp">
       <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\03. Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>소스 파일\03. Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\03. Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\03. Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>소스 파일\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

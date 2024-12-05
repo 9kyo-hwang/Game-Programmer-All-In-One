@@ -1,7 +1,7 @@
 #pragma once
 #include "Singleton.h"
 
-enum class ESceneType
+enum class ESceneType : uint8
 {
 	None,
 	Development,
