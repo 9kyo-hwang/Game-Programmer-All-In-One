@@ -11,7 +11,7 @@ public:
 
 	void Initialize() override;
 	void Update() override;
-	void Render(HDC InHandleDeviceContext) override;
+	void Render(HDC InDC) override;
 
 public:
 	// TEST

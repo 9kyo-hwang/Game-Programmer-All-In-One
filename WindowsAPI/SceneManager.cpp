@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SceneManager.h"
 #include "DevelopmentScene.h"
+#include "EditorScene.h"
 #include "GameplayScene.h"
 
 void SceneManager::Initialize()
@@ -15,11 +16,11 @@ void SceneManager::Update()
 	}
 }
 
-void SceneManager::Render(HDC InHandleDeviceContext)
+void SceneManager::Render(HDC InDC)
 {
 	if (ActiveScene)
 	{
-		ActiveScene->Render(InHandleDeviceContext);
+		ActiveScene->Render(InDC);
 	}
 }
 
@@ -40,6 +41,9 @@ void SceneManager::LoadScene(ESceneType NewType)
 		break;
 	case ESceneType::Gameplay:
 		NewScene = new GameplayScene();
+		break;
+	case ESceneType::Editor:
+		NewScene = new EditorScene();
 		break;
 	}
 

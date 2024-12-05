@@ -1,11 +1,12 @@
 #pragma once
 #include "Singleton.h"
 
-enum class ESceneType
+enum class ESceneType : uint8
 {
 	None,
 	Development,
 	Gameplay,
+	Editor,
 };
 
 class SceneManager : public Singleton<SceneManager>
@@ -13,7 +14,7 @@ class SceneManager : public Singleton<SceneManager>
 public:
 	void Initialize();
 	void Update();
-	void Render(HDC InHandleDeviceContext);
+	void Render(HDC InDC);
 
 public:
 	void LoadScene(ESceneType NewType);

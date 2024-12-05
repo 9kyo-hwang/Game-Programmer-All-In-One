@@ -64,7 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             // 대략 60프레임 정도로 제한
             uint64 Tick = ::GetTickCount();
-            if (Tick - PrevTick >= 10)
+            //if (Tick - PrevTick >= 10)
             {
                 Game.Update();
                 Game.Render();
@@ -118,9 +118,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
-
+   RECT WindowRect = { 0, 0, 800, 600 };
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, WindowRect.right - WindowRect.left, WindowRect.bottom - WindowRect.top, 
+       nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {

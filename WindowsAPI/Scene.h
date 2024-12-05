@@ -8,5 +8,5 @@ public:
 
 	virtual void Initialize() abstract;
 	virtual void Update() abstract;
-	virtual void Render(HDC InHandleDeviceContext) abstract;
+	virtual void Render(HDC InDC) abstract;
 };
