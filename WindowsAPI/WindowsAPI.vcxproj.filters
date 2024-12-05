@@ -33,6 +33,12 @@
     <Filter Include="소스 파일\01. Managers">
       <UniqueIdentifier>{e6bc4630-14e3-4d8d-b9f6-aa774ec972a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\04. Resources">
+      <UniqueIdentifier>{b00db567-49af-4c14-95ba-201f01e0534f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04. Resources\Game">
+      <UniqueIdentifier>{de29d846-04e9-4af7-87ca-696cc2d07108}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsAPI.h">
@@ -104,6 +110,15 @@
     <ClInclude Include="EditorScene.h">
       <Filter>소스 파일\02. Scenes\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Resources.h">
+      <Filter>소스 파일\04. Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLine.h">
+      <Filter>소스 파일\04. Resources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>소스 파일\01. Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WindowsAPI.rc">
@@ -166,6 +181,15 @@
     </ClCompile>
     <ClCompile Include="EditorScene.cpp">
       <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources.cpp">
+      <Filter>소스 파일\04. Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLine.cpp">
+      <Filter>소스 파일\04. Resources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>소스 파일\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

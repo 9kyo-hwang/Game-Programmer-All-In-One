@@ -3,8 +3,10 @@
 #include "Bullet.h"
 
 #include "InputManager.h"
+#include "MeshLine.h"
 #include "ObjectManager.h"
 #include "TimerManager.h"
+#include "ResourceManager.h"  // 임시로 하드 코딩
 
 Player::Player()
 	: Super(EObjectType::Player)
@@ -62,5 +64,8 @@ void Player::Update()
 
 void Player::Render(HDC InDC)
 {
-	Utils::DrawCircle(InDC, Position, 50);
+	if (const MeshLine* Mesh = ResourceManager::Get()->GetMeshLine(L"Player"))
+	{
+		Mesh->Render(InDC, Position);
+	}
 }

@@ -3,6 +3,7 @@
 #include "TimerManager.h"
 #include "InputManager.h"
 #include "SceneManager.h"
+#include "ResourceManager.h"
 
 Game::Game()
 {
@@ -11,6 +12,8 @@ Game::Game()
 Game::~Game()
 {
 	SceneManager::Get()->Clear();
+	ResourceManager::Get()->Clear();
+
 	_CrtDumpMemoryLeaks();  // 사실 마지막에 넣어야...
 }
 
@@ -28,8 +31,9 @@ void Game::Initialize(HWND NewWindow)
 	TimerManager::Get()->Initialize();
 	InputManager::Get()->Initialize(NewWindow);
 	SceneManager::Get()->Initialize();
+	ResourceManager::Get()->Initialize();
 
-	SceneManager::Get()->LoadScene(ESceneType::Editor);
+	SceneManager::Get()->LoadScene(ESceneType::Gameplay);
 }
 
 void Game::Update()
