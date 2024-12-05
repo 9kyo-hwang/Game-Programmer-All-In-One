@@ -29,7 +29,7 @@ void Game::Initialize(HWND NewWindow)
 	InputManager::Get()->Initialize(NewWindow);
 	SceneManager::Get()->Initialize();
 
-	SceneManager::Get()->LoadScene(ESceneType::Gameplay);
+	SceneManager::Get()->LoadScene(ESceneType::Editor);
 }
 
 void Game::Update()

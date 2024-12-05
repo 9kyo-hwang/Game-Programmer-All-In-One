@@ -146,6 +146,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DevelopmentScene.h" />
+    <ClInclude Include="EditorScene.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
@@ -169,6 +170,7 @@
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="DevelopmentScene.cpp" />
+    <ClCompile Include="EditorScene.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="InputManager.cpp" />

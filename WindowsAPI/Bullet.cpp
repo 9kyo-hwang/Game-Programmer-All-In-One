@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Bullet.h"
 
+#include "ObjectManager.h"
 #include "TimerManager.h"
 
 Bullet::Bullet()
@@ -26,9 +27,42 @@ void Bullet::Update()
 
 	Position.y -= DeltaTime * Stat.Speed;
 
-	// Collision
+	// TODO: Collision
+	const vector<Object*> Objects = ObjectManager::Get()->GetObjects();
+	for (Object* Element : Objects)
+	{
+		if (Element == this)
+		{
+			continue;
+		}
 
-	// TODO:
+		if (Element->GetType() != EObjectType::Monster)
+		{
+			continue;
+		}
+
+		Vector2 MyPosition = GetPosition();
+		Vector2 TargetPosition = Element->GetPosition();
+
+		const float dx = MyPosition.x - TargetPosition.x;
+		const float dy = MyPosition.y - TargetPosition.y;
+		float Distance = sqrt(dx * dx + dy * dy);
+
+		if (Distance < 25)
+		{
+			// ±¦ÂúÀ»±î?
+			ObjectManager::Get()->Remove(Element);
+			ObjectManager::Get()->Remove(this);
+			return;
+		}
+	}
+
+	// TODO: Remove
+	if (Position.y < -200)
+	{
+		ObjectManager::Get()->Remove(this);
+		return;
+	}
 }
 
 void Bullet::Render(HDC InDC)

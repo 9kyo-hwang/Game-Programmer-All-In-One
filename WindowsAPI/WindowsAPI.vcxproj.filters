@@ -101,6 +101,9 @@
     <ClInclude Include="ObjectManager.h">
       <Filter>소스 파일\01. Managers</Filter>
     </ClInclude>
+    <ClInclude Include="EditorScene.h">
+      <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WindowsAPI.rc">
@@ -160,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="ObjectManager.cpp">
       <Filter>소스 파일\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorScene.cpp">
+      <Filter>소스 파일\02. Scenes\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
