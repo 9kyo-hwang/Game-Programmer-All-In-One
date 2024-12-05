@@ -21,6 +21,15 @@
     <Filter Include="소스 파일\99. Headers\Andromeda">
       <UniqueIdentifier>{0e13f06f-2f42-4ac5-b6eb-3ce2f2339102}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\03. Objects">
+      <UniqueIdentifier>{0a3f9194-2efb-4d86-a51e-2f17a4e68120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02. Scenes">
+      <UniqueIdentifier>{edae92bb-3acf-4d05-a585-392ea39d2832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02. Scenes\Game">
+      <UniqueIdentifier>{9c1ec2df-802f-4289-992d-f686f47d7d88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsAPI.h">
@@ -59,6 +68,21 @@
     <ClInclude Include="Singleton.h">
       <Filter>소스 파일\01. Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>소스 파일\99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>소스 파일\02. Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>소스 파일\01. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopmentScene.h">
+      <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayScene.h">
+      <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WindowsAPI.rc">
@@ -88,6 +112,21 @@
     </ClCompile>
     <ClCompile Include="TimerManager.cpp">
       <Filter>소스 파일\01. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>소스 파일\99. Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스 파일\02. Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>소스 파일\01. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopmentScene.cpp">
+      <Filter>소스 파일\02. Scenes\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayScene.cpp">
+      <Filter>소스 파일\02. Scenes\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
