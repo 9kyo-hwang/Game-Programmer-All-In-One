@@ -15,11 +15,11 @@ void SceneManager::Update()
 	}
 }
 
-void SceneManager::Render(HDC InHandleDeviceContext)
+void SceneManager::Render(HDC InDC)
 {
 	if (ActiveScene)
 	{
-		ActiveScene->Render(InHandleDeviceContext);
+		ActiveScene->Render(InDC);
 	}
 }
 

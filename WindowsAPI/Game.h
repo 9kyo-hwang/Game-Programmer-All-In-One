@@ -7,12 +7,18 @@ public:
 	~Game();
 
 public:
-	void Initialize(HWND InHandleWindow);
+	void Initialize(HWND NewWindow);
 	void Update();
 	void Render();
 
 private:
-	HWND HandleWindow{};
-	HDC HandleDeviceContext{};
+	HWND Window{};
+	HDC DC{};
+
+	// for Back Buffering
+private:
+	RECT Rectangle;
+	HDC BackDC;
+	HBITMAP BackBitmap;
 };
 

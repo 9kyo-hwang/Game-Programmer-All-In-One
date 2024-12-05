@@ -64,7 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             // 대략 60프레임 정도로 제한
             uint64 Tick = ::GetTickCount();
-            if (Tick - PrevTick >= 10)
+            //if (Tick - PrevTick >= 10)
             {
                 Game.Update();
                 Game.Render();

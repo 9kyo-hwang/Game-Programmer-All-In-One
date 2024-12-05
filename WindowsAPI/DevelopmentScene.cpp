@@ -40,8 +40,8 @@ void DevelopmentScene::Update()
 	}
 }
 
-void DevelopmentScene::Render(HDC InHandleDeviceContext)
+void DevelopmentScene::Render(HDC InDC)
 {
 	// 추후 Object 쪽으로 이관될 코드
-	Utils::DrawCircle(InHandleDeviceContext, PlayerPosition, 50);
+	Utils::DrawCircle(InDC, PlayerPosition, 50);
 }

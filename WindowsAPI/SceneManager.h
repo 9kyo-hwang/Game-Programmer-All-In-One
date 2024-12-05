@@ -13,7 +13,7 @@ class SceneManager : public Singleton<SceneManager>
 public:
 	void Initialize();
 	void Update();
-	void Render(HDC InHandleDeviceContext);
+	void Render(HDC InDC);
 
 public:
 	void LoadScene(ESceneType NewType);
