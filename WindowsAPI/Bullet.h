@@ -24,6 +24,11 @@ public:
 	void SetAngle(float NewAngle) { Angle = NewAngle; }
 
 private:
+	bool FindNearestMonster();
+
+private:
 	float Angle = 0.0f;
+	float ElapsedTime = 0.0f;
+	Object* Target = nullptr;
 };
 

@@ -24,8 +24,8 @@ void Player::Initialize()
 	Stat.Hp = 100;
 	Stat.MaxHp = 100;
 	Stat.Speed = 500;
-	Position.x = 400;
-	Position.y = 500;
+	Position.X = 400;
+	Position.Y = 500;
 }
 
 void Player::Update()
@@ -36,19 +36,19 @@ void Player::Update()
 	// 현재 이 방식으로는 대각선 이동 시 속도가 더 빨라짐
 	if (InputManager::Get()->GetButton(EKeyCode::A))
 	{
-		Position.x -= Stat.Speed * DeltaTime;
+		Position.X -= Stat.Speed * DeltaTime;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::D))
 	{
-		Position.x += Stat.Speed * DeltaTime;
+		Position.X += Stat.Speed * DeltaTime;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::W))
 	{
-		Position.y -= Stat.Speed * DeltaTime;
+		Position.Y -= Stat.Speed * DeltaTime;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::S))
 	{
-		Position.y += Stat.Speed * DeltaTime;
+		Position.Y += Stat.Speed * DeltaTime;
 	}
 
 	if (InputManager::Get()->GetButton(EKeyCode::Q))
@@ -88,11 +88,11 @@ void Player::Render(HDC InDC)
 	::DeleteObject(Pen);
 }
 
-Vector2 Player::GetFirePosition()
+Vector Player::GetFirePosition()
 {
-	Vector2 FirePosition = Position;
-	FirePosition.x += CannonLength * ::cos(CannonAngle);
-	FirePosition.y -= CannonLength * ::sin(CannonAngle);  // y좌표는 위로 갈 수록 -
+	Vector FirePosition = Position;
+	FirePosition.X += CannonLength * ::cos(CannonAngle);
+	FirePosition.Y -= CannonLength * ::sin(CannonAngle);  // y좌표는 위로 갈 수록 -
 
 	return FirePosition;
 }

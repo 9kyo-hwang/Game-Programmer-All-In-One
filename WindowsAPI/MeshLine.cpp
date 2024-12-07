@@ -59,18 +59,18 @@ void MeshLine::Load(wstring Path)
 	File.close();
 }
 
-void MeshLine::Render(HDC InDC, Vector2 Position) const
+void MeshLine::Render(HDC InDC, Vector Position) const
 {
 	// 3D의 경우 GPU에 Render를 위임할 수 있음(우리는 Mesh 정보만 넘겨주면 됨)
 	for (const auto& [Point1, Point2] : Lines)
 	{
-		Vector2 From;
-		From.x = static_cast<float>(Point1.x) + Position.x;  // 실제 플레이어 좌표 적용
-		From.y = static_cast<float>(Point1.y) + Position.y;
+		Vector From;
+		From.X = static_cast<float>(Point1.x) + Position.X;  // 실제 플레이어 좌표 적용
+		From.Y = static_cast<float>(Point1.y) + Position.Y;
 
-		Vector2 To;
-		To.x = static_cast<float>(Point2.x) + Position.x;
-		To.y = static_cast<float>(Point2.y) + Position.y;
+		Vector To;
+		To.X = static_cast<float>(Point2.x) + Position.X;
+		To.Y = static_cast<float>(Point2.y) + Position.Y;
 
 		Utils::DrawLine(InDC, From, To);
 	}

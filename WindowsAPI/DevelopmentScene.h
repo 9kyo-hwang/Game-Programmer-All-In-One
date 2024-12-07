@@ -15,7 +15,7 @@ public:
 
 public:
 	// TEST
-	Vector2 PlayerPosition{300, 300};
+	Vector PlayerPosition{300, 300};
 	float Speed = 1000.0f;
 };
 

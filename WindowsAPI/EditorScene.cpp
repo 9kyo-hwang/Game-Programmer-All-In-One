@@ -110,13 +110,13 @@ void EditorScene::Render(HDC InDC)
 {
 	for (const auto& [Point1, Point2] : Lines)
 	{
-		Vector2 From;
-		From.x = static_cast<float>(Point1.x);
-		From.y = static_cast<float>(Point1.y);
+		Vector From;
+		From.X = static_cast<float>(Point1.x);
+		From.Y = static_cast<float>(Point1.y);
 
-		Vector2 To;
-		To.x = static_cast<float>(Point2.x);
-		To.y = static_cast<float>(Point2.y);
+		Vector To;
+		To.X = static_cast<float>(Point2.x);
+		To.Y = static_cast<float>(Point2.y);
 
 		Utils::DrawLine(InDC, From, To);
 	}

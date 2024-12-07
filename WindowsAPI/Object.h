@@ -26,12 +26,12 @@ public:
 	virtual void Render(HDC InDC) abstract;
 
 	EObjectType GetType() const { return Type; }
-	Vector2 GetPosition() const { return Position; }
-	void SetPosition(Vector2 NewPosition) { Position = NewPosition; }
+	Vector GetPosition() const { return Position; }
+	void SetPosition(Vector NewPosition) { Position = NewPosition; }
 
 protected:
 	EObjectType Type = EObjectType::None;
-	Vector2 Position{};
+	Vector Position{};
 	Stats Stat{};
 };
 

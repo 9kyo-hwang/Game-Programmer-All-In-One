@@ -9,8 +9,82 @@ using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
 
-struct Vector2
+struct Vector
 {
-	float x = 0.0f;
-	float y = 0.0f;
+	Vector() {}
+	Vector(float InX, float InY)
+		: X(InX)
+		, Y(InY)
+	{}
+
+	Vector operator+(const Vector& Other) const
+	{
+		Vector Ret;
+		Ret.X = X + Other.X;
+		Ret.Y = Y + Other.Y;
+
+		return Ret;
+	}
+
+	Vector operator-(const Vector& Other) const
+	{
+		Vector Ret;
+		Ret.X = X - Other.X;
+		Ret.Y = Y - Other.Y;
+
+		return Ret;
+	}
+
+	Vector operator*(const float Value) const
+	{
+		Vector Ret;
+		Ret.X = X * Value;
+		Ret.Y = Y * Value;
+
+		return Ret;
+	}
+
+	void operator+=(const Vector& Other)
+	{
+		X += Other.X;
+		Y += Other.Y;
+	}
+
+	void operator-=(const Vector& Other)
+	{
+		X -= Other.X;
+		Y -= Other.Y;
+	}
+
+	void operator*=(const float Value)
+	{
+		X *= Value;
+		Y *= Value;
+	}
+
+	float GetMagnitudeSquared() const
+	{
+		return X * X + Y * Y;
+	}
+
+	float GetMagnitude() const
+	{
+		// 루트 연산은 비쌈
+		return ::sqrt(GetMagnitudeSquared());
+	}
+
+	void Normalize()
+	{
+		const float Magnitude = GetMagnitude();
+		if (Magnitude < std::numeric_limits<float>::epsilon())
+		{
+			return;
+		}
+
+		X /= Magnitude;
+		Y /= Magnitude;
+	}
+
+	float X = 0.0f;
+	float Y = 0.0f;
 };
