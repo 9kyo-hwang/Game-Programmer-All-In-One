@@ -51,13 +51,23 @@ void Player::Update()
 		Position.y += Stat.Speed * DeltaTime;
 	}
 
+	if (InputManager::Get()->GetButton(EKeyCode::Q))
+	{
+		CannonAngle += DeltaTime * 10;
+	}
+	if (InputManager::Get()->GetButton(EKeyCode::E))
+	{
+		CannonAngle -= DeltaTime * 10;
+	}
+
 	if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
 	{
 		// TODO: 미사일 발사
 
 		// 새로 생성한 Missile을 화면에 어떻게 그릴 것인가?
 		Bullet* NewBullet = ObjectManager::Get()->NewObject<Bullet>();
-		NewBullet->SetPosition(Position);  // 플레이어 위치에 생성, 위로 발사
+		NewBullet->SetPosition(GetFirePosition());  // 포신 끝 격발 위치에 생성
+		NewBullet->SetAngle(CannonAngle);  // 포신 각도를 넘겨줘서 해당 각도로 발사
 		ObjectManager::Get()->Add(NewBullet);
 	}
 }
@@ -68,4 +78,21 @@ void Player::Render(HDC InDC)
 	{
 		Mesh->Render(InDC, Position);
 	}
+
+	HPEN Pen = ::CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+	HPEN OldPen = (HPEN)SelectObject(InDC, Pen);
+
+	Utils::DrawLine(InDC, Position, /*End of Cannon*/GetFirePosition());
+
+	::SelectObject(InDC, OldPen);
+	::DeleteObject(Pen);
+}
+
+Vector2 Player::GetFirePosition()
+{
+	Vector2 FirePosition = Position;
+	FirePosition.x += CannonLength * ::cos(CannonAngle);
+	FirePosition.y -= CannonLength * ::sin(CannonAngle);  // y좌표는 위로 갈 수록 -
+
+	return FirePosition;
 }

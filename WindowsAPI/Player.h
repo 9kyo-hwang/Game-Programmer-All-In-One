@@ -13,7 +13,10 @@ public:
 	virtual void Update() override;
 	virtual void Render(HDC InDC) override;
 
-public:
+	Vector2 GetFirePosition();
 
+private:
+	float CannonAngle = 0.0f;
+	float CannonLength = 100.0f;
 };
 
