@@ -19,6 +19,8 @@ enum class EKeyCode : uint8
 	A = 'A',
 	S = 'S',
 	D = 'D',
+	Q = 'Q',
+	E = 'E'
 };
 
 enum class EKeyState : uint8

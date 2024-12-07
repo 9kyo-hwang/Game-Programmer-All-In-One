@@ -19,5 +19,11 @@ public:
 	void Initialize() override;
 	void Update() override;
 	void Render(HDC InDC) override;
+
+public:
+	void SetAngle(float NewAngle) { Angle = NewAngle; }
+
+private:
+	float Angle = 0.0f;
 };
 

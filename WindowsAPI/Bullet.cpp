@@ -25,7 +25,9 @@ void Bullet::Update()
 {
 	float DeltaTime = TimerManager::Get()->GetDeltaTime();
 
-	Position.y -= DeltaTime * Stat.Speed;
+	// TODO: 각도 적용
+	Position.x += Stat.Speed * DeltaTime * ::cos(Angle);
+	Position.y -= Stat.Speed * DeltaTime * ::sin(Angle);
 
 	// TODO: Collision
 	const vector<Object*> Objects = ObjectManager::Get()->GetObjects();
