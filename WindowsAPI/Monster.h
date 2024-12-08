@@ -16,5 +16,9 @@ public:
 private:
 	Vector Start{ 300, 100 };
 	Vector End{ 600, 250 };
+
+	Vector Point1{ 400, 150 };
+	Vector Point2{ 600, 450 };
+	Vector Point3{ 200,450 };
 };
 

@@ -94,6 +94,11 @@ struct Vector
 		return X * Other.X + Y * Other.Y;
 	}
 
+	float Cross(const Vector& Other) const
+	{
+		return X * Other.Y - Y * Other.X;  // 양수, 음수냐에 따라 방향 달라짐
+	}
+
 	float X = 0.0f;
 	float Y = 0.0f;
 };
