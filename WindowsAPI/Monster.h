@@ -12,5 +12,9 @@ public:
 	void Initialize() override;
 	void Update() override;
 	void Render(HDC InDC) override;
+
+private:
+	Vector Start{ 300, 100 };
+	Vector End{ 600, 250 };
 };
 

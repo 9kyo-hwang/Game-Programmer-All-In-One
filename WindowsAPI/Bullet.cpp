@@ -38,6 +38,7 @@ void Bullet::Update()
 	}
 	else
 	{
+		// delete된 타겟을 추적할 위험이 있음
 		Vector Direction = Target->GetPosition() - GetPosition();
 		Direction.Normalize();  // 방향만 필요
 		Position += Direction * Stat.Speed * DeltaTime;  // 이동은 서서히

@@ -16,6 +16,10 @@ struct Vector
 		: X(InX)
 		, Y(InY)
 	{}
+	Vector(POINT Point)
+		: X(static_cast<float>(Point.x))
+		, Y(static_cast<float>(Point.y))
+	{}
 
 	Vector operator+(const Vector& Other) const
 	{
@@ -83,6 +87,11 @@ struct Vector
 
 		X /= Magnitude;
 		Y /= Magnitude;
+	}
+
+	float Dot(const Vector& Other) const
+	{
+		return X * Other.X + Y * Other.Y;
 	}
 
 	float X = 0.0f;
