@@ -5,8 +5,9 @@ enum class ESceneType : uint8
 {
 	None,
 	Development,
-	Gameplay,
 	Editor,
+	Menu,
+	Gameplay,
 };
 
 class SceneManager : public Singleton<SceneManager>

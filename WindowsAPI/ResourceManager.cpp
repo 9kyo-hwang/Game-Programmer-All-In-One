@@ -12,10 +12,26 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::Initialize()
 {
-	MeshLine* Mesh = new MeshLine();
-	Mesh->Load(L"Player.txt");
-
-	MeshLines[L"Player"] = Mesh;
+	{
+		MeshLine* Mesh = new MeshLine();
+		Mesh->Load(L"UI.txt");
+		MeshLines[L"UI"] = Mesh;
+	}
+	{
+		MeshLine* Mesh = new MeshLine();
+		Mesh->Load(L"Menu.txt");
+		MeshLines[L"Menu"] = Mesh;
+	}
+	{
+		MeshLine* Mesh = new MeshLine();
+		Mesh->Load(L"MissileTank.txt");
+		MeshLines[L"MissileTank"] = Mesh;
+	}
+	{
+		MeshLine* Mesh = new MeshLine();
+		Mesh->Load(L"CanonTank.txt");
+		MeshLines[L"CanonTank"] = Mesh;
+	}
 }
 
 void ResourceManager::Clear()

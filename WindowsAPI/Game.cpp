@@ -33,7 +33,8 @@ void Game::Initialize(HWND NewWindow)
 	SceneManager::Get()->Initialize();
 	ResourceManager::Get()->Initialize();
 
-	SceneManager::Get()->LoadScene(ESceneType::Gameplay);
+	// 최초로 호출되는 씬
+	SceneManager::Get()->LoadScene(ESceneType::Menu);
 }
 
 void Game::Update()

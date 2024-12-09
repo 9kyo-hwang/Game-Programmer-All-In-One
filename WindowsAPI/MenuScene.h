@@ -1,13 +1,13 @@
 #pragma once
 #include "Scene.h"
 
-class GameplayScene final : public Scene
+class MenuScene final : public Scene
 {
 	using Super = Scene;
 
 public:
-	GameplayScene();
-	~GameplayScene() override;
+	MenuScene();
+	~MenuScene() override;
 
 	void Initialize() override;
 	void Update() override;

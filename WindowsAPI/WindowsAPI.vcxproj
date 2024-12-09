@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DevelopmentScene.h" />
     <ClInclude Include="EditorScene.h" />
@@ -152,8 +153,8 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MenuScene.h" />
     <ClInclude Include="MeshLine.h" />
-    <ClInclude Include="Monster.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="pch.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TimerManager.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
@@ -177,8 +179,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="MeshLine.cpp" />
-    <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="pch.cpp">
@@ -193,6 +195,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="TimerManager.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowsAPI.cpp" />
   </ItemGroup>

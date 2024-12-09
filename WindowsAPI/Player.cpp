@@ -33,66 +33,68 @@ void Player::Update()
 	float DeltaTime = TimerManager::Get()->GetDeltaTime();
 	// d = t * s
 
+	if (!bIsLocalPlayer)  // 내 플레이어가 아니면 수행하지 않음
+	{
+		return;
+	}
+
 	// 현재 이 방식으로는 대각선 이동 시 속도가 더 빨라짐
 	if (InputManager::Get()->GetButton(EKeyCode::A))
 	{
 		Position.X -= Stat.Speed * DeltaTime;
+		Direction = EDirection::Left;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::D))
 	{
 		Position.X += Stat.Speed * DeltaTime;
+		Direction = EDirection::Right;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::W))
 	{
-		Position.Y -= Stat.Speed * DeltaTime;
+		//Position.Y -= Stat.Speed * DeltaTime;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::S))
 	{
-		Position.Y += Stat.Speed * DeltaTime;
+		//Position.Y += Stat.Speed * DeltaTime;
 	}
 
 	if (InputManager::Get()->GetButton(EKeyCode::Q))
 	{
-		CannonAngle += DeltaTime * 10;
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::E))
 	{
-		CannonAngle -= DeltaTime * 10;
 	}
 
 	if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
 	{
 		// TODO: 미사일 발사
-
-		// 새로 생성한 Missile을 화면에 어떻게 그릴 것인가?
-		Bullet* NewBullet = ObjectManager::Get()->NewObject<Bullet>();
-		NewBullet->SetPosition(GetFirePosition());  // 포신 끝 격발 위치에 생성
-		NewBullet->SetAngle(CannonAngle);  // 포신 각도를 넘겨줘서 해당 각도로 발사
-		ObjectManager::Get()->Add(NewBullet);
 	}
 }
 
 void Player::Render(HDC InDC)
 {
-	if (const MeshLine* Mesh = ResourceManager::Get()->GetMeshLine(L"Player"))
+	if (Direction == EDirection::Left)
 	{
-		Mesh->Render(InDC, Position);
+		// 왼쪽을 바라보는 것이 기본 이미지
+		if (const MeshLine* Mesh = ResourceManager::Get()->GetMeshLine(GetPlayerName()))
+		{
+			Mesh->Render(InDC, Position, 0.5f, 0.5f);
+		}
+	}
+	else
+	{
+		// 좌우 반전을 위해 X축 비율 음수 적용
+		if (const MeshLine* Mesh = ResourceManager::Get()->GetMeshLine(GetPlayerName()))
+		{
+			Mesh->Render(InDC, Position, -0.5f, 0.5f);
+		}
 	}
 
 	HPEN Pen = ::CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
 	HPEN OldPen = (HPEN)SelectObject(InDC, Pen);
 
-	Utils::DrawLine(InDC, Position, /*End of Cannon*/GetFirePosition());
+	//Utils::DrawLine(InDC, Position, /*End of Cannon*/GetFirePosition());
 
 	::SelectObject(InDC, OldPen);
 	::DeleteObject(Pen);
-}
-
-Vector Player::GetFirePosition()
-{
-	Vector FirePosition = Position;
-	FirePosition.X += CannonLength * ::cos(CannonAngle);
-	FirePosition.Y -= CannonLength * ::sin(CannonAngle);  // y좌표는 위로 갈 수록 -
-
-	return FirePosition;
 }

@@ -8,6 +8,12 @@ enum class EObjectType : uint8
 	Projectile,
 };
 
+enum class EDirection : uint8
+{
+	Left,
+	Right,
+};
+
 class Object
 {
 public:
@@ -25,12 +31,13 @@ public:
 	virtual void Update() abstract;
 	virtual void Render(HDC InDC) abstract;
 
-	EObjectType GetType() const { return Type; }
+	EObjectType GetObjectType() const { return Type; }
 	Vector GetPosition() const { return Position; }
 	void SetPosition(Vector NewPosition) { Position = NewPosition; }
 
 protected:
 	EObjectType Type = EObjectType::None;
+	EDirection Direction = EDirection::Left;
 	Vector Position{};
 	Stats Stat{};
 };
