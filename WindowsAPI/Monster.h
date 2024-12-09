@@ -14,11 +14,20 @@ public:
 	void Render(HDC InDC) override;
 
 private:
+#if 0  // Dot Product Example
 	Vector Start{ 300, 100 };
 	Vector End{ 600, 250 };
+#endif
 
+#if 0  // Cross Product Example
 	Vector Point1{ 400, 150 };
 	Vector Point2{ 600, 450 };
 	Vector Point3{ 200,450 };
+#endif
+
+#if 1  // Inverse Trigonometric Function
+	Vector LookAt{};
+	Vector Direction{};
+#endif
 };
 

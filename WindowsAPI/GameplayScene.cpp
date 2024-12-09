@@ -16,7 +16,7 @@ GameplayScene::~GameplayScene()
 void GameplayScene::Initialize()
 {
 	Monster* NewMonster = ObjectManager::Get()->NewObject<Monster>();
-	NewMonster->SetPosition(Vector{ 400, 400 });
+	//NewMonster->SetPosition(Vector{ 400, 400 });
 	ObjectManager::Get()->Add(NewMonster);
 }
 
@@ -31,8 +31,7 @@ void GameplayScene::Update()
 
 void GameplayScene::Render(HDC InDC)
 {
-	const vector<Object*>& Objects = ObjectManager::Get()->GetObjects();
-	for (Object* Element : Objects)
+	for (Object* Element : ObjectManager::Get()->GetObjects())
 	{
 		Element->Render(InDC);
 	}

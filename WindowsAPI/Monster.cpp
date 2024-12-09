@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Monster.h"
-
 #include "InputManager.h"
 
 Monster::Monster()
@@ -17,6 +16,13 @@ void Monster::Initialize()
 	Stat.Hp = 100;
 	Stat.MaxHp = 100;
 	Stat.Speed = 10;
+
+#if 1  // Inv Tri Example
+	Position = Vector{ 400, 300 };
+	LookAt = Vector{ 550, 70 };
+	Direction = LookAt - Position;
+	Direction.Normalize();
+#endif
 }
 
 void Monster::Update()
@@ -41,8 +47,36 @@ void Monster::Update()
 
 void Monster::Render(HDC InDC)
 {
-	// Utils::DrawCircle(InDC, Position, 50);
+	Utils::DrawCircle(InDC, Position, 100);
 
+	// 몬스터가 바라보는 방향
+	HPEN Pen = ::CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+	HPEN OldPen = (HPEN)::SelectObject(InDC, Pen);
+	{
+		Utils::DrawLine(InDC, Position, LookAt);
+	}
+	::SelectObject(InDC, OldPen);
+	::DeleteObject(Pen);
+
+	Vector MousePosition = InputManager::Get()->GetMousePosition();
+	Vector MonsterToMouse = MousePosition - Position;
+	MonsterToMouse.Normalize();
+	Direction.Normalize();
+
+	float DotRet = MonsterToMouse.Dot(Direction);
+	float Radian = ::acos(DotRet);  // 아크 코사인은 0 ~ 180 사이 각만 나타낼 수 있음
+	float Degree = Radian * 180 / (::atan(1) * 4);
+
+	// 외적으로 시계/반시계 방향 판단 후 각 보정
+	if (Direction.Cross(MonsterToMouse) < 0)
+	{
+		Degree = 360 - Degree;
+	}
+	
+	wstring Text = std::format(L"Degree: {0}", Degree);
+	Utils::DrawTextW(InDC, { 20, 50 }, Text);
+
+# if 0  // Dot, Cross Product Example
 	Vector Mouse = InputManager::Get()->GetMousePosition();
 
 	HPEN Pen = ::CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
@@ -75,4 +109,5 @@ void Monster::Render(HDC InDC)
 
 	wstring str = std::format(L"Cross 1: {0}, Cross 2: {1}", Cross1, Cross2);
 	Utils::DrawTextW(InDC, { 20, 50 }, str);
+#endif
 }
