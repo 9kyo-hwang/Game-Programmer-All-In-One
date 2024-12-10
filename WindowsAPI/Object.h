@@ -8,6 +8,12 @@ enum class EObjectType : uint8
 	Projectile,
 };
 
+enum class EDirection : uint8
+{
+	Left,
+	Right,
+};
+
 class Object
 {
 public:
@@ -25,13 +31,17 @@ public:
 	virtual void Update() abstract;
 	virtual void Render(HDC InDC) abstract;
 
-	EObjectType GetType() const { return Type; }
-	Vector2 GetPosition() const { return Position; }
-	void SetPosition(Vector2 NewPosition) { Position = NewPosition; }
+	EObjectType GetObjectType() const { return Type; }
+	Vector GetPosition() const { return Position; }
+	void SetPosition(Vector NewPosition) { Position = NewPosition; }
+	float GetRadius() const { return Radius; }
+	void SetRadius(float NewRadius) { Radius = NewRadius; }
 
 protected:
 	EObjectType Type = EObjectType::None;
-	Vector2 Position{};
+	EDirection Direction = EDirection::Left;
+	Vector Position{};
 	Stats Stat{};
+	float Radius = 50.f;  // 일종의 충돌 범위
 };
 

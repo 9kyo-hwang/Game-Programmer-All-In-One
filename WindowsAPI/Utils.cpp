@@ -1,23 +1,23 @@
 #include "pch.h"
 #include "Utils.h"
 
-void Utils::DrawTextW(HDC DC, Vector2 Position, const wstring& Text)
+void Utils::DrawTextW(HDC DC, Vector Position, const wstring& Text)
 {
-	::TextOut(DC, Position.x, Position.y, Text.c_str(), static_cast<int32>(Text.size()));
+	::TextOut(DC, Position.X, Position.Y, Text.c_str(), static_cast<int32>(Text.size()));
 }
 
-void Utils::DrawRectangle(HDC DC, Vector2 Position, int32 Width, int32 Height)
+void Utils::DrawRectangle(HDC DC, Vector Position, int32 Width, int32 Height)
 {
-	::Rectangle(DC, Position.x - Width / 2, Position.y - Height / 2, Position.x + Width / 2, Position.y + Height / 2);
+	::Rectangle(DC, Position.X - Width / 2, Position.Y - Height / 2, Position.X + Width / 2, Position.Y + Height / 2);
 }
 
-void Utils::DrawCircle(HDC DC, Vector2 Position, int32 Radius)
+void Utils::DrawCircle(HDC DC, Vector Position, int32 Radius)
 {
-	::Ellipse(DC, Position.x - Radius, Position.y - Radius, Position.x + Radius, Position.y + Radius);
+	::Ellipse(DC, Position.X - Radius, Position.Y - Radius, Position.X + Radius, Position.Y + Radius);
 }
 
-void Utils::DrawLine(HDC DC, Vector2 From, Vector2 To)
+void Utils::DrawLine(HDC DC, Vector From, Vector To)
 {
-	::MoveToEx(DC, From.x, From.y, nullptr);
-	::LineTo(DC, To.x, To.y);
+	::MoveToEx(DC, From.X, From.Y, nullptr);
+	::LineTo(DC, To.X, To.Y);
 }

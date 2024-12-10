@@ -15,6 +15,7 @@ using namespace std;
 #include "Defines.h"
 #include "Enums.h"
 #include "Utils.h"
+#include "Constants.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>

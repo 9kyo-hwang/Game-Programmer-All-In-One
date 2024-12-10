@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "DevelopmentScene.h"
 #include "EditorScene.h"
+#include "MenuScene.h"
 #include "GameplayScene.h"
 
 void SceneManager::Initialize()
@@ -32,18 +33,19 @@ void SceneManager::LoadScene(ESceneType NewType)
 	}
 
 	Scene* NewScene = nullptr;
-
-	switch (NewType) {
-	case ESceneType::None:
-		break;
+	switch (NewType)
+	{
 	case ESceneType::Development:
 		NewScene = new DevelopmentScene();
 		break;
-	case ESceneType::Gameplay:
-		NewScene = new GameplayScene();
-		break;
 	case ESceneType::Editor:
 		NewScene = new EditorScene();
+		break;
+	case ESceneType::Menu:
+		NewScene = new MenuScene();
+		break;
+	case ESceneType::Gameplay:
+		NewScene = new GameplayScene();
 		break;
 	}
 
