@@ -13,9 +13,14 @@ public:
 	void Update() override;
 	void Render(HDC InDC) override;
 
+	Vector GetSpeed() const { return Speed; }
 	void SetSpeed(Vector NewSpeed) { Speed = NewSpeed; }
+
+	Object* GetOwner() const { return Owner; }
+	void SetOwner(Object* NewOwner) { Owner = NewOwner; }
 
 private:
 	Vector Speed{};
+	Object* Owner = nullptr;
 };
 

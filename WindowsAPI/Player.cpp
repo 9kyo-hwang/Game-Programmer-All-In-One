@@ -83,6 +83,7 @@ void Player::Update()
 
 		// TODO
 		Bullet* NewBullet = ObjectManager::Get()->NewObject<Bullet>();
+		NewBullet->SetOwner(this);
 		NewBullet->SetPosition(Position);
 		NewBullet->SetSpeed({ Speed * ::cos(Angle * PI / 180), -1 * Speed * ::sin(Angle * PI / 180)});
 		ObjectManager::Get()->Add(NewBullet);
