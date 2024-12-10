@@ -10,6 +10,8 @@ enum class ESceneType : uint8
 	Gameplay,
 };
 
+class Scene;
+
 class SceneManager : public Singleton<SceneManager>
 {
 public:
@@ -20,8 +22,9 @@ public:
 public:
 	void LoadScene(ESceneType NewType);
 	void Clear();
+	Scene* GetActiveScene() const { return ActiveScene; }
 
 private:
-	class Scene* ActiveScene = nullptr;
+	Scene* ActiveScene = nullptr;
 	ESceneType Type = ESceneType::None;
 };

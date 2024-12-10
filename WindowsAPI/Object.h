@@ -34,11 +34,14 @@ public:
 	EObjectType GetObjectType() const { return Type; }
 	Vector GetPosition() const { return Position; }
 	void SetPosition(Vector NewPosition) { Position = NewPosition; }
+	float GetRadius() const { return Radius; }
+	void SetRadius(float NewRadius) { Radius = NewRadius; }
 
 protected:
 	EObjectType Type = EObjectType::None;
 	EDirection Direction = EDirection::Left;
 	Vector Position{};
 	Stats Stat{};
+	float Radius = 50.f;  // 일종의 충돌 범위
 };
 

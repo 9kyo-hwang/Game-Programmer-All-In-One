@@ -7,6 +7,7 @@
 #include "ObjectManager.h"
 #include "TimerManager.h"
 #include "ResourceManager.h"  // 임시로 하드 코딩
+#include "UIManager.h"
 
 Player::Player()
 	: Super(EObjectType::Player)
@@ -33,12 +34,14 @@ void Player::Update()
 	float DeltaTime = TimerManager::Get()->GetDeltaTime();
 	// d = t * s
 
-	if (!bIsLocalPlayer)  // 내 플레이어가 아니면 수행하지 않음
+	// 내 플레이어가 아니면 수행하지 않음
+	if (!bIsLocalPlayer)
 	{
 		return;
 	}
 
-	// 현재 이 방식으로는 대각선 이동 시 속도가 더 빨라짐
+	OnUpdateFireAngle();
+
 	if (InputManager::Get()->GetButton(EKeyCode::A))
 	{
 		Position.X -= Stat.Speed * DeltaTime;
@@ -49,25 +52,40 @@ void Player::Update()
 		Position.X += Stat.Speed * DeltaTime;
 		Direction = EDirection::Right;
 	}
+
+	// 포신 각도 조절
 	if (InputManager::Get()->GetButton(EKeyCode::W))
 	{
-		//Position.Y -= Stat.Speed * DeltaTime;
+		FireAngle = ::clamp(FireAngle + 50 * DeltaTime, 0.f, 75.f);
 	}
 	if (InputManager::Get()->GetButton(EKeyCode::S))
 	{
-		//Position.Y += Stat.Speed * DeltaTime;
+		FireAngle = ::clamp(FireAngle - 50 * DeltaTime, 0.f, 75.f);
 	}
 
-	if (InputManager::Get()->GetButton(EKeyCode::Q))
+	// 파워 게이지 늘리기
+	if (InputManager::Get()->GetButton(EKeyCode::Space))
 	{
-	}
-	if (InputManager::Get()->GetButton(EKeyCode::E))
-	{
+		float Power = UIManager::Get()->GetPowerPercent();
+		Power = min(100, Power + 100 * DeltaTime);
+		UIManager::Get()->SetPowerPercent(Power);
 	}
 
-	if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
+	// 발사
+	if (InputManager::Get()->GetButtonUp(EKeyCode::Space))
 	{
-		// TODO: 미사일 발사
+		// 더 이상 움직이지 못하도록 즉시 해제
+		bIsLocalPlayer = false;
+
+		float Power = UIManager::Get()->GetPowerPercent();
+		float Speed = 10 * Power;  // 파워에 비례한 발사 속도
+		float Angle = UIManager::Get()->GetBarrelAngle();
+
+		// TODO
+		Bullet* NewBullet = ObjectManager::Get()->NewObject<Bullet>();
+		NewBullet->SetPosition(Position);
+		NewBullet->SetSpeed({ Speed * ::cos(Angle * PI / 180), -1 * Speed * ::sin(Angle * PI / 180)});
+		ObjectManager::Get()->Add(NewBullet);
 	}
 }
 
@@ -90,11 +108,36 @@ void Player::Render(HDC InDC)
 		}
 	}
 
-	HPEN Pen = ::CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-	HPEN OldPen = (HPEN)SelectObject(InDC, Pen);
+	if (bIsLocalPlayer)
+	{
+		RECT Rect
+		{
+			static_cast<LONG>(Position.X - 10),
+			static_cast<LONG>(Position.Y - 80),
+			static_cast<LONG>(Position.X + 10),
+			static_cast<LONG>(Position.Y - 60)
+		};
 
-	//Utils::DrawLine(InDC, Position, /*End of Cannon*/GetFirePosition());
+		HBRUSH Brush = ::CreateSolidBrush(RGB(250, 236, 197));
+		HBRUSH OldBrush = static_cast<HBRUSH>(::SelectObject(InDC, Brush));
+		::Ellipse(InDC, Rect.left, Rect.top, Rect.right, Rect.bottom);
 
-	::SelectObject(InDC, OldPen);
-	::DeleteObject(Pen);
+		::SelectObject(InDC, OldBrush);
+		::DeleteObject(Brush);
+	}
+}
+
+// 각도나 방향 변화 시 동작하는 코드를 별도 함수로 분리
+void Player::OnUpdateFireAngle()
+{
+	if (Direction == EDirection::Left)
+	{
+		UIManager::Get()->SetPlayerAngle(180.f);
+		UIManager::Get()->SetBarrelAngle(180.f - FireAngle);
+	}
+	else
+	{
+		UIManager::Get()->SetPlayerAngle(0.f);
+		UIManager::Get()->SetBarrelAngle(FireAngle);
+	}
 }

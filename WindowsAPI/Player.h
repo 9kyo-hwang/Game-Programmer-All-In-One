@@ -31,6 +31,9 @@ public:
 	bool IsLocallyControlled() const { return bIsLocalPlayer; }
 
 private:
+	void OnUpdateFireAngle();
+
+private:
 	EPlayerType PlayerType = EPlayerType::CanonTank;
 	int32 Id = 0;  // 여러 Player들을 구분하기 위해 ID 설정
 	uint8 bIsLocalPlayer = false;  // true이면 내 플레이어, 아니라면 상대방

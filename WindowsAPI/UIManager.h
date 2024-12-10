@@ -43,4 +43,3 @@ private:
 	bool				SpecialWeapon = false;
 	int32				RemainTime = 0;
 };
-
