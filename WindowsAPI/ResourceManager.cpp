@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ResourceManager.h"
 #include <ranges>
+
+#include "Flipbook.h"
 #include "Texture.h"
 #include "Sprite.h"
 
@@ -23,6 +25,20 @@ void ResourceManager::Clear()
 	}
 
 	Textures.clear();
+
+	for (Sprite* CachedSprite : Sprites | views::values)
+	{
+		SAFE_DELETE(CachedSprite);
+	}
+
+	Sprites.clear();
+
+	for (Flipbook* CachedFlipbook : Flipbooks | views::values)
+	{
+		SAFE_DELETE(CachedFlipbook);
+	}
+
+	Flipbooks.clear();
 }
 
 Texture* ResourceManager::LoadTexture(const wstring& Name, const wstring& Path, uint32 Transparent)
@@ -60,4 +76,15 @@ Sprite* ResourceManager::CreateSprite(const wstring& Name, Texture* BaseTexture,
 
 	Sprite* NewSprite = new Sprite(BaseTexture, X, Y, Width, Height);
 	return Sprites[Name] = NewSprite;
+}
+
+Flipbook* ResourceManager::CreateFlipbook(const wstring& Name)
+{
+	if (Flipbooks.contains(Name))
+	{
+		return Flipbooks[Name];
+	}
+
+	Flipbook* NewFlipbook = new Flipbook();
+	return Flipbooks[Name] = NewFlipbook;
 }

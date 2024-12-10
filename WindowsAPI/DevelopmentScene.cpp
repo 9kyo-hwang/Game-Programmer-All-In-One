@@ -2,13 +2,10 @@
 #include "DevelopmentScene.h"
 
 #include "ASpriteActor.h"
-#include "TimerManager.h"
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "APlayer.h"
-#include "CharacterMovementComponent.h"
-#include "GameObject.h"
-#include "SpriteRenderer.h"
+#include "Flipbook.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -35,59 +32,66 @@ void DevelopmentScene::Initialize()
 
 	Sprite* BackgroundSprite = ResourceManager::Get()->CreateSprite(L"Stage01", Stage01);
 	ResourceManager::Get()->CreateSprite(L"Start_Off", Start, 0, 0, 150, 150);
-	Sprite* StartOnSprite = ResourceManager::Get()->CreateSprite(L"Start_On", Start, 150, 0, 150, 150);
+	ResourceManager::Get()->CreateSprite(L"Start_On", Start, 150, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Edit_Off", Edit, 0, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Edit_On", Edit, 150, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Exit_Off", Exit, 0, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Exit_On", Exit, 150, 0, 150, 150);
 
 	{
+		Texture* PlayerUp = ResourceManager::Get()->GetTexture(L"PlayerUp");
+		Flipbook* FB_MoveUp = ResourceManager::Get()->CreateFlipbook(L"FB_MoveUp");
+		FB_MoveUp->SetInfo({ PlayerUp, L"FB_MoveUp", {200, 200}, 0, 9, 1, 0.5f, true });
+	}
+	{
+		Texture* PlayerDown = ResourceManager::Get()->GetTexture(L"PlayerDown");
+		Flipbook* FB_MoveDown = ResourceManager::Get()->CreateFlipbook(L"FB_MoveDown");
+		FB_MoveDown->SetInfo({ PlayerDown, L"FB_MoveDown", {200, 200}, 0, 9, 1, 0.5f, true });
+	}
+	{
+		Texture* PlayerLeft = ResourceManager::Get()->GetTexture(L"PlayerLeft");
+		Flipbook* FB_MoveLeft = ResourceManager::Get()->CreateFlipbook(L"FB_MoveLeft");
+		FB_MoveLeft->SetInfo({ PlayerLeft, L"FB_MoveLeft", {200, 200}, 0, 9, 1, 0.5f, true });
+	}
+	{
+		Texture* PlayerRight = ResourceManager::Get()->GetTexture(L"PlayerRight");
+		Flipbook* FB_MoveRight = ResourceManager::Get()->CreateFlipbook(L"FB_MoveRight");
+		FB_MoveRight->SetInfo({ PlayerRight, L"FB_MoveRight", {200, 200}, 0, 9, 1, 0.5f, true });
+	}
+
+	{
 		ASpriteActor* NewBackground = new ASpriteActor();
 		NewBackground->SetSprite(BackgroundSprite);
 		NewBackground->SetPosition({ BackgroundSprite->GetSize().X / 2, BackgroundSprite->GetSize().Y / 2 });
-		Background = NewBackground;
+		Actors.push_back(NewBackground);
 	}
 	{
 		APlayer* NewPlayer = new APlayer();
-		NewPlayer->SetSprite(StartOnSprite);
-		NewPlayer->SetPosition({ StartOnSprite->GetSize().X / 2, StartOnSprite->GetSize().Y / 2 });
-		Player = NewPlayer;
+		Actors.push_back(NewPlayer);
 	}
+
+	for (AActor* Actor : Actors)
 	{
-		GameObject* Player = new GameObject();
-		Player->SetPosition({ 500, 500 });
-		{
-			SpriteRenderer* Renderer = new SpriteRenderer();
-			Renderer->SetSprite(ResourceManager::Get()->GetSprite(L"Start_On"));
-			Player->AddComponent(Renderer);
-		}
-		{
-			CharacterMovementComponent* Movement = new CharacterMovementComponent();
-			Player->AddComponent(Movement);
-		}
-
-		GO = Player;
+		Actor->BeginPlay();
 	}
-
-	Background->BeginPlay();
-	Player->BeginPlay();
-	GO->Start();
 }
 
 void DevelopmentScene::Update()
 {
 	//float DeltaTime = TimerManager::Get()->GetDeltaTime();
 
-	Background->Tick();
-	Player->Tick();
-	GO->Update();
+	for (AActor* Actor : Actors)
+	{
+		Actor->Tick();
+	}
 }
 
 void DevelopmentScene::Render(HDC InDC)
 {
-	Background->Render(InDC);
-	Player->Render(InDC);
-	GO->Render(InDC);
+	for (AActor* Actor : Actors)
+	{
+		Actor->Render(InDC);
+	}
 
 	//Texture* Stage01 = ResourceManager::Get()->GetTexture(L"Stage01");
 	//Sprite* StartOn = ResourceManager::Get()->GetSprite(L"Start_On");

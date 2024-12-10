@@ -1,9 +1,9 @@
 #pragma once
-#include "ASpriteActor.h"
+#include "FlipbookActor.h"
 
-class APlayer : public ASpriteActor
+class APlayer : public FlipbookActor
 {
-	using Super = ASpriteActor;
+	using Super = FlipbookActor;
 
 public:
 	APlayer();
@@ -12,5 +12,11 @@ public:
 	void BeginPlay() override;
 	void Tick() override;
 	void Render(HDC InDC) override;
+
+private:
+	Flipbook* FB_MoveUp = nullptr;
+	Flipbook* FB_MoveDown = nullptr;
+	Flipbook* FB_MoveLeft = nullptr;
+	Flipbook* FB_MoveRight = nullptr;
 };
 

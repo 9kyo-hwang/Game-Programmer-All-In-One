@@ -32,6 +32,10 @@ void ASpriteActor::Render(HDC InDC)
 
 	Vector2Int Size = MySprite->GetSize();
 
-	::BitBlt(InDC, Position.X - Size.X / 2, Position.Y - Size.Y / 2, Size.X, Size.Y,
-		MySprite->GetDC(), MySprite->GetPosition().X, MySprite->GetPosition().Y, SRCCOPY);
+	//::BitBlt(InDC, Position.X - Size.X / 2, Position.Y - Size.Y / 2, Size.X, Size.Y,
+	//	MySprite->GetDC(), MySprite->GetPosition().X, MySprite->GetPosition().Y, SRCCOPY);
+
+	// 투명 처리를 해주는 함수
+	::TransparentBlt(InDC, Position.X - Size.X / 2, Position.Y - Size.Y / 2, Size.X, Size.Y,
+		MySprite->GetDC(), MySprite->GetPosition().X, MySprite->GetPosition().Y, MySprite->GetSize().X, MySprite->GetSize().Y, MySprite->GetTransparent());
 }

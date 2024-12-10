@@ -2,7 +2,6 @@
 #include "Scene.h"
 
 class AActor;
-class GameObject;
 
 class DevelopmentScene final : public Scene
 {
@@ -13,13 +12,10 @@ public:
 	~DevelopmentScene() override;
 
 	void Initialize() override;
-	void Update() override;
+	void Update() override;  // ÇÊ¿ä¿¡ µû¶ó FixedUpdate¸¦ µÖµµ µÊ
 	void Render(HDC InDC) override;
 
 private:
-	AActor* Background = nullptr;
-	AActor* Player = nullptr;
-
-	GameObject* GO = nullptr;
+	vector<AActor*> Actors;
 };
 
