@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
 
+class AActor;
+
 class DevelopmentScene final : public Scene
 {
 	using Super = Scene;
@@ -13,6 +15,8 @@ public:
 	void Update() override;
 	void Render(HDC InDC) override;
 
-public:
+private:
+	AActor* Background = nullptr;
+	AActor* Player = nullptr;
 };
 

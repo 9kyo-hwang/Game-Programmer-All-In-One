@@ -159,6 +159,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AActor.h" />
+    <ClInclude Include="APlayer.h" />
+    <ClInclude Include="ASpriteActor.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DevelopmentScene.h" />
@@ -184,6 +187,9 @@
     <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AActor.cpp" />
+    <ClCompile Include="APlayer.cpp" />
+    <ClCompile Include="ASpriteActor.cpp" />
     <ClCompile Include="DevelopmentScene.cpp" />
     <ClCompile Include="EditorScene.cpp" />
     <ClCompile Include="Game.cpp" />
