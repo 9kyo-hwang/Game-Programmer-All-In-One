@@ -6,6 +6,9 @@
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "APlayer.h"
+#include "CharacterMovementComponent.h"
+#include "GameObject.h"
+#include "SpriteRenderer.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -50,9 +53,25 @@ void DevelopmentScene::Initialize()
 		NewPlayer->SetPosition({ StartOnSprite->GetSize().X / 2, StartOnSprite->GetSize().Y / 2 });
 		Player = NewPlayer;
 	}
+	{
+		GameObject* Player = new GameObject();
+		Player->SetPosition({ 500, 500 });
+		{
+			SpriteRenderer* Renderer = new SpriteRenderer();
+			Renderer->SetSprite(ResourceManager::Get()->GetSprite(L"Start_On"));
+			Player->AddComponent(Renderer);
+		}
+		{
+			CharacterMovementComponent* Movement = new CharacterMovementComponent();
+			Player->AddComponent(Movement);
+		}
+
+		GO = Player;
+	}
 
 	Background->BeginPlay();
 	Player->BeginPlay();
+	GO->Start();
 }
 
 void DevelopmentScene::Update()
@@ -61,12 +80,14 @@ void DevelopmentScene::Update()
 
 	Background->Tick();
 	Player->Tick();
+	GO->Update();
 }
 
 void DevelopmentScene::Render(HDC InDC)
 {
 	Background->Render(InDC);
 	Player->Render(InDC);
+	GO->Render(InDC);
 
 	//Texture* Stage01 = ResourceManager::Get()->GetTexture(L"Stage01");
 	//Sprite* StartOn = ResourceManager::Get()->GetSprite(L"Start_On");
