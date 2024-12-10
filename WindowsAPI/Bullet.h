@@ -1,18 +1,11 @@
 #pragma once
 #include "Object.h"
 
-class Bullet : public Object
+class Bullet final : public Object
 {
 	using Super = Object;
 
 public:
-	struct Stats
-	{
-		int32 Hp = 0;
-		int32 MaxHp = 0;
-		float Speed = 0.0f;
-	};
-
 	Bullet();
 	~Bullet() override;
 
@@ -20,10 +13,14 @@ public:
 	void Update() override;
 	void Render(HDC InDC) override;
 
-public:
-	void SetAngle(float NewAngle) { Angle = NewAngle; }
+	Vector GetSpeed() const { return Speed; }
+	void SetSpeed(Vector NewSpeed) { Speed = NewSpeed; }
+
+	Object* GetOwner() const { return Owner; }
+	void SetOwner(Object* NewOwner) { Owner = NewOwner; }
 
 private:
-	float Angle = 0.0f;
+	Vector Speed{};
+	Object* Owner = nullptr;
 };
 

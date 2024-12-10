@@ -1,13 +1,13 @@
 #pragma once
-#include "Object.h"
+#include "Scene.h"
 
-class Monster : public Object
+class MenuScene final : public Scene
 {
-	using Super = Object;
+	using Super = Scene;
 
 public:
-	Monster();
-	~Monster() override;
+	MenuScene();
+	~MenuScene() override;
 
 	void Initialize() override;
 	void Update() override;
