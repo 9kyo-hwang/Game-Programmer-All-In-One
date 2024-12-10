@@ -14,8 +14,5 @@ public:
 	void Render(HDC InDC) override;
 
 public:
-	// TEST
-	Vector PlayerPosition{300, 300};
-	float Speed = 1000.0f;
 };
 

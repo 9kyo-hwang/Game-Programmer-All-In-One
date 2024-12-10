@@ -2,8 +2,6 @@
 #include "SceneManager.h"
 #include "DevelopmentScene.h"
 #include "EditorScene.h"
-#include "MenuScene.h"
-#include "GameplayScene.h"
 
 void SceneManager::Initialize()
 {
@@ -41,11 +39,7 @@ void SceneManager::LoadScene(ESceneType NewType)
 	case ESceneType::Editor:
 		NewScene = new EditorScene();
 		break;
-	case ESceneType::Menu:
-		NewScene = new MenuScene();
-		break;
-	case ESceneType::Gameplay:
-		NewScene = new GameplayScene();
+	case ESceneType::None:
 		break;
 	}
 

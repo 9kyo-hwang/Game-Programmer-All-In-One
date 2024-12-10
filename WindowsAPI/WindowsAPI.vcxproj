@@ -70,6 +70,22 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>E:\Github\Game-Programmer-All-In-One\Binaries\x64\Debug\</OutDir>
+    <IntDir>E:\Github\Game-Programmer-All-In-One\Intermediate\x64\Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>E:\Github\Game-Programmer-All-In-One\Binaries\x64\Debug\</OutDir>
+    <IntDir>E:\Github\Game-Programmer-All-In-One\Intermediate\x64\Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>E:\Github\Game-Programmer-All-In-One\Binaries\x64\Debug\</OutDir>
+    <IntDir>E:\Github\Game-Programmer-All-In-One\Intermediate\x64\Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>E:\Github\Game-Programmer-All-In-One\Binaries\x64\Debug\</OutDir>
+    <IntDir>E:\Github\Game-Programmer-All-In-One\Intermediate\x64\Debug\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -143,7 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DevelopmentScene.h" />
@@ -151,51 +166,42 @@
     <ClInclude Include="Enums.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="MenuScene.h" />
-    <ClInclude Include="MeshLine.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="TimerManager.h" />
     <ClInclude Include="Types.h" />
-    <ClInclude Include="UIManager.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="DevelopmentScene.cpp" />
     <ClCompile Include="EditorScene.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="MenuScene.cpp" />
-    <ClCompile Include="MeshLine.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TimerManager.cpp" />
-    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowsAPI.cpp" />
   </ItemGroup>

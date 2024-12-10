@@ -6,8 +6,6 @@ enum class ESceneType : uint8
 	None,
 	Development,
 	Editor,
-	Menu,
-	Gameplay,
 };
 
 class Scene;

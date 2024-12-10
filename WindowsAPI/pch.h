@@ -8,8 +8,10 @@
 #include <string>
 #include <algorithm>
 #include <format>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 #include "Types.h"
 #include "Defines.h"

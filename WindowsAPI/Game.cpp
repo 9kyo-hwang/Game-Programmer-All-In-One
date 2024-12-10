@@ -31,10 +31,10 @@ void Game::Initialize(HWND NewWindow)
 	TimerManager::Get()->Initialize();
 	InputManager::Get()->Initialize(NewWindow);
 	SceneManager::Get()->Initialize();
-	ResourceManager::Get()->Initialize();
+	ResourceManager::Get()->Initialize(NewWindow, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Resources"));
 
 	// 최초로 호출되는 씬
-	SceneManager::Get()->LoadScene(ESceneType::Menu);
+	SceneManager::Get()->LoadScene(ESceneType::Development);
 }
 
 void Game::Update()
