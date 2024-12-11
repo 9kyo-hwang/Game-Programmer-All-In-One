@@ -1,5 +1,7 @@
 #pragma once
 
+class Component;
+
 class AActor
 {
 public:
@@ -10,11 +12,18 @@ public:
 	virtual void Tick();
 	virtual void Render(HDC InDC);
 
-	Vector2Int GetPosition() const { return Position; }
-	void SetPosition(Vector2Int NewPosition) { Position = NewPosition; }
+	Vector2 GetPosition() const { return Position; }
+	void SetPosition(Vector2 NewPosition) { Position = NewPosition; }
+
+	void AddComponent(Component* NewComponent);
+	void RemoveComponent(Component* TargetComponent);
+
+	ELayerType GetLayer() const { return Layer; }
+	void SetLayer(ELayerType NewLayer) { Layer = NewLayer; }
 
 protected:
-	// 씬에 배치 가능하므로 좌표 필요
-	Vector2Int Position{ 0, 0 };
+	Vector2 Position{ 0, 0 };  // 씬에 배치 가능하므로 좌표 필요
+	vector<Component*> Components;
+	ELayerType Layer = ELayerType::Object;
 };
 

@@ -60,19 +60,23 @@ void DevelopmentScene::Initialize()
 	}
 
 	{
-		ASpriteActor* NewBackground = new ASpriteActor();
-		NewBackground->SetSprite(BackgroundSprite);
-		NewBackground->SetPosition({ BackgroundSprite->GetSize().X / 2, BackgroundSprite->GetSize().Y / 2 });
-		Actors.push_back(NewBackground);
+		ASpriteActor* Background = new ASpriteActor();
+		Background->SetSprite(BackgroundSprite);
+		Background->SetPosition({ static_cast<float>(BackgroundSprite->GetSize().X / 2), static_cast<float>(BackgroundSprite->GetSize().Y / 2) });
+		Background->SetLayer(ELayerType::Background);
+
+		AddActor(Background);
 	}
 	{
-		APlayer* NewPlayer = new APlayer();
-		Actors.push_back(NewPlayer);
+		AddActor(new APlayer());
 	}
 
-	for (AActor* Actor : Actors)
+	for (const vector<AActor*>& ActorsOnLayer : Actors)
 	{
-		Actor->BeginPlay();
+		for (AActor* Actor : ActorsOnLayer)
+		{
+			Actor->BeginPlay();
+		}
 	}
 }
 
@@ -80,23 +84,39 @@ void DevelopmentScene::Update()
 {
 	//float DeltaTime = TimerManager::Get()->GetDeltaTime();
 
-	for (AActor* Actor : Actors)
+	for (const vector<AActor*>& ActorsOnLayer : Actors)
 	{
-		Actor->Tick();
+		for (AActor* Actor : ActorsOnLayer)
+		{
+			Actor->Tick();
+		}
 	}
 }
 
 void DevelopmentScene::Render(HDC InDC)
 {
-	for (AActor* Actor : Actors)
+	for (const vector<AActor*>& ActorsOnLayer : Actors)
 	{
-		Actor->Render(InDC);
+		for (AActor* Actor : ActorsOnLayer)
+		{
+			Actor->Render(InDC);
+		}
 	}
-
-	//Texture* Stage01 = ResourceManager::Get()->GetTexture(L"Stage01");
-	//Sprite* StartOn = ResourceManager::Get()->GetSprite(L"Start_On");
-
-	//// (0, 0) 지점에 (800, 600) 만큼 그리기. 단 Src의 (x, y) 좌표부터 시작
-	//::BitBlt(InDC, 0, 0, GWinSizeX, GWinSizeY,
-	//	StartOn->GetDC(), StartOn->GetPosition().X, StartOn->GetPosition().Y, SRCCOPY);
 }
+
+void DevelopmentScene::AddActor(AActor* NewActor)
+{
+	if (NewActor)
+	{
+		Actors[static_cast<int32>(NewActor->GetLayer())].push_back(NewActor);
+	}
+}
+
+void DevelopmentScene::RemoveActor(AActor* TargetActor)
+{
+	if (TargetActor)
+	{
+		std::erase(Actors[static_cast<int32>(TargetActor->GetLayer())], TargetActor);
+	}
+}
+

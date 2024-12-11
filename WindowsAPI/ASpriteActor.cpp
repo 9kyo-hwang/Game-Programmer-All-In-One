@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ASpriteActor.h"
 
+#include "SceneManager.h"
 #include "Sprite.h"
 
 ASpriteActor::ASpriteActor()
@@ -31,11 +32,13 @@ void ASpriteActor::Render(HDC InDC)
 	}
 
 	Vector2Int Size = MySprite->GetSize();
+	Vector2 Camera = SceneManager::Get()->GetCameraPosition();
 
-	//::BitBlt(InDC, Position.X - Size.X / 2, Position.Y - Size.Y / 2, Size.X, Size.Y,
-	//	MySprite->GetDC(), MySprite->GetPosition().X, MySprite->GetPosition().Y, SRCCOPY);
-
-	// 투명 처리를 해주는 함수
-	::TransparentBlt(InDC, Position.X - Size.X / 2, Position.Y - Size.Y / 2, Size.X, Size.Y,
-		MySprite->GetDC(), MySprite->GetPosition().X, MySprite->GetPosition().Y, MySprite->GetSize().X, MySprite->GetSize().Y, MySprite->GetTransparent());
+	// 배경은 굳이 Transparent를 고려할 필요가 없어서 속도가 더 빠른 BitBlt 사용
+	::BitBlt(InDC,
+		Position.X - Size.X / 2 - (Camera.X - GWinSizeX / 2), Position.Y - Size.Y / 2 - (Camera.Y - GWinSizeY / 2),
+		Size.X, Size.Y,
+		MySprite->GetDC(),
+		MySprite->GetPosition().X, MySprite->GetPosition().Y, 
+		SRCCOPY);
 }

@@ -162,6 +162,7 @@
     <ClInclude Include="AActor.h" />
     <ClInclude Include="APlayer.h" />
     <ClInclude Include="ASpriteActor.h" />
+    <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Defines.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="AActor.cpp" />
     <ClCompile Include="APlayer.cpp" />
     <ClCompile Include="ASpriteActor.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DevelopmentScene.cpp" />
     <ClCompile Include="EditorScene.cpp" />

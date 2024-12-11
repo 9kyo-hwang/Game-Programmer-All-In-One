@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "APlayer.h"
+
+#include "CameraComponent.h"
 #include "InputManager.h"
 #include "ResourceManager.h"
 #include "TimerManager.h"
@@ -10,6 +12,8 @@ APlayer::APlayer()
 	FB_MoveDown = ResourceManager::Get()->GetFlipbook(L"FB_MoveDown");
 	FB_MoveLeft = ResourceManager::Get()->GetFlipbook(L"FB_MoveLeft");
 	FB_MoveRight = ResourceManager::Get()->GetFlipbook(L"FB_MoveRight");
+
+	AddComponent(new CameraComponent());
 }
 
 APlayer::~APlayer()

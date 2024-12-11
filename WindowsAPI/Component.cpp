@@ -1,11 +1,19 @@
 #include "pch.h"
 #include "Component.h"
 
-void Component::Start()
+Component::Component()
 {
 }
 
-void Component::Update()
+Component::~Component()
+{
+}
+
+void Component::BeginPlay()
+{
+}
+
+void Component::TickComponent()
 {
 }
 

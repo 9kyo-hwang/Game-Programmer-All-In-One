@@ -23,29 +23,18 @@ struct Vector2
 
 	Vector2 operator+(const Vector2& Other) const
 	{
-		Vector2 Ret;
-		Ret.X = X + Other.X;
-		Ret.Y = Y + Other.Y;
-
-		return Ret;
+		return { X + Other.X, Y + Other.Y };
 	}
+
 
 	Vector2 operator-(const Vector2& Other) const
 	{
-		Vector2 Ret;
-		Ret.X = X - Other.X;
-		Ret.Y = Y - Other.Y;
-
-		return Ret;
+		return { X - Other.X, Y - Other.Y };
 	}
 
 	Vector2 operator*(const float Value) const
 	{
-		Vector2 Ret;
-		Ret.X = X * Value;
-		Ret.Y = Y * Value;
-
-		return Ret;
+		return { X * Value, Y * Value };
 	}
 
 	void operator+=(const Vector2& Other)

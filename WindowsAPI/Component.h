@@ -1,14 +1,20 @@
 #pragma once
 
+class AActor;
+
 class Component
 {
 public:
-	virtual void Start();
-	virtual void Update();
+	Component();
+	virtual ~Component();
+	virtual void BeginPlay();
+	virtual void TickComponent();
 	virtual void Render(HDC InDC);
 
+	AActor* GetOwner() const { return Owner; }
+	void SetOwner(AActor* NewOwner) { Owner = NewOwner; }
+
 protected:
-	// Owner
-	class GameObject* Parent = nullptr;
+	AActor* Owner = nullptr;
 };
 
