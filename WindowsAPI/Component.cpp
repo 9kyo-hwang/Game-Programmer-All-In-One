@@ -17,6 +17,6 @@ void Component::TickComponent()
 {
 }
 
-void Component::Render(HDC InDC)
+void Component::Render(HDC DeviceContextHandle)
 {
 }

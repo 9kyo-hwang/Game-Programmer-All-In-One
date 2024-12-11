@@ -13,7 +13,7 @@ public:
 
 	void Initialize() override;
 	void Update() override;  // ÇÊ¿ä¿¡ µû¶ó FixedUpdate¸¦ µÖµµ µÊ
-	void Render(HDC InDC) override;
+	void Render(HDC DeviceContextHandle) override;
 
 	void AddActor(AActor* NewActor);
 	void RemoveActor(AActor* TargetActor);

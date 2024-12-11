@@ -5,7 +5,9 @@
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "APlayer.h"
+#include "CollisionManager.h"
 #include "Flipbook.h"
+#include "SphereCollider.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -68,7 +70,23 @@ void DevelopmentScene::Initialize()
 		AddActor(Background);
 	}
 	{
-		AddActor(new APlayer());
+		APlayer* Player = new APlayer();
+		SphereCollider* Collider = new SphereCollider();
+		Collider->Radius = 50.0f;
+		CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
+		Player->AddComponent(Collider);
+
+		AddActor(Player);
+	}
+	{
+		AActor* Actor = new AActor();
+		SphereCollider* Collider = new SphereCollider();
+		Collider->Radius = 50.0f;
+		CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
+		Actor->AddComponent(Collider);
+		Actor->SetPosition({ 400, 300 });
+
+		AddActor(Actor);
 	}
 
 	for (const vector<AActor*>& ActorsOnLayer : Actors)
@@ -91,15 +109,18 @@ void DevelopmentScene::Update()
 			Actor->Tick();
 		}
 	}
+
+	// 보통 LateUpdate에서 수행
+	CollisionManager::Get()->Update();
 }
 
-void DevelopmentScene::Render(HDC InDC)
+void DevelopmentScene::Render(HDC DeviceContextHandle)
 {
 	for (const vector<AActor*>& ActorsOnLayer : Actors)
 	{
 		for (AActor* Actor : ActorsOnLayer)
 		{
-			Actor->Render(InDC);
+			Actor->Render(DeviceContextHandle);
 		}
 	}
 }

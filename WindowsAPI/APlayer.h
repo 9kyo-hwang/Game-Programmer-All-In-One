@@ -11,7 +11,10 @@ public:
 
 	void BeginPlay() override;
 	void Tick() override;
-	void Render(HDC InDC) override;
+	void Render(HDC DeviceContextHandle) override;
+
+	void OnComponentBeginOverlap(Collider* This, Collider* Other) override;
+	void OnComponentEndOverlap(Collider* This, Collider* Other) override;
 
 private:
 	Flipbook* FB_MoveUp = nullptr;

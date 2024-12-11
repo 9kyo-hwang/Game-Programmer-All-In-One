@@ -8,5 +8,5 @@ public:
 
 	virtual void Initialize() = 0;
 	virtual void Update() = 0;
-	virtual void Render(HDC InDC) = 0;
+	virtual void Render(HDC DeviceContextHandle) = 0;
 };

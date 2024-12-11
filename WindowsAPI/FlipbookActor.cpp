@@ -46,9 +46,9 @@ void FlipbookActor::Tick()
 	}
 }
 
-void FlipbookActor::Render(HDC InDC)
+void FlipbookActor::Render(HDC DeviceContextHandle)
 {
-	Super::Render(InDC);
+	Super::Render(DeviceContextHandle);
 
 	if (!MyFlipbook)
 	{
@@ -58,7 +58,7 @@ void FlipbookActor::Render(HDC InDC)
 	Vector2 Camera = SceneManager::Get()->GetCameraPosition();
 	const FlipbookInfo& Info = MyFlipbook->GetInfo();
 
-	::TransparentBlt(InDC, 
+	::TransparentBlt(DeviceContextHandle, 
 		Position.X - Info.Size.X / 2 - (Camera.X - GWinSizeX / 2), Position.Y - Info.Size.Y / 2 - (Camera.Y - GWinSizeY / 2),  // 보통 카메라 영역은 중심을 좌표로 잡으므로
 		Info.Size.X, Info.Size.Y,
 		Info.MyTexture->GetDC(), 

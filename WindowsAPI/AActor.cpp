@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AActor.h"
 #include "Component.h"
+#include "Collider.h"
 
 AActor::AActor()
 {
@@ -50,3 +51,14 @@ void AActor::RemoveComponent(Component* TargetComponent)
 		std::erase(Components, TargetComponent);
 	}
 }
+
+void AActor::OnComponentBeginOverlap(Collider* This, Collider* Other)
+{
+	
+}
+
+void AActor::OnComponentEndOverlap(Collider* This, Collider* Other)
+{
+	
+}
+

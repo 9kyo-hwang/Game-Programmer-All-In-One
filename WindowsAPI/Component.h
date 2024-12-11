@@ -9,7 +9,7 @@ public:
 	virtual ~Component();
 	virtual void BeginPlay();
 	virtual void TickComponent();
-	virtual void Render(HDC InDC);
+	virtual void Render(HDC DeviceContextHandle);
 
 	AActor* GetOwner() const { return Owner; }
 	void SetOwner(AActor* NewOwner) { Owner = NewOwner; }

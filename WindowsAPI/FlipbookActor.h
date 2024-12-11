@@ -14,7 +14,7 @@ public:
 
 	void BeginPlay() override;
 	void Tick() override;
-	void Render(HDC InDC) override;
+	void Render(HDC DeviceContextHandle) override;
 
 	void SetFlipbook(Flipbook* NewFlipbook);
 	void Reset();

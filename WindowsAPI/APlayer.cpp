@@ -56,7 +56,17 @@ void APlayer::Tick()
 	}
 }
 
-void APlayer::Render(HDC InDC)
+void APlayer::Render(HDC DeviceContextHandle)
 {
-	Super::Render(InDC);
+	Super::Render(DeviceContextHandle);
+}
+
+void APlayer::OnComponentBeginOverlap(Collider* This, Collider* Other)
+{
+	Super::OnComponentBeginOverlap(This, Other);
+}
+
+void APlayer::OnComponentEndOverlap(Collider* This, Collider* Other)
+{
+	Super::OnComponentEndOverlap(This, Other);
 }
