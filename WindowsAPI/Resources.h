@@ -5,7 +5,5 @@ class Resources
 public:
 	Resources();
 	virtual ~Resources();
-
-
 };
 

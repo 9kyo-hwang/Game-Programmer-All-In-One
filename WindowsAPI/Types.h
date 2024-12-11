@@ -9,52 +9,41 @@ using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
 
-struct Vector
+struct Vector2
 {
-	Vector() {}
-	Vector(float InX, float InY)
+	Vector2() {}
+	Vector2(float InX, float InY)
 		: X(InX)
 		, Y(InY)
 	{}
-	Vector(POINT Point)
+	Vector2(POINT Point)
 		: X(static_cast<float>(Point.x))
 		, Y(static_cast<float>(Point.y))
 	{}
 
-	Vector operator+(const Vector& Other) const
+	Vector2 operator+(const Vector2& Other) const
 	{
-		Vector Ret;
-		Ret.X = X + Other.X;
-		Ret.Y = Y + Other.Y;
-
-		return Ret;
+		return { X + Other.X, Y + Other.Y };
 	}
 
-	Vector operator-(const Vector& Other) const
-	{
-		Vector Ret;
-		Ret.X = X - Other.X;
-		Ret.Y = Y - Other.Y;
 
-		return Ret;
+	Vector2 operator-(const Vector2& Other) const
+	{
+		return { X - Other.X, Y - Other.Y };
 	}
 
-	Vector operator*(const float Value) const
+	Vector2 operator*(const float Value) const
 	{
-		Vector Ret;
-		Ret.X = X * Value;
-		Ret.Y = Y * Value;
-
-		return Ret;
+		return { X * Value, Y * Value };
 	}
 
-	void operator+=(const Vector& Other)
+	void operator+=(const Vector2& Other)
 	{
 		X += Other.X;
 		Y += Other.Y;
 	}
 
-	void operator-=(const Vector& Other)
+	void operator-=(const Vector2& Other)
 	{
 		X -= Other.X;
 		Y -= Other.Y;
@@ -89,16 +78,74 @@ struct Vector
 		Y /= Magnitude;
 	}
 
-	float Dot(const Vector& Other) const
+	float Dot(const Vector2& Other) const
 	{
 		return X * Other.X + Y * Other.Y;
 	}
 
-	float Cross(const Vector& Other) const
+	float Cross(const Vector2& Other) const
 	{
 		return X * Other.Y - Y * Other.X;  // 양수, 음수냐에 따라 방향 달라짐
 	}
 
 	float X = 0.0f;
 	float Y = 0.0f;
+};
+
+struct Vector2Int
+{
+	Vector2Int() {}
+	Vector2Int(int32 InX, int32 InY)
+		: X(InX)
+		, Y(InY)
+	{}
+	Vector2Int(POINT Point)
+		: X(static_cast<int32>(Point.x))
+		, Y(static_cast<int32>(Point.y))
+	{}
+
+	Vector2Int operator+(const Vector2Int& Other) const
+	{
+		return { X + Other.X , Y + Other.Y };
+	}
+
+	Vector2Int operator-(const Vector2Int& Other) const
+	{
+		return { X - Other.X, Y - Other.Y };
+	}
+
+	Vector2Int operator*(const int32 Value) const
+	{
+		return { X * Value, Y * Value };
+	}
+
+	void operator+=(const Vector2Int& Other)
+	{
+		X += Other.X;
+		Y += Other.Y;
+	}
+
+	void operator-=(const Vector2Int& Other)
+	{
+		X -= Other.X;
+		Y -= Other.Y;
+	}
+
+	int32 GetMagnitudeSquared() const
+	{
+		return X * X + Y * Y;
+	}
+
+	int32 Dot(const Vector2Int& Other) const
+	{
+		return X * Other.X + Y * Other.Y;
+	}
+
+	int32 Cross(const Vector2Int& Other) const
+	{
+		return X * Other.Y - Y * Other.X;  // 양수, 음수냐에 따라 방향 달라짐
+	}
+
+	int32 X = 0;
+	int32 Y = 0;
 };

@@ -6,7 +6,7 @@ public:
 	Scene(){}
 	virtual ~Scene(){}
 
-	virtual void Initialize() abstract;
-	virtual void Update() abstract;
-	virtual void Render(HDC InDC) abstract;
+	virtual void Initialize() = 0;
+	virtual void Update() = 0;
+	virtual void Render(HDC DeviceContextHandle) = 0;
 };

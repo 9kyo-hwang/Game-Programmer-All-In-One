@@ -27,20 +27,20 @@ public:
 	Object(EObjectType InType);
 	virtual ~Object();
 
-	virtual void Initialize() abstract;
-	virtual void Update() abstract;
-	virtual void Render(HDC InDC) abstract;
-
+	virtual void Initialize() = 0;
+	virtual void Update() = 0;
+	virtual void Render(HDC InDC) = 0;
+	
 	EObjectType GetObjectType() const { return Type; }
-	Vector GetPosition() const { return Position; }
-	void SetPosition(Vector NewPosition) { Position = NewPosition; }
+	Vector2 GetPosition() const { return Position; }
+	void SetPosition(Vector2 NewPosition) { Position = NewPosition; }
 	float GetRadius() const { return Radius; }
 	void SetRadius(float NewRadius) { Radius = NewRadius; }
 
 protected:
 	EObjectType Type = EObjectType::None;
 	EDirection Direction = EDirection::Left;
-	Vector Position{};
+	Vector2 Position{};
 	Stats Stat{};
 	float Radius = 50.f;  // 일종의 충돌 범위
 };

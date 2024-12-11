@@ -1,55 +1,90 @@
 #include "pch.h"
 #include "ResourceManager.h"
-
 #include <ranges>
 
-#include "MeshLine.h"
+#include "Flipbook.h"
+#include "Texture.h"
+#include "Sprite.h"
 
 ResourceManager::~ResourceManager()
 {
 	Clear();
 }
 
-void ResourceManager::Initialize()
+void ResourceManager::Initialize(HWND InWindow, fs::path InResourcePath)
 {
-	{
-		MeshLine* Mesh = new MeshLine();
-		Mesh->Load(L"UI.txt");
-		MeshLines[L"UI"] = Mesh;
-	}
-	{
-		MeshLine* Mesh = new MeshLine();
-		Mesh->Load(L"Menu.txt");
-		MeshLines[L"Menu"] = Mesh;
-	}
-	{
-		MeshLine* Mesh = new MeshLine();
-		Mesh->Load(L"MissileTank.txt");
-		MeshLines[L"MissileTank"] = Mesh;
-	}
-	{
-		MeshLine* Mesh = new MeshLine();
-		Mesh->Load(L"CanonTank.txt");
-		MeshLines[L"CanonTank"] = Mesh;
-	}
+	Window = InWindow;
+	ResourcePath = InResourcePath;
 }
 
 void ResourceManager::Clear()
 {
-	for (auto Mesh : MeshLines | views::values)
+	for (Texture* CachedTexture : Textures | views::values)
 	{
-		SAFE_DELETE(Mesh);
+		SAFE_DELETE(CachedTexture);
 	}
 
-	MeshLines.clear();
+	Textures.clear();
+
+	for (Sprite* CachedSprite : Sprites | views::values)
+	{
+		SAFE_DELETE(CachedSprite);
+	}
+
+	Sprites.clear();
+
+	for (Flipbook* CachedFlipbook : Flipbooks | views::values)
+	{
+		SAFE_DELETE(CachedFlipbook);
+	}
+
+	Flipbooks.clear();
 }
 
-const MeshLine* ResourceManager::GetMeshLine(wstring Name)
+Texture* ResourceManager::LoadTexture(const wstring& Name, const wstring& Path, uint32 Transparent)
 {
-	if (MeshLines.contains(Name))
+	if (Textures.contains(Name))
 	{
-		return MeshLines[Name];
+		return Textures[Name];
 	}
 
-	return nullptr;
+	fs::path TexturePath = ResourcePath / Path;
+
+	Texture* NewTexture = new Texture();
+	NewTexture->Load(Window, TexturePath.wstring());
+	NewTexture->SetTransparent(Transparent);
+
+	return Textures[Name] = NewTexture;
+}
+
+Sprite* ResourceManager::CreateSprite(const wstring& Name, Texture* BaseTexture, int32 X, int32 Y, int32 Width,
+	int32 Height)
+{
+	if (Sprites.contains(Name))
+	{
+		return Sprites[Name];
+	}
+
+	if (Width == 0)
+	{
+		Width = BaseTexture->GetSize().X;
+	}
+	if (Height == 0)
+	{
+		Height = BaseTexture->GetSize().Y;
+	}
+
+	Sprite* NewSprite = new Sprite(BaseTexture, X, Y, Width, Height);
+	return Sprites[Name] = NewSprite;
+}
+
+Flipbook* ResourceManager::CreateFlipbook(const wstring& Name)
+{
+	if (Flipbooks.contains(Name))
+	{
+		return Flipbooks[Name];
+	}
+
+	Flipbook* NewFlipbook = new Flipbook();
+	return Flipbooks[Name] = NewFlipbook;
 }
