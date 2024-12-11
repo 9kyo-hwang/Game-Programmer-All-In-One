@@ -1,13 +1,14 @@
 #include "pch.h"
 #include "DevelopmentScene.h"
-
 #include "ASpriteActor.h"
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "APlayer.h"
+#include "Button.h"
 #include "CollisionManager.h"
 #include "Flipbook.h"
 #include "SphereCollider.h"
+#include "TestPanel.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -88,6 +89,9 @@ void DevelopmentScene::Initialize()
 
 		AddActor(Actor);
 	}
+	{
+		UIs.push_back(new TestPanel());
+	}
 
 	for (const vector<AActor*>& ActorsOnLayer : Actors)
 	{
@@ -95,6 +99,11 @@ void DevelopmentScene::Initialize()
 		{
 			Actor->BeginPlay();
 		}
+	}
+
+	for (UI* Item : UIs)
+	{
+		Item->BeginPlay();
 	}
 }
 
@@ -110,6 +119,11 @@ void DevelopmentScene::Update()
 		}
 	}
 
+	for (UI* Item : UIs)
+	{
+		Item->Tick();
+	}
+
 	// 보통 LateUpdate에서 수행
 	CollisionManager::Get()->Update();
 }
@@ -122,6 +136,11 @@ void DevelopmentScene::Render(HDC DeviceContextHandle)
 		{
 			Actor->Render(DeviceContextHandle);
 		}
+	}
+
+	for (UI* Item : UIs)
+	{
+		Item->Render(DeviceContextHandle);
 	}
 }
 

@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 class AActor;
+class UI;
 
 class DevelopmentScene final : public Scene
 {
@@ -19,6 +20,8 @@ public:
 	void RemoveActor(AActor* TargetActor);
 
 private:
+	// 추후 Base Scene 클래스로 이관
 	vector<AActor*> Actors[static_cast<int32>(ELayerType::End)];  // 레이어 별로 액터를 두도록
+	vector<UI*> UIs;  // UI는 UIManager를 둬도, Scene에 둬도 됨
 };
 

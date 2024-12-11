@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "Sprite.h"
+
+#include <assert.h>
+
 #include "Texture.h"
 
 Sprite::Sprite(Texture* InTexture, int32 InX, int32 InY, int32 InWidth, int32 InHeight)

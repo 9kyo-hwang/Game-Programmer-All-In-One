@@ -39,5 +39,6 @@ protected:
 public:  // 임시로 public
 	// Overlap Begin ~ End 사이에, 겹친 상대방을 기록하기 위한 저장소
 	unordered_set<Collider*> CollidedActorsSet;
+	// 충돌 관계를 정의하기 위한 비트 플래그
 };
 
