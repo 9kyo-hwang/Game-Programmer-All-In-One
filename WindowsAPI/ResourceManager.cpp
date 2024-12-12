@@ -5,6 +5,7 @@
 #include "Flipbook.h"
 #include "Texture.h"
 #include "Sprite.h"
+#include "Tilemap.h"
 
 ResourceManager::~ResourceManager()
 {
@@ -39,6 +40,13 @@ void ResourceManager::Clear()
 	}
 
 	Flipbooks.clear();
+
+	for (Tilemap* CachedTilemap : Tilemaps | views::values)
+	{
+		SAFE_DELETE(CachedTilemap);
+	}
+
+	Tilemaps.clear();
 }
 
 Texture* ResourceManager::LoadTexture(const wstring& Name, const wstring& Path, uint32 Transparent)
@@ -51,7 +59,7 @@ Texture* ResourceManager::LoadTexture(const wstring& Name, const wstring& Path, 
 	fs::path TexturePath = ResourcePath / Path;
 
 	Texture* NewTexture = new Texture();
-	NewTexture->Load(Window, TexturePath.wstring());
+	NewTexture->LoadTexture(Window, TexturePath.wstring());
 	NewTexture->SetTransparent(Transparent);
 
 	return Textures[Name] = NewTexture;
@@ -87,4 +95,26 @@ Flipbook* ResourceManager::CreateFlipbook(const wstring& Name)
 
 	Flipbook* NewFlipbook = new Flipbook();
 	return Flipbooks[Name] = NewFlipbook;
+}
+
+Tilemap* ResourceManager::CreateTilemap(const wstring& Name)
+{
+	if (Tilemaps.contains(Name))
+	{
+		return Tilemaps[Name];
+	}
+
+	Tilemap* NewTilemap = new Tilemap();
+	return Tilemaps[Name] = NewTilemap;
+}
+
+void ResourceManager::SaveTilemap(const wstring& Name, const wstring& Path)
+{
+	// TODO
+}
+
+Tilemap* ResourceManager::LoadTilemap(const wstring& Name, const wstring& Path)
+{
+	// TODO
+	return nullptr;
 }

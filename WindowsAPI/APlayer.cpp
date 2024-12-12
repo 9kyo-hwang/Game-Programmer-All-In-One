@@ -27,11 +27,9 @@ void APlayer::BeginPlay()
 	SetFlipbook(FB_MoveRight);
 }
 
-void APlayer::Tick()
+void APlayer::Tick(float DeltaTime)
 {
-	Super::Tick();
-
-	float DeltaTime = TimerManager::Get()->GetDeltaTime();
+	Super::Tick(DeltaTime);
 
 	// TODO: 필요한 기능 구현
 	if (InputManager::Get()->GetButton(EKeyCode::W))

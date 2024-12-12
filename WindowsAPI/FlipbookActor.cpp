@@ -4,7 +4,6 @@
 #include "Flipbook.h"
 #include "SceneManager.h"
 #include "Texture.h"
-#include "TimerManager.h"
 
 FlipbookActor::FlipbookActor()
 {
@@ -19,7 +18,7 @@ void FlipbookActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void FlipbookActor::Tick()
+void FlipbookActor::Tick(float DeltaTime)
 {
 	Super::Tick();
 
@@ -34,7 +33,6 @@ void FlipbookActor::Tick()
 		return;
 	}
 
-	float DeltaTime = TimerManager::Get()->GetDeltaTime();
 	ElapsedTime += DeltaTime;
 
 	int32 NumFrame = Info.End - Info.Begin + 1;

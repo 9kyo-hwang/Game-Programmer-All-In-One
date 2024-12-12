@@ -9,7 +9,7 @@ Texture::~Texture()
 {
 }
 
-Texture* Texture::Load(HWND Window, const wstring& Path)
+Texture* Texture::LoadTexture(HWND Window, const wstring& Path)
 {
 	HDC WindowDC = ::GetDC(Window);
 	DC = ::CreateCompatibleDC(WindowDC);

@@ -1,4 +1,5 @@
 #pragma once
+#include "TimerManager.h"
 
 class Component;
 class Collider;
@@ -10,7 +11,7 @@ public:
 	virtual ~AActor();
 
 	virtual void BeginPlay();
-	virtual void Tick();
+	virtual void Tick(float DeltaTime = TimerManager::Get()->GetDeltaTime());
 	virtual void Render(HDC DeviceContextHandle);
 
 	Vector2 GetPosition() const { return Position; }

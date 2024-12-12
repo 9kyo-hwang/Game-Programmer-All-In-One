@@ -8,7 +8,8 @@
 #include "CollisionManager.h"
 #include "Flipbook.h"
 #include "SphereCollider.h"
-#include "TestPanel.h"
+#include "Tilemap.h"
+#include "TilemapActor.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -29,11 +30,14 @@ void DevelopmentScene::Initialize()
 	//ResourceManager::Get()->LoadTexture(L"Sword", L"Sprite\\Item\\Sword.bmp");
 	//ResourceManager::Get()->LoadTexture(L"Potion", L"Sprite\\UI\\Potion.bmp");
 	Texture* Stage01 = ResourceManager::Get()->LoadTexture(L"Stage01", L"Sprite\\Map\\Stage01.bmp");
+	Texture* Tile = ResourceManager::Get()->LoadTexture(L"Tile", L"Sprite\\Map\\Tile.bmp", RGB(128, 128, 128));
 	Texture* Start = ResourceManager::Get()->LoadTexture(L"Start", L"Sprite\\UI\\Start.bmp");
 	Texture* Edit = ResourceManager::Get()->LoadTexture(L"Edit", L"Sprite\\UI\\Edit.bmp");
 	Texture* Exit = ResourceManager::Get()->LoadTexture(L"Exit", L"Sprite\\UI\\Exit.bmp"); 
 
 	Sprite* BackgroundSprite = ResourceManager::Get()->CreateSprite(L"Stage01", Stage01);
+	Sprite* TileO = ResourceManager::Get()->CreateSprite(L"Tile_O", Tile, 0, 0, 48, 48);
+	Sprite* TileX = ResourceManager::Get()->CreateSprite(L"Tile_X", Tile, 48, 0, 48, 48);
 	ResourceManager::Get()->CreateSprite(L"Start_Off", Start, 0, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Start_On", Start, 150, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Edit_Off", Edit, 0, 0, 150, 150);
@@ -72,91 +76,48 @@ void DevelopmentScene::Initialize()
 	}
 	{
 		APlayer* Player = new APlayer();
-		SphereCollider* Collider = new SphereCollider();
-		Collider->Radius = 50.0f;
-		CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
-		Player->AddComponent(Collider);
+		//SphereCollider* Collider = new SphereCollider();
+		//Collider->Radius = 50.0f;
+		//CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
+		//Player->AddComponent(Collider);
 
 		AddActor(Player);
 	}
-	{
-		AActor* Actor = new AActor();
-		SphereCollider* Collider = new SphereCollider();
-		Collider->Radius = 50.0f;
-		CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
-		Actor->AddComponent(Collider);
-		Actor->SetPosition({ 400, 300 });
+	//{
+	//	AActor* Actor = new AActor();
+	//	SphereCollider* Collider = new SphereCollider();
+	//	Collider->Radius = 50.0f;
+	//	CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
+	//	Actor->AddComponent(Collider);
+	//	Actor->SetPosition({ 400, 300 });
 
-		AddActor(Actor);
-	}
+	//	AddActor(Actor);
+	//}
 	{
-		UIs.push_back(new TestPanel());
-	}
-
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
-	{
-		for (AActor* Actor : ActorsOnLayer)
+		// 충돌 처리 등을 수행할 특수한 액터 -> 캐싱
+		TilemapActor* NewTilemapActor = new TilemapActor();
+		AddActor(NewTilemapActor);
+		MyTilemapActor = NewTilemapActor;
 		{
-			Actor->BeginPlay();
+			Tilemap* Tilemap01 = ResourceManager::Get()->CreateTilemap(L"Tilemap_01");
+			Tilemap01->SetMapSize({ 63, 43 });
+			Tilemap01->SetTileSize(48);
+
+			MyTilemapActor->SetTilemap(Tilemap01);
+			MyTilemapActor->SetShowDebug(true);
 		}
 	}
 
-	for (UI* Item : UIs)
-	{
-		Item->BeginPlay();
-	}
+	Super::Initialize();
 }
 
-void DevelopmentScene::Update()
+void DevelopmentScene::Update(float DeltaTime)
 {
-	//float DeltaTime = TimerManager::Get()->GetDeltaTime();
-
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
-	{
-		for (AActor* Actor : ActorsOnLayer)
-		{
-			Actor->Tick();
-		}
-	}
-
-	for (UI* Item : UIs)
-	{
-		Item->Tick();
-	}
-
-	// 보통 LateUpdate에서 수행
-	CollisionManager::Get()->Update();
+	Super::Update();
 }
 
 void DevelopmentScene::Render(HDC DeviceContextHandle)
 {
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
-	{
-		for (AActor* Actor : ActorsOnLayer)
-		{
-			Actor->Render(DeviceContextHandle);
-		}
-	}
-
-	for (UI* Item : UIs)
-	{
-		Item->Render(DeviceContextHandle);
-	}
-}
-
-void DevelopmentScene::AddActor(AActor* NewActor)
-{
-	if (NewActor)
-	{
-		Actors[static_cast<int32>(NewActor->GetLayer())].push_back(NewActor);
-	}
-}
-
-void DevelopmentScene::RemoveActor(AActor* TargetActor)
-{
-	if (TargetActor)
-	{
-		std::erase(Actors[static_cast<int32>(TargetActor->GetLayer())], TargetActor);
-	}
+	Super::Render(DeviceContextHandle);
 }
 
