@@ -110,11 +110,22 @@ Tilemap* ResourceManager::CreateTilemap(const wstring& Name)
 
 void ResourceManager::SaveTilemap(const wstring& Name, const wstring& Path)
 {
-	// TODO
+	Tilemap* Target = GetTilemap(Name);
+	fs::path FullPath = ResourcePath / Path;
+	Target->Save(FullPath);
 }
 
 Tilemap* ResourceManager::LoadTilemap(const wstring& Name, const wstring& Path)
 {
-	// TODO
-	return nullptr;
+	Tilemap* Target = nullptr;
+	if (!Tilemaps.contains(Name))
+	{
+		Tilemaps[Name] = new Tilemap();
+	}
+
+	Target = Tilemaps[Name];
+	fs::path FullPath = ResourcePath / Path;
+	Target->Load(FullPath);
+
+	return Target;
 }

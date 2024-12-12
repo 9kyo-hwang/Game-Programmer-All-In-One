@@ -7,6 +7,7 @@
 #include "Button.h"
 #include "CollisionManager.h"
 #include "Flipbook.h"
+#include "InputManager.h"
 #include "SphereCollider.h"
 #include "Tilemap.h"
 #include "TilemapActor.h"
@@ -114,6 +115,15 @@ void DevelopmentScene::Initialize()
 void DevelopmentScene::Update(float DeltaTime)
 {
 	Super::Update();
+
+	if (InputManager::Get()->GetButtonDown(EKeyCode::Q))
+	{
+		ResourceManager::Get()->SaveTilemap(L"Tilemap_01", L"Tilemap\\Tilemap01.txt");
+	}
+	else if (InputManager::Get()->GetButtonDown(EKeyCode::E))
+	{
+		ResourceManager::Get()->LoadTilemap(L"Tilemap_01", L"Tilemap\\Tilemap01.txt");
+	}
 }
 
 void DevelopmentScene::Render(HDC DeviceContextHandle)

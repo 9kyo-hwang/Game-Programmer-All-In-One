@@ -12,6 +12,7 @@
 #include <format>
 #include <filesystem>
 #include <functional>  // For Callback Function
+#include <cassert>
 
 using namespace std;
 namespace fs = std::filesystem;
