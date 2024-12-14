@@ -11,9 +11,9 @@ void CollisionManager::Initialize()
 void CollisionManager::Update()
 {
 	// 매 프레임마다 물체 간 Hit/Overlap 판정
-	for (Collider*& Src : Colliders)
+	for (Collider* Src : Colliders)
 	{
-		for (Collider*& Dest : Colliders)
+		for (Collider* Dest : Colliders)
 		{
 			if (Src == Dest)
 			{

@@ -1,6 +1,8 @@
 #pragma once
 #include "FlipbookActor.h"
 
+class BoxCollider;
+
 class APlayer : public FlipbookActor
 {
 	using Super = FlipbookActor;
@@ -15,6 +17,10 @@ public:
 
 	void OnComponentBeginOverlap(Collider* This, Collider* Other) override;
 	void OnComponentEndOverlap(Collider* This, Collider* Other) override;
+
+private:
+	void OnTickGravity();
+	void AdjustCollisionPos(BoxCollider* This, BoxCollider* Other);
 
 private:
 	Flipbook* FB_MoveUp = nullptr;

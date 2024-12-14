@@ -16,37 +16,37 @@ void Tilemap::Load(const wstring& Path)
 {
 	// C++ 파일 입출력은 기본적으로 Text 포맷. 보안상 binary로 저장하는 것이 일반적
 	// 인자로 Mode를 변경할 수 있음, 예) ios_base::binary
-	wifstream Fin(Path);
+	wifstream Stream(Path);
 
-	Fin >> MapSize.X >> MapSize.Y;
+	Stream >> MapSize.X >> MapSize.Y;
 	SetMapSize(MapSize);
 
 	for (int32 y = 0; y < MapSize.Y; ++y)
 	{
 		for (int32 x = 0; x < MapSize.X; ++x)
 		{
-			Fin >> Tiles[y][x].Value;
+			Stream >> Tiles[y][x].Value;
 		}
 	}
 
-	Fin.close();
+	Stream.close();
 }
 
 void Tilemap::Save(const wstring& Path)
 {
-	wofstream Fout(Path);
+	wofstream Stream(Path);
 
-	Fout << MapSize.X << "\n" << MapSize.Y << "\n";
+	Stream << MapSize.X << "\n" << MapSize.Y << "\n";
 	for (int32 y = 0; y < MapSize.Y; ++y)
 	{
 		for (int32 x = 0; x < MapSize.X; ++x)
 		{
-			Fout << Tiles[y][x].Value << " ";
+			Stream << Tiles[y][x].Value << " ";
 		}
-		Fout << "\n";
+		Stream << "\n";
 	}
 
-	Fout.close();
+	Stream.close();
 }
 
 void Tilemap::SetMapSize(Vector2Int NewMapSize)

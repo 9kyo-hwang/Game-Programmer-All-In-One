@@ -4,13 +4,13 @@
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "APlayer.h"
-#include "Button.h"
 #include "CollisionManager.h"
 #include "Flipbook.h"
 #include "InputManager.h"
-#include "SphereCollider.h"
 #include "Tilemap.h"
 #include "TilemapActor.h"
+#include "Sound.h"
+#include "BoxCollider.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -77,23 +77,23 @@ void DevelopmentScene::Initialize()
 	}
 	{
 		APlayer* Player = new APlayer();
-		//SphereCollider* Collider = new SphereCollider();
-		//Collider->Radius = 50.0f;
-		//CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
-		//Player->AddComponent(Collider);
+		BoxCollider* Collider = new BoxCollider();
+		Collider->Size = {64, 64};
+		CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
+		Player->AddComponent(Collider);
 
 		AddActor(Player);
 	}
-	//{
-	//	AActor* Actor = new AActor();
-	//	SphereCollider* Collider = new SphereCollider();
-	//	Collider->Radius = 50.0f;
-	//	CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
-	//	Actor->AddComponent(Collider);
-	//	Actor->SetPosition({ 400, 300 });
+	{
+		AActor* Actor = new AActor();
+		BoxCollider* Collider = new BoxCollider();
+		Collider->Size = { 64, 64 };
+		CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
+		Actor->AddComponent(Collider);
+		Actor->SetPosition({ 400, 300 });
 
-	//	AddActor(Actor);
-	//}
+		AddActor(Actor);
+	}
 	{
 		// 충돌 처리 등을 수행할 특수한 액터 -> 캐싱
 		TilemapActor* NewTilemapActor = new TilemapActor();
@@ -105,8 +105,19 @@ void DevelopmentScene::Initialize()
 			Tilemap01->SetTileSize(48);
 
 			MyTilemapActor->SetTilemap(Tilemap01);
-			MyTilemapActor->SetShowDebug(true);
+			MyTilemapActor->SetShowDebug(false);
 		}
+	}
+
+	ResourceManager::Get()->LoadSound(L"BGM", L"Sound\\BGM.wav");
+	{
+		// 현재 방식은 하나의 리소스를 돌려쓰는 방식
+		// A에서 재생시킨 BGM이 다 끝나지 않았을 때 B가 BGM을 다시 재생하면 중간에 강제로 끊고 다시 재생
+		// FMOD 같은 라이브러리는 이를 해결하기 위해 "채널링" 개념 도입
+
+		//Sound* BGM = ResourceManager::Get()->GetSound(L"BGM");
+		//BGM->Play(true);  // 검 휘두르기 같은 BGM은 loop을 false로 두면 됨
+		//SoundManager::Get()->Play(L"BGM");  // 위와 동일한 기능
 	}
 
 	Super::Initialize();

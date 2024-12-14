@@ -55,3 +55,15 @@ bool BoxCollider::IsCollision(Collider* Other)
 
 	return false;
 }
+
+RECT BoxCollider::GetRect() const
+{
+	Vector2 Position = GetOwner()->GetPosition();
+	return
+	{
+		static_cast<int32>(Position.X - Size.X / 2),
+		static_cast<int32>(Position.Y - Size.Y / 2),
+		static_cast<int32>(Position.X + Size.X / 2),
+		static_cast<int32>(Position.Y + Size.Y / 2),
+	};
+}

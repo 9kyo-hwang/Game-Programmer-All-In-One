@@ -5,6 +5,7 @@ class Texture;
 class Sprite;
 class Flipbook;
 class Tilemap;
+class Sound;
 
 class ResourceManager : public Singleton<ResourceManager>
 {
@@ -30,6 +31,9 @@ public:
 	void SaveTilemap(const wstring& Name, const wstring& Path);
 	Tilemap* LoadTilemap(const wstring& Name, const wstring& Path);
 
+	Sound* GetSound(const wstring& Name) { return Sounds[Name]; }
+	Sound* LoadSound(const wstring& Name, const wstring& Path);
+
 private:
 	HWND Window{};
 	fs::path ResourcePath{};
@@ -37,5 +41,6 @@ private:
 	unordered_map<wstring, Sprite*> Sprites;
 	unordered_map<wstring, Flipbook*> Flipbooks;
 	unordered_map<wstring, Tilemap*> Tilemaps;
+	unordered_map<wstring, Sound*> Sounds;
 };
 

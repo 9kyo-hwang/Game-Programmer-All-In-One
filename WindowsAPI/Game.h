@@ -7,13 +7,13 @@ public:
 	~Game();
 
 public:
-	void Initialize(HWND NewWindow);
+	void Initialize(HWND InWindowHandle);
 	void Update();
 	void Render();
 
 private:
-	HWND Window{};
-	HDC DC{};
+	HWND WindowHandle{};
+	HDC DeviceContextHandle{};
 
 	// for Back Buffering
 private:

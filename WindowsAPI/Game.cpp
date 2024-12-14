@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
+#include "SoundManager.h"
 
 Game::Game()
 {
@@ -17,22 +18,22 @@ Game::~Game()
 	_CrtDumpMemoryLeaks();  // 사실 마지막에 넣어야...
 }
 
-void Game::Initialize(HWND NewWindow)
+void Game::Initialize(HWND InWindowHandle)
 {
-	Window = NewWindow;
-	DC = ::GetDC(NewWindow);
+	WindowHandle = InWindowHandle;
+	DeviceContextHandle = ::GetDC(InWindowHandle);
 
-	::GetClientRect(Window, &Rectangle);
-	BackDC = ::CreateCompatibleDC(DC);  // 기존 DC와 호환되는 새 DC 생성
-	BackBitmap = ::CreateCompatibleBitmap(DC, Rectangle.right, Rectangle.bottom);  // 기존 DC에 호환되는 Bmp 생성
+	::GetClientRect(WindowHandle, &Rectangle);
+	BackDC = ::CreateCompatibleDC(DeviceContextHandle);  // 기존 DC와 호환되는 새 DC 생성
+	BackBitmap = ::CreateCompatibleBitmap(DeviceContextHandle, Rectangle.right, Rectangle.bottom);  // 기존 DC에 호환되는 Bmp 생성
 	HBITMAP PrevBitmap = (HBITMAP)::SelectObject(BackDC, BackBitmap);  // 새로운 DC와 Bmp를 사용하도록 설정, 사용하지 않게 된 구형 Bitmap 반환
 	::DeleteObject(PrevBitmap);  // 반환받은 구형 Bitmap 제거
 
 	TimerManager::Get()->Initialize();
-	InputManager::Get()->Initialize(NewWindow);
+	InputManager::Get()->Initialize(InWindowHandle);
 	SceneManager::Get()->Initialize();
-	ResourceManager::Get()->Initialize(NewWindow, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Resources"));
-
+	ResourceManager::Get()->Initialize(InWindowHandle, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Resources"));
+	SoundManager::Get()->Initialize(InWindowHandle);
 	// 최초로 호출되는 씬
 	SceneManager::Get()->LoadScene(ESceneType::Development);
 }
@@ -61,6 +62,6 @@ void Game::Render()
 	}
 
 	SceneManager::Get()->Render(BackDC);  // 물체를 그리는 것은 백 버퍼에 수행
-	::BitBlt(DC, 0, 0, Rectangle.right, Rectangle.bottom, BackDC, 0, 0, SRCCOPY);  // 화면 출력은 프론트 버퍼가 담당하므로 백 버퍼 내용을 고속 복사
+	::BitBlt(DeviceContextHandle, 0, 0, Rectangle.right, Rectangle.bottom, BackDC, 0, 0, SRCCOPY);  // 화면 출력은 프론트 버퍼가 담당하므로 백 버퍼 내용을 고속 복사
 	::PatBlt(BackDC, 0, 0, Rectangle.right, Rectangle.bottom, WHITENESS);  // 복사한 뒤 백 버퍼는 초기화
 }

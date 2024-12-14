@@ -3,6 +3,7 @@
 #include <ranges>
 
 #include "Flipbook.h"
+#include "Sound.h"
 #include "Texture.h"
 #include "Sprite.h"
 #include "Tilemap.h"
@@ -128,4 +129,17 @@ Tilemap* ResourceManager::LoadTilemap(const wstring& Name, const wstring& Path)
 	Target->Load(FullPath);
 
 	return Target;
+}
+
+Sound* ResourceManager::LoadSound(const wstring& Name, const wstring& Path)
+{
+	if (Sounds.contains(Name))
+	{
+		return Sounds[Name];
+	}
+
+	fs::path FullPath = ResourcePath / Path;
+	Sound* NewSound = new Sound();
+	NewSound->Load(FullPath);
+	return Sounds[Name] = NewSound;
 }

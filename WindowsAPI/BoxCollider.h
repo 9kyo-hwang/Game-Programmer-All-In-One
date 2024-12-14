@@ -15,6 +15,8 @@ public:
 
 	bool IsCollision(Collider* Other) override;
 
+	RECT GetRect() const;
+
 public:
 	Vector2 Size{};
 };
