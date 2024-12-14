@@ -19,7 +19,8 @@ public:
 	void OnComponentEndOverlap(Collider* This, Collider* Other) override;
 
 private:
-	void OnTickGravity();
+	void Jump();
+	void OnTickGravity(float DeltaTime);
 	void AdjustCollisionPos(BoxCollider* This, BoxCollider* Other);
 
 private:
@@ -27,5 +28,10 @@ private:
 	Flipbook* FB_MoveDown = nullptr;
 	Flipbook* FB_MoveLeft = nullptr;
 	Flipbook* FB_MoveRight = nullptr;
+
+	Vector2 Speed{};
+	int32 Gravity = 1000;
+	uint8 bOnGround = false;
+	uint8 bJumping = false;
 };
 

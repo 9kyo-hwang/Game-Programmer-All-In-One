@@ -32,18 +32,18 @@ void APlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// TODO: 필요한 기능 구현
-	if (InputManager::Get()->GetButton(EKeyCode::W))
-	{
-		Position.Y -= 200 * DeltaTime;
-		SetFlipbook(FB_MoveUp);
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::S))
-	{
-		Position.Y += 200 * DeltaTime;
-		SetFlipbook(FB_MoveDown);
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::A))
+	// TODO: 마리오 같은 2D 플랫포머 입력으로 변경
+	//if (InputManager::Get()->GetButton(EKeyCode::W))
+	//{
+	//	Position.Y -= 200 * DeltaTime;
+	//	SetFlipbook(FB_MoveUp);
+	//}
+	//else if (InputManager::Get()->GetButton(EKeyCode::S))
+	//{
+	//	Position.Y += 200 * DeltaTime;
+	//	SetFlipbook(FB_MoveDown);
+	//}
+	if (InputManager::Get()->GetButton(EKeyCode::A))
 	{
 		Position.X -= 200 * DeltaTime;
 		SetFlipbook(FB_MoveLeft);
@@ -53,6 +53,12 @@ void APlayer::Tick(float DeltaTime)
 		Position.X += 200 * DeltaTime;
 		SetFlipbook(FB_MoveRight);
 	}
+	else if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
+	{
+		Jump();
+	}
+
+	OnTickGravity(DeltaTime);
 }
 
 void APlayer::Render(HDC DeviceContextHandle)
@@ -67,6 +73,7 @@ void APlayer::OnComponentBeginOverlap(Collider* This, Collider* Other)
 		if (BoxCollider* OtherBoxCollider = dynamic_cast<BoxCollider*>(Other))
 		{
 			AdjustCollisionPos(ThisBoxCollider, OtherBoxCollider);
+			bOnGround = true;
 		}
 	}
 }
@@ -76,8 +83,24 @@ void APlayer::OnComponentEndOverlap(Collider* This, Collider* Other)
 	Super::OnComponentEndOverlap(This, Other);
 }
 
-void APlayer::OnTickGravity()
+void APlayer::Jump()
 {
+}
+
+void APlayer::OnTickGravity(float DeltaTime)
+{
+	if (DeltaTime > 0.1f)
+	{
+		return;
+	}
+
+	if (bOnGround)
+	{
+		return;
+	}
+
+	Speed.Y += Gravity * DeltaTime;
+	Position.Y += Speed.Y * DeltaTime;
 }
 
 // 진입한 방향 반대로 다시 밀쳐서 해당 칸으로 움직이지 못하도록 보정하는 함수

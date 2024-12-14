@@ -27,6 +27,12 @@ void Collider::Render(HDC InDC)
 
 bool Collider::IsCollision(Collider* Other)
 {
+	ECollideLayer OtherLayer = Other->GetCollideLayer();
+	if (CollisionFlag & 1 << static_cast<uint32>(OtherLayer))
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -42,7 +48,6 @@ bool Collider::OnCollision(BoxCollider* Box1, BoxCollider* Box2)
 
 bool Collider::OnCollision(SphereCollider* Sphere, BoxCollider* Box)
 {
-	// TODO.
 	return false;
 }
 
@@ -57,4 +62,14 @@ bool Collider::OnCollision(SphereCollider* Sphere1, SphereCollider* Sphere2)
 	float Distance = (Position1 - Position2).GetMagnitude();
 
 	return Distance <= Radius1 + Radius2;
+}
+
+void Collider::AddCollisionFlagLayer(ECollideLayer InLayer)
+{
+	CollisionFlag |= (1 << static_cast<uint32>(InLayer));
+}
+
+void Collider::RemoveCollisionFlagLayer(ECollideLayer InLayer)
+{
+	CollisionFlag &= ~(1 << static_cast<uint32>(InLayer));
 }

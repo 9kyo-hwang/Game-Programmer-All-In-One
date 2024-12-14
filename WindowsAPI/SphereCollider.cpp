@@ -44,6 +44,11 @@ void SphereCollider::Render(HDC DeviceContextHandle)
 
 bool SphereCollider::IsCollision(Collider* Other)
 {
+	if (!Super::IsCollision(Other))
+	{
+		return false;
+	}
+
 	// 콜라이더 타입마다 다르게 연산해줘야...
 	switch (Other->GetColliderType())
 	{

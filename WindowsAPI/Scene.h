@@ -18,6 +18,6 @@ public:
 	void RemoveActor(AActor* TargetActor);
 
 protected:
-	vector<AActor*> Actors[static_cast<int32>(ELayerType::End)];
+	vector<AActor*> Actors[static_cast<int32>(ERenderLayer::End)];
 	vector<UI*> UIs;
 };

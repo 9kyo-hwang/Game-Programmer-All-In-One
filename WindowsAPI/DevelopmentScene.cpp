@@ -71,14 +71,17 @@ void DevelopmentScene::Initialize()
 		ASpriteActor* Background = new ASpriteActor();
 		Background->SetSprite(BackgroundSprite);
 		Background->SetPosition({ static_cast<float>(BackgroundSprite->GetSize().X / 2), static_cast<float>(BackgroundSprite->GetSize().Y / 2) });
-		Background->SetLayer(ELayerType::Background);
+		Background->SetLayer(ERenderLayer::Background);
 
 		AddActor(Background);
 	}
 	{
 		APlayer* Player = new APlayer();
+
 		BoxCollider* Collider = new BoxCollider();
 		Collider->Size = {64, 64};
+		Collider->SetCollideLayer(ECollideLayer::Object);
+		Collider->AddCollisionFlagLayer(ECollideLayer::Ground);
 		CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
 		Player->AddComponent(Collider);
 
@@ -86,11 +89,14 @@ void DevelopmentScene::Initialize()
 	}
 	{
 		AActor* Actor = new AActor();
+		Actor->SetLayer(ERenderLayer::Object);
+		Actor->SetPosition({ 200, 400 });
+
 		BoxCollider* Collider = new BoxCollider();
-		Collider->Size = { 64, 64 };
+		Collider->Size = { 10000, 100 };
+		Collider->SetCollideLayer(ECollideLayer::Ground);
 		CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
 		Actor->AddComponent(Collider);
-		Actor->SetPosition({ 400, 300 });
 
 		AddActor(Actor);
 	}
