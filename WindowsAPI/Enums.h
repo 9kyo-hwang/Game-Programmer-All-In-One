@@ -15,3 +15,12 @@ enum class ECollideLayer : uint8
 	Wall,
 
 };
+
+enum class EMovementDirection : uint8
+{
+	Up,
+	Down,
+	Left,
+	Right,
+	END
+};

@@ -36,7 +36,7 @@ void ASpriteActor::Render(HDC InDC)
 
 	// 배경은 굳이 Transparent를 고려할 필요가 없어서 속도가 더 빠른 BitBlt 사용
 	::BitBlt(InDC,
-		Position.X - Size.X / 2 - (Camera.X - GWinSizeX / 2), Position.Y - Size.Y / 2 - (Camera.Y - GWinSizeY / 2),
+		CurrentPosition.X - Size.X / 2 - (Camera.X - GWinSizeX / 2), CurrentPosition.Y - Size.Y / 2 - (Camera.Y - GWinSizeY / 2),
 		Size.X, Size.Y,
 		MySprite->GetDC(),
 		MySprite->GetPosition().X, MySprite->GetPosition().Y, 

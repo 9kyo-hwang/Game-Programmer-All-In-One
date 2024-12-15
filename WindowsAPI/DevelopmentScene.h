@@ -13,6 +13,8 @@ public:
 	void Update(float DeltaTime) override;  // ÇÊ¿ä¿¡ µû¶ó FixedUpdate¸¦ µÖµµ µÊ
 	void Render(HDC DeviceContextHandle) override;
 
-	class TilemapActor* MyTilemapActor = nullptr;
-};
+	bool CanMoveTo(Vector2Int Dest) const;
+	Vector2 CellToWorld(Vector2Int Cell) const;
 
+	class TilemapActor* ActiveTilemapActor = nullptr;
+};

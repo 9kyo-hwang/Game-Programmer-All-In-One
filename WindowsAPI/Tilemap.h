@@ -25,7 +25,7 @@ public:
 	Vector2Int GetMapSize() const { return MapSize; }
 	void SetMapSize(Vector2Int NewMapSize);
 
-	int32 GetTileSize() const { return TileSize; }
+	int32 GetNumTile() const { return NumTile; }
 	void SetTileSize(int32 NewTileSize);
 
 	Tile* GetTileAt(Vector2Int Position);
@@ -33,6 +33,6 @@ public:
 
 private:
 	Vector2Int MapSize{};  // (10, 10): 10개짜리가 10줄
-	int32 TileSize = 0;
+	int32 NumTile = 0;
 	vector<vector<Tile>> Tiles{};  // 2차원 좌표로 관리
 };

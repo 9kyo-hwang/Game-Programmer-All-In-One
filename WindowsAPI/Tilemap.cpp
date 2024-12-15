@@ -23,9 +23,10 @@ void Tilemap::Load(const wstring& Path)
 
 	for (int32 y = 0; y < MapSize.Y; ++y)
 	{
+		wstring Line; Stream >> Line;
 		for (int32 x = 0; x < MapSize.X; ++x)
 		{
-			Stream >> Tiles[y][x].Value;
+			Tiles[y][x].Value = Line[x] - L'0';
 		}
 	}
 
@@ -41,7 +42,7 @@ void Tilemap::Save(const wstring& Path)
 	{
 		for (int32 x = 0; x < MapSize.X; ++x)
 		{
-			Stream << Tiles[y][x].Value << " ";
+			Stream << Tiles[y][x].Value;
 		}
 		Stream << "\n";
 	}
@@ -58,7 +59,7 @@ void Tilemap::SetMapSize(Vector2Int NewMapSize)
 
 void Tilemap::SetTileSize(int32 NewTileSize)
 {
-	TileSize = NewTileSize;
+	NumTile = NewTileSize;
 
 	// 맵을 새로 그려야할 경우 이곳에서 수행
 }

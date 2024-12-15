@@ -1,30 +1,75 @@
 #include "pch.h"
 #include "APlayer.h"
-
 #include "CameraComponent.h"
-#include "InputManager.h"
 #include "ResourceManager.h"
 #include "BoxCollider.h"
+#include "DevelopmentScene.h"
+#include "InputManager.h"
+#include "SceneManager.h"
+#include "Flipbook.h"
+
+const Vector2Int APlayer::Offset[]{ {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
 
 APlayer::APlayer()
 {
-	FB_MoveUp = ResourceManager::Get()->GetFlipbook(L"FB_MoveUp");
-	FB_MoveDown = ResourceManager::Get()->GetFlipbook(L"FB_MoveDown");
-	FB_MoveLeft = ResourceManager::Get()->GetFlipbook(L"FB_MoveLeft");
-	FB_MoveRight = ResourceManager::Get()->GetFlipbook(L"FB_MoveRight");
+	Flipbooks.resize(
+		static_cast<size_t>(EPlayerState::END),
+		vector<Flipbook*>(static_cast<size_t>(EMovementDirection::END))
+	);
+
+	Flipbooks[static_cast<size_t>(EPlayerState::Idle)][static_cast<size_t>(EMovementDirection::Up)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_IdleUp");
+	Flipbooks[static_cast<size_t>(EPlayerState::Idle)][static_cast<size_t>(EMovementDirection::Down)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_IdleDown");
+	Flipbooks[static_cast<size_t>(EPlayerState::Idle)][static_cast<size_t>(EMovementDirection::Left)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_IdleLeft");
+	Flipbooks[static_cast<size_t>(EPlayerState::Idle)][static_cast<size_t>(EMovementDirection::Right)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_IdleRight");
+
+	Flipbooks[static_cast<size_t>(EPlayerState::Move)][static_cast<size_t>(EMovementDirection::Up)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_MoveUp");
+	Flipbooks[static_cast<size_t>(EPlayerState::Move)][static_cast<size_t>(EMovementDirection::Down)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_MoveDown");
+	Flipbooks[static_cast<size_t>(EPlayerState::Move)][static_cast<size_t>(EMovementDirection::Left)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_MoveLeft");
+	Flipbooks[static_cast<size_t>(EPlayerState::Move)][static_cast<size_t>(EMovementDirection::Right)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_MoveRight");
+
+	Flipbooks[static_cast<size_t>(EPlayerState::Attack)][static_cast<size_t>(EMovementDirection::Up)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_AttackUp");
+	Flipbooks[static_cast<size_t>(EPlayerState::Attack)][static_cast<size_t>(EMovementDirection::Down)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_AttackDown");
+	Flipbooks[static_cast<size_t>(EPlayerState::Attack)][static_cast<size_t>(EMovementDirection::Left)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_AttackLeft");
+	Flipbooks[static_cast<size_t>(EPlayerState::Attack)][static_cast<size_t>(EMovementDirection::Right)]
+		= ResourceManager::Get()->GetFlipbook(L"FB_AttackRight");
 
 	AddComponent(new CameraComponent());
 }
 
 APlayer::~APlayer()
 {
+	for (vector<Flipbook*> FlipbooksByState : Flipbooks)
+	{
+		for (Flipbook* FlipbookByDirection : FlipbooksByState)
+		{
+			SAFE_DELETE(FlipbookByDirection);
+		}
+
+		FlipbooksByState.clear();
+	}
+
+	Flipbooks.clear();
 }
 
 void APlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetFlipbook(FB_MoveRight);
+	TransitionTo(EPlayerState::Move);
+	TransitionTo(EPlayerState::Idle);
+
+	MoveTo({ 5, 5 }, true);
 }
 
 void APlayer::Tick(float DeltaTime)
@@ -33,17 +78,16 @@ void APlayer::Tick(float DeltaTime)
 
 	switch (CurrentState)
 	{
-	case EPlayerState::MoveOnGround:
-		OnMove();
-		OnInput(DeltaTime);
+	case EPlayerState::Idle:
+		OnIdle(DeltaTime);
 		break;
-	case EPlayerState::Fall:
-		OnFall();
-		OnInput(DeltaTime);
+	case EPlayerState::Move:
+		OnMove(DeltaTime);
+		break;
+	case EPlayerState::Attack:
+		OnAttack(DeltaTime);
 		break;
 	}
-
-	OnTickGravity(DeltaTime);
 }
 
 void APlayer::Render(HDC DeviceContextHandle)
@@ -51,42 +95,130 @@ void APlayer::Render(HDC DeviceContextHandle)
 	Super::Render(DeviceContextHandle);
 }
 
-void APlayer::OnComponentBeginOverlap(Collider* This, Collider* Other)
+void APlayer::OnIdle(float DeltaTime)
 {
-	BoxCollider* ThisBoxCollider = dynamic_cast<BoxCollider*>(This);
-	BoxCollider* OtherBoxCollider = dynamic_cast<BoxCollider*>(Other);
-
-	if (ThisBoxCollider == nullptr || OtherBoxCollider == nullptr)
+	bKeyPressed = true;
+	if (InputManager::Get()->GetButton(EKeyCode::W))
 	{
+		RotateTo(EMovementDirection::Up);
+	}
+	else if (InputManager::Get()->GetButton(EKeyCode::S))
+	{
+		RotateTo(EMovementDirection::Down);
+	}
+	else if (InputManager::Get()->GetButton(EKeyCode::A))
+	{
+		RotateTo(EMovementDirection::Left);
+	}
+	else if (InputManager::Get()->GetButton(EKeyCode::D))
+	{
+		RotateTo(EMovementDirection::Right);
+	}
+	else
+	{
+		bKeyPressed = false;
+		if (CurrentState == EPlayerState::Idle)
+		{
+			UpdateAnimation();
+		}
+
 		return;
 	}
 
-	AdjustCollisionPos(ThisBoxCollider, OtherBoxCollider);
-
-	if (OtherBoxCollider->GetCollideLayer() == ECollideLayer::Ground)
+	Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
+	if (CanMoveTo(Dest))
 	{
-		TransitionTo(EPlayerState::MoveOnGround);
+		MoveTo(Dest);
+		TransitionTo(EPlayerState::Move);
 	}
 }
 
-void APlayer::OnComponentEndOverlap(Collider* This, Collider* Other)
+// 여기서는 부드러운 움직임을 보여주기 위한 로직 처리
+void APlayer::OnMove(float DeltaTime)
 {
-	BoxCollider* ThisBoxCollider = dynamic_cast<BoxCollider*>(This);
-	BoxCollider* OtherBoxCollider = dynamic_cast<BoxCollider*>(Other);
-
-	if (ThisBoxCollider == nullptr || OtherBoxCollider == nullptr)
+	if (HasReachedDest())
 	{
+		TransitionTo(EPlayerState::Idle);
+		CurrentPosition = DestinationPosition;
 		return;
 	}
 
-	if (OtherBoxCollider->GetCollideLayer() == ECollideLayer::Ground)
+	switch (CurrentDirection)
 	{
-		// TODO
+	case EMovementDirection::Up:
+		CurrentPosition.Y -= 200 * DeltaTime;
+		break;
+	case EMovementDirection::Down:
+		CurrentPosition.Y += 200 * DeltaTime;
+		break;
+	case EMovementDirection::Left:
+		CurrentPosition.X -= 200 * DeltaTime;
+		break;
+	case EMovementDirection::Right:
+		CurrentPosition.X += 200 * DeltaTime;
+		break;
 	}
 }
 
-EPlayerState APlayer::GetCurrentState() const
+void APlayer::OnAttack(float DeltaTime)
 {
+
+}
+
+void APlayer::RotateTo(EMovementDirection NewDirection)
+{
+	CurrentDirection = NewDirection;
+	UpdateAnimation();  // 애니메이션 갱신 호출 반드시 필요
+}
+
+void APlayer::UpdateAnimation()
+{
+	switch (CurrentState)
+	{
+	case EPlayerState::Idle:
+		bKeyPressed
+			? SetFlipbook(Flipbooks[static_cast<size_t>(EPlayerState::Move)][static_cast<size_t>(CurrentDirection)])
+			: SetFlipbook(Flipbooks[static_cast<size_t>(EPlayerState::Idle)][static_cast<size_t>(CurrentDirection)]);
+		break;
+	case EPlayerState::Move:
+		SetFlipbook(Flipbooks[static_cast<size_t>(EPlayerState::Move)][static_cast<size_t>(CurrentDirection)]);
+		break;
+	case EPlayerState::Attack:
+		SetFlipbook(Flipbooks[static_cast<size_t>(EPlayerState::Attack)][static_cast<size_t>(CurrentDirection)]);
+		break;
+	}
+}
+
+bool APlayer::HasReachedDest() const
+{
+	Vector2 DestDir = (DestinationPosition - CurrentPosition);
+	return DestDir.GetMagnitude() < 5.0f;
+}
+
+bool APlayer::CanMoveTo(Vector2Int Dest)
+{
+	if (DevelopmentScene* Scene = dynamic_cast<DevelopmentScene*>(SceneManager::Get()->GetActiveScene()))
+	{
+		return Scene->CanMoveTo(Dest);
+	}
+
+	return false;
+}
+
+// 실제 좌표 이동은 여기서 이루어짐
+void APlayer::MoveTo(Vector2Int Dest, bool bTeleport)
+{
+	CellPosition = Dest;
+
+	if (DevelopmentScene* Scene = dynamic_cast<DevelopmentScene*>(SceneManager::Get()->GetActiveScene()))
+	{
+		DestinationPosition = Scene->CellToWorld(Dest);
+
+		if (bTeleport)
+		{
+			CurrentPosition = DestinationPosition;
+		}
+	}
 }
 
 void APlayer::TransitionTo(EPlayerState NewState)
@@ -96,104 +228,6 @@ void APlayer::TransitionTo(EPlayerState NewState)
 		return;
 	}
 
-	switch (NewState)
-	{
-	case EPlayerState::MoveOnGround:
-		Speed.Y = 0.f;
-		break;
-	case EPlayerState::Fall:
-		break;
-	}
-
 	CurrentState = NewState;
-}
-
-void APlayer::OnInput(float DeltaTime)
-{
-	if (InputManager::Get()->GetButton(EKeyCode::A))
-	{
-		Position.X -= 200 * DeltaTime;
-		SetFlipbook(FB_MoveLeft);
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::D))
-	{
-		Position.X += 200 * DeltaTime;
-		SetFlipbook(FB_MoveRight);
-	}
-}
-
-void APlayer::OnMove()
-{
-	if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
-	{
-		Jump();
-	}
-}
-
-void APlayer::OnFall()
-{
-
-}
-
-void APlayer::Jump()
-{
-	if (CurrentState == EPlayerState::Fall)
-	{
-		return;
-	}
-
-	TransitionTo(EPlayerState::Fall);
-	Speed.Y = -500.f;
-}
-
-void APlayer::OnTickGravity(float DeltaTime)
-{
-	if (DeltaTime > 0.1f)
-	{
-		return;
-	}
-
-	Speed.Y += Gravity * DeltaTime;
-	Position.Y += Speed.Y * DeltaTime;
-}
-
-// 진입한 방향 반대로 다시 밀쳐서 해당 칸으로 움직이지 못하도록 보정하는 함수
-void APlayer::AdjustCollisionPos(BoxCollider* This, BoxCollider* Other)
-{
-	const RECT ThisRect = This->GetRect();
-	const RECT OtherRect = Other->GetRect();
-
-	RECT Intersect{};
-	Vector2 NewPosition = GetPosition();
-	if (::IntersectRect(&Intersect, &ThisRect, &OtherRect))
-	{
-		// Intersect 사각형의 가로가 길면 가로 방향으로, 세로가 길면 세로 방향으로 밂
-		int32 Width = Intersect.right - Intersect.left;
-		int32 Height = Intersect.bottom - Intersect.top;
-
-		if (Width > Height)
-		{
-			if (Intersect.top == OtherRect.top)
-			{
-				NewPosition.Y -= Height;
-			}
-			else
-			{
-				NewPosition.Y += Height;
-			}
-		}
-		else
-		{
-			if (Intersect.left == OtherRect.left)
-			{
-				NewPosition.X -= Width;
-			}
-			else
-			{
-				NewPosition.X += Width;
-			}
-		}
-	}
-
-	SetPosition(NewPosition);
+	UpdateAnimation();  // 애니메이션 갱신 호출 반드시 필요
 }

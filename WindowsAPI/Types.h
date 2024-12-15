@@ -136,6 +136,11 @@ struct Vector2Int
 		return X * X + Y * Y;
 	}
 
+	float GetMagnitude() const
+	{
+		return ::sqrt(GetMagnitudeSquared());
+	}
+
 	int32 Dot(const Vector2Int& Other) const
 	{
 		return X * Other.X + Y * Other.Y;

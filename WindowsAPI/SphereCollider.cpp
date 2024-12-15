@@ -30,7 +30,7 @@ void SphereCollider::Render(HDC DeviceContextHandle)
 	if (bShowDebug)
 	{
 		Vector2 Camera = SceneManager::Get()->GetCameraPosition();
-		Vector2 OwnerPosition = GetOwner()->GetPosition();
+		Vector2 OwnerPosition = GetOwner()->GetCurrentPosition();
 		OwnerPosition.X -= (Camera.X - GWinSizeX / 2);
 		OwnerPosition.Y -= (Camera.Y - GWinSizeY / 2);
 

@@ -14,20 +14,23 @@ public:
 	virtual void Tick(float DeltaTime = TimerManager::Get()->GetDeltaTime());
 	virtual void Render(HDC DeviceContextHandle);
 
-	Vector2 GetPosition() const { return Position; }
-	void SetPosition(Vector2 NewPosition) { Position = NewPosition; }
+	Vector2 GetCurrentPosition() const { return CurrentPosition; }
+	void SetCurrentPosition(Vector2 NewPosition) { CurrentPosition = NewPosition; }
 
+	Component* GetCollider() const;
 	void AddComponent(Component* NewComponent);
 	void RemoveComponent(Component* TargetComponent);
 
 	ERenderLayer GetLayer() const { return Layer; }
 	void SetLayer(ERenderLayer NewLayer) { Layer = NewLayer; }
 
+	// OnCollisionEnter2D, OnCollisionExit2D
 	virtual void OnComponentBeginOverlap(Collider* This, Collider* Other);
 	virtual void OnComponentEndOverlap(Collider* This, Collider* Other);
 
 protected:
-	Vector2 Position{ 0, 0 };  // 씬에 배치 가능하므로 좌표 필요
+	Vector2 CurrentPosition{ 0, 0 };
+	Vector2 DestinationPosition{ 0, 0 };
 	vector<Component*> Components;
 	ERenderLayer Layer = ERenderLayer::Object;
 };

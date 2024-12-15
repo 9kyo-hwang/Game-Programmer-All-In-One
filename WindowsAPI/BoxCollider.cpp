@@ -30,7 +30,7 @@ void BoxCollider::Render(HDC DeviceContextHandle)
 	if (bShowDebug)
 	{
 		Vector2 Camera = SceneManager::Get()->GetCameraPosition();
-		Vector2 OwnerPosition = GetOwner()->GetPosition();
+		Vector2 OwnerPosition = GetOwner()->GetCurrentPosition();
 		OwnerPosition.X -= (Camera.X - GWinSizeX / 2);
 		OwnerPosition.Y -= (Camera.Y - GWinSizeY / 2);
 
@@ -63,7 +63,7 @@ bool BoxCollider::IsCollision(Collider* Other)
 
 RECT BoxCollider::GetRect() const
 {
-	Vector2 Position = GetOwner()->GetPosition();
+	Vector2 Position = GetOwner()->GetCurrentPosition();
 	return
 	{
 		static_cast<int32>(Position.X - Size.X / 2),

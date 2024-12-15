@@ -53,10 +53,10 @@ bool Collider::OnCollision(SphereCollider* Sphere, BoxCollider* Box)
 
 bool Collider::OnCollision(SphereCollider* Sphere1, SphereCollider* Sphere2)
 {
-	Vector2 Position1 = Sphere1->GetOwner()->GetPosition();
+	Vector2 Position1 = Sphere1->GetOwner()->GetCurrentPosition();
 	float Radius1 = Sphere1->Radius;
 
-	Vector2 Position2 = Sphere2->GetOwner()->GetPosition();
+	Vector2 Position2 = Sphere2->GetOwner()->GetCurrentPosition();
 	float Radius2 = Sphere2->Radius;
 
 	float Distance = (Position1 - Position2).GetMagnitude();

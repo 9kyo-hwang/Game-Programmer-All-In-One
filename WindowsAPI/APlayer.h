@@ -6,10 +6,9 @@ class BoxCollider;
 enum class EPlayerState : uint8
 {
 	Idle,
-	MoveOnGround,
-	Jump,
-	Fall,
-	Skill
+	Move,
+	Attack,
+	END
 };
 
 class APlayer : public FlipbookActor
@@ -24,31 +23,29 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
-	void OnComponentBeginOverlap(Collider* This, Collider* Other) override;
-	void OnComponentEndOverlap(Collider* This, Collider* Other) override;
-
-	EPlayerState GetCurrentState() const;
-	void TransitionTo(EPlayerState NewState);
-
 protected:
-	void OnInput(float DeltaTime);
-	virtual void OnMove();
-	virtual void OnFall();
+	virtual void OnIdle(float DeltaTime);
+	virtual void OnMove(float DeltaTime);
+	virtual void OnAttack(float DeltaTime);
 
 private:
-	void Jump();
-	void OnTickGravity(float DeltaTime);
-	void AdjustCollisionPos(BoxCollider* This, BoxCollider* Other);
+	void TransitionTo(EPlayerState NewState);
+	void RotateTo(EMovementDirection NewDirection);
+
+	void UpdateAnimation();
+
+	bool HasReachedDest() const;
+	bool CanMoveTo(Vector2Int Dest);
+	void MoveTo(Vector2Int Dest, bool bTeleport = false);
 
 private:
-	Flipbook* FB_MoveUp = nullptr;
-	Flipbook* FB_MoveDown = nullptr;
-	Flipbook* FB_MoveLeft = nullptr;
-	Flipbook* FB_MoveRight = nullptr;
+	vector<vector<Flipbook*>> Flipbooks;
 
-	Vector2 Speed{};
-	int32 Gravity = 1000;
+	Vector2Int CellPosition;  // float position to int position
+	EPlayerState CurrentState = EPlayerState::Idle;
+	EMovementDirection CurrentDirection = EMovementDirection::Down;
+	uint8 bKeyPressed = false;
 
-	EPlayerState CurrentState = EPlayerState::Fall;
+	static const Vector2Int Offset[4];
 };
 

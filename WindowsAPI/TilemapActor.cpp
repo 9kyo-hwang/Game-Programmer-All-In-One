@@ -55,10 +55,10 @@ void TilemapActor::Render(HDC DeviceContextHandle)
 	int32 FOV_RightX = static_cast<int32>(Camera.X) + GWinSizeX / 2;
 	int32 FOV_RightY = static_cast<int32>(Camera.Y) + GWinSizeY / 2;
 
-	int32 BeginX = (FOV_LeftX - static_cast<int32>(Position.X)) / TileO->GetSize().X;
-	int32 BeginY = (FOV_LeftY - static_cast<int32>(Position.Y)) / TileO->GetSize().Y;
-	int32 EndX = (FOV_RightX - static_cast<int32>(Position.X)) / TileO->GetSize().X;
-	int32 EndY = (FOV_RightY - static_cast<int32>(Position.Y)) / TileO->GetSize().Y;
+	int32 BeginX = (FOV_LeftX - static_cast<int32>(CurrentPosition.X)) / TileO->GetSize().X;
+	int32 BeginY = (FOV_LeftY - static_cast<int32>(CurrentPosition.Y)) / TileO->GetSize().Y;
+	int32 EndX = (FOV_RightX - static_cast<int32>(CurrentPosition.X)) / TileO->GetSize().X;
+	int32 EndY = (FOV_RightY - static_cast<int32>(CurrentPosition.Y)) / TileO->GetSize().Y;
 		
 	for (int32 y = BeginY; y < EndY; ++y)  // 왜 나는 하나 더 그려지지...?
 	{
@@ -73,8 +73,8 @@ void TilemapActor::Render(HDC DeviceContextHandle)
 			{
 			case 0:  // O
 				::TransparentBlt(DeviceContextHandle, 
-					Position.X + x * TileO->GetSize().X - (Camera.X - GWinSizeX / 2),  // 액터가 그리는 스프라이트의 "좌상단 꼭짓점"에 위치하도록 설정
-					Position.Y + y * TileO->GetSize().Y - (Camera.Y - GWinSizeY / 2),
+					CurrentPosition.X + x * TileO->GetSize().X - (Camera.X - GWinSizeX / 2),  // 액터가 그리는 스프라이트의 "좌상단 꼭짓점"에 위치하도록 설정
+					CurrentPosition.Y + y * TileO->GetSize().Y - (Camera.Y - GWinSizeY / 2),
 					TileO->GetSize().X,
 					TileO->GetSize().Y,
 					TileO->GetDC(), 
@@ -86,8 +86,8 @@ void TilemapActor::Render(HDC DeviceContextHandle)
 				break;
 			case 1:  // X
 				::TransparentBlt(DeviceContextHandle,
-					Position.X + x * TileX->GetSize().X - (Camera.X - GWinSizeX / 2),
-					Position.Y + y * TileX->GetSize().Y - (Camera.Y - GWinSizeY / 2),
+					CurrentPosition.X + x * TileX->GetSize().X - (Camera.X - GWinSizeX / 2),
+					CurrentPosition.Y + y * TileX->GetSize().Y - (Camera.Y - GWinSizeY / 2),
 					TileX->GetSize().X,
 					TileX->GetSize().Y,
 					TileX->GetDC(),
@@ -116,8 +116,8 @@ void TilemapActor::PickTile()
 		int32 WorldX = Mouse.x + LeftTopX;
 		int32 WorldY = Mouse.y + LeftTopY;
 
-		int32 TileX = WorldX / MyTilemap->GetTileSize();
-		int32 TileY = WorldY / MyTilemap->GetTileSize();
+		int32 TileX = WorldX / MyTilemap->GetNumTile();
+		int32 TileY = WorldY / MyTilemap->GetNumTile();
 
 		if (Tile* TargetTile = MyTilemap->GetTileAt({ TileX, TileY }))
 		{

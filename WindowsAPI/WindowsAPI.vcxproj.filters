@@ -137,9 +137,6 @@
     <ClInclude Include="Component.h">
       <Filter>소스 파일\05. Components</Filter>
     </ClInclude>
-    <ClInclude Include="APlayer.h">
-      <Filter>소스 파일\03. Objects\Unreal</Filter>
-    </ClInclude>
     <ClInclude Include="FlipbookActor.h">
       <Filter>소스 파일\03. Objects\Unreal</Filter>
     </ClInclude>
@@ -187,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="SoundManager.h">
       <Filter>소스 파일\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="APlayer.h">
+      <Filter>소스 파일\03. Objects\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -251,9 +251,6 @@
     <ClCompile Include="Component.cpp">
       <Filter>소스 파일\05. Components</Filter>
     </ClCompile>
-    <ClCompile Include="APlayer.cpp">
-      <Filter>소스 파일\03. Objects\Unreal</Filter>
-    </ClCompile>
     <ClCompile Include="FlipbookActor.cpp">
       <Filter>소스 파일\03. Objects\Unreal</Filter>
     </ClCompile>
@@ -301,6 +298,9 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>소스 파일\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="APlayer.cpp">
+      <Filter>소스 파일\03. Objects\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AActor.h"
 #include "Component.h"
+#include "Collider.h"
 
 AActor::AActor()
 {
@@ -26,12 +27,25 @@ void AActor::Tick(float DeltaTime)
 	}
 }
 
-void AActor::Render(HDC InDC)
+void AActor::Render(HDC DeviceContextHandle)
 {
 	for (Component* Item : Components)
 	{
-		Item->Render(InDC);
+		Item->Render(DeviceContextHandle);
 	}
+}
+
+Component* AActor::GetCollider() const
+{
+	for (Component* Item : Components)
+	{
+		if (Collider* Col = dynamic_cast<Collider*>(Item))
+		{
+			return Col;
+		}
+	}
+
+	return nullptr;
 }
 
 void AActor::AddComponent(Component* NewComponent)
