@@ -4,7 +4,6 @@
 #include "CameraComponent.h"
 #include "InputManager.h"
 #include "ResourceManager.h"
-#include "TimerManager.h"
 #include "BoxCollider.h"
 
 APlayer::APlayer()
@@ -32,30 +31,16 @@ void APlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// TODO: 마리오 같은 2D 플랫포머 입력으로 변경
-	//if (InputManager::Get()->GetButton(EKeyCode::W))
-	//{
-	//	Position.Y -= 200 * DeltaTime;
-	//	SetFlipbook(FB_MoveUp);
-	//}
-	//else if (InputManager::Get()->GetButton(EKeyCode::S))
-	//{
-	//	Position.Y += 200 * DeltaTime;
-	//	SetFlipbook(FB_MoveDown);
-	//}
-	if (InputManager::Get()->GetButton(EKeyCode::A))
+	switch (CurrentState)
 	{
-		Position.X -= 200 * DeltaTime;
-		SetFlipbook(FB_MoveLeft);
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::D))
-	{
-		Position.X += 200 * DeltaTime;
-		SetFlipbook(FB_MoveRight);
-	}
-	else if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
-	{
-		Jump();
+	case EPlayerState::MoveOnGround:
+		OnMove();
+		OnInput(DeltaTime);
+		break;
+	case EPlayerState::Fall:
+		OnFall();
+		OnInput(DeltaTime);
+		break;
 	}
 
 	OnTickGravity(DeltaTime);
@@ -68,33 +53,102 @@ void APlayer::Render(HDC DeviceContextHandle)
 
 void APlayer::OnComponentBeginOverlap(Collider* This, Collider* Other)
 {
-	if (BoxCollider* ThisBoxCollider = dynamic_cast<BoxCollider*>(This))
+	BoxCollider* ThisBoxCollider = dynamic_cast<BoxCollider*>(This);
+	BoxCollider* OtherBoxCollider = dynamic_cast<BoxCollider*>(Other);
+
+	if (ThisBoxCollider == nullptr || OtherBoxCollider == nullptr)
 	{
-		if (BoxCollider* OtherBoxCollider = dynamic_cast<BoxCollider*>(Other))
-		{
-			AdjustCollisionPos(ThisBoxCollider, OtherBoxCollider);
-			bOnGround = true;
-		}
+		return;
+	}
+
+	AdjustCollisionPos(ThisBoxCollider, OtherBoxCollider);
+
+	if (OtherBoxCollider->GetCollideLayer() == ECollideLayer::Ground)
+	{
+		TransitionTo(EPlayerState::MoveOnGround);
 	}
 }
 
 void APlayer::OnComponentEndOverlap(Collider* This, Collider* Other)
 {
-	Super::OnComponentEndOverlap(This, Other);
+	BoxCollider* ThisBoxCollider = dynamic_cast<BoxCollider*>(This);
+	BoxCollider* OtherBoxCollider = dynamic_cast<BoxCollider*>(Other);
+
+	if (ThisBoxCollider == nullptr || OtherBoxCollider == nullptr)
+	{
+		return;
+	}
+
+	if (OtherBoxCollider->GetCollideLayer() == ECollideLayer::Ground)
+	{
+		// TODO
+	}
+}
+
+EPlayerState APlayer::GetCurrentState() const
+{
+}
+
+void APlayer::TransitionTo(EPlayerState NewState)
+{
+	if (CurrentState == NewState)
+	{
+		return;
+	}
+
+	switch (NewState)
+	{
+	case EPlayerState::MoveOnGround:
+		Speed.Y = 0.f;
+		break;
+	case EPlayerState::Fall:
+		break;
+	}
+
+	CurrentState = NewState;
+}
+
+void APlayer::OnInput(float DeltaTime)
+{
+	if (InputManager::Get()->GetButton(EKeyCode::A))
+	{
+		Position.X -= 200 * DeltaTime;
+		SetFlipbook(FB_MoveLeft);
+	}
+	else if (InputManager::Get()->GetButton(EKeyCode::D))
+	{
+		Position.X += 200 * DeltaTime;
+		SetFlipbook(FB_MoveRight);
+	}
+}
+
+void APlayer::OnMove()
+{
+	if (InputManager::Get()->GetButtonDown(EKeyCode::Space))
+	{
+		Jump();
+	}
+}
+
+void APlayer::OnFall()
+{
+
 }
 
 void APlayer::Jump()
 {
+	if (CurrentState == EPlayerState::Fall)
+	{
+		return;
+	}
+
+	TransitionTo(EPlayerState::Fall);
+	Speed.Y = -500.f;
 }
 
 void APlayer::OnTickGravity(float DeltaTime)
 {
 	if (DeltaTime > 0.1f)
-	{
-		return;
-	}
-
-	if (bOnGround)
 	{
 		return;
 	}
@@ -106,8 +160,8 @@ void APlayer::OnTickGravity(float DeltaTime)
 // 진입한 방향 반대로 다시 밀쳐서 해당 칸으로 움직이지 못하도록 보정하는 함수
 void APlayer::AdjustCollisionPos(BoxCollider* This, BoxCollider* Other)
 {
-	RECT ThisRect = This->GetRect();
-	RECT OtherRect = Other->GetRect();
+	const RECT ThisRect = This->GetRect();
+	const RECT OtherRect = Other->GetRect();
 
 	RECT Intersect{};
 	Vector2 NewPosition = GetPosition();

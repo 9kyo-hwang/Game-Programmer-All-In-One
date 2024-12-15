@@ -3,6 +3,15 @@
 
 class BoxCollider;
 
+enum class EPlayerState : uint8
+{
+	Idle,
+	MoveOnGround,
+	Jump,
+	Fall,
+	Skill
+};
+
 class APlayer : public FlipbookActor
 {
 	using Super = FlipbookActor;
@@ -18,6 +27,14 @@ public:
 	void OnComponentBeginOverlap(Collider* This, Collider* Other) override;
 	void OnComponentEndOverlap(Collider* This, Collider* Other) override;
 
+	EPlayerState GetCurrentState() const;
+	void TransitionTo(EPlayerState NewState);
+
+protected:
+	void OnInput(float DeltaTime);
+	virtual void OnMove();
+	virtual void OnFall();
+
 private:
 	void Jump();
 	void OnTickGravity(float DeltaTime);
@@ -31,7 +48,7 @@ private:
 
 	Vector2 Speed{};
 	int32 Gravity = 1000;
-	uint8 bOnGround = false;
-	uint8 bJumping = false;
+
+	EPlayerState CurrentState = EPlayerState::Fall;
 };
 
