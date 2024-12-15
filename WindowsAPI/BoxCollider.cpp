@@ -44,6 +44,11 @@ void BoxCollider::Render(HDC DeviceContextHandle)
 
 bool BoxCollider::IsCollision(Collider* Other)
 {
+	if (!Super::IsCollision(Other))
+	{
+		return false;
+	}
+
 	// 콜라이더 타입마다 다르게 연산해줘야...
 	switch (Other->GetColliderType())
 	{
@@ -54,4 +59,16 @@ bool BoxCollider::IsCollision(Collider* Other)
 	}
 
 	return false;
+}
+
+RECT BoxCollider::GetRect() const
+{
+	Vector2 Position = GetOwner()->GetPosition();
+	return
+	{
+		static_cast<int32>(Position.X - Size.X / 2),
+		static_cast<int32>(Position.Y - Size.Y / 2),
+		static_cast<int32>(Position.X + Size.X / 2),
+		static_cast<int32>(Position.Y + Size.Y / 2),
+	};
 }

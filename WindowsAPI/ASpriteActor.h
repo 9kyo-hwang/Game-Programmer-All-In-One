@@ -12,7 +12,7 @@ public:
 	~ASpriteActor() override;
 
 	void BeginPlay() override;
-	void Tick() override;
+	void Tick(float DeltaTime) override;
 	void Render(HDC InDC) override;
 
 	void SetSprite(Sprite* NewSprite) { MySprite = NewSprite; }

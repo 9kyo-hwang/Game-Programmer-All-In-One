@@ -7,7 +7,7 @@ public:
 	Texture();
 	~Texture() override;
 
-	Texture* Load(HWND Window, const wstring& Path);
+	Texture* LoadTexture(HWND Window, const wstring& Path);
 	HDC GetDC() const { return DC; }
 
 	Vector2Int GetSize() const { return Size; }

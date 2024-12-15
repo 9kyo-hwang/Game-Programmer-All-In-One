@@ -1,4 +1,5 @@
 #pragma once
+#include "TimerManager.h"
 
 enum class EObjectType : uint8
 {
@@ -28,7 +29,7 @@ public:
 	virtual ~Object();
 
 	virtual void Initialize() = 0;
-	virtual void Update() = 0;
+	virtual void Update(float DeltaTime = TimerManager::Get()->GetDeltaTime()) = 0;
 	virtual void Render(HDC InDC) = 0;
 	
 	EObjectType GetObjectType() const { return Type; }

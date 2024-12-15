@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "AActor.h"
 #include "Component.h"
-#include "Collider.h"
 
 AActor::AActor()
 {
@@ -19,7 +18,7 @@ void AActor::BeginPlay()
 	}
 }
 
-void AActor::Tick()
+void AActor::Tick(float DeltaTime)
 {
 	for (Component* Item : Components)
 	{

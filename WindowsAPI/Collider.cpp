@@ -27,41 +27,27 @@ void Collider::Render(HDC InDC)
 
 bool Collider::IsCollision(Collider* Other)
 {
+	ECollideLayer OtherLayer = Other->GetCollideLayer();
+	if (CollisionFlag & 1 << static_cast<uint32>(OtherLayer))
+	{
+		return true;
+	}
+
 	return false;
 }
 
 bool Collider::OnCollision(BoxCollider* Box1, BoxCollider* Box2)
 {
-	Vector2 Position1 = Box1->GetOwner()->GetPosition();
-	Vector2 Size1 = Box1->Size;
+	// https://blog.naver.com/winterwolfs/10165506488
+	RECT Rect1 = Box1->GetRect();
+	RECT Rect2 = Box2->GetRect();
 
-	Vector2 Position2 = Box2->GetOwner()->GetPosition();
-	Vector2 Size2 = Box2->Size;
-
-	float MinX1 = Position1.X - Size1.X / 2;
-	float MaxX1 = Position1.X + Size1.X / 2;
-	float MinY1 = Position1.Y - Size1.Y / 2;
-	float MaxY1 = Position1.Y + Size1.Y / 2;
-
-	float MinX2 = Position2.X - Size2.X / 2;
-	float MaxX2 = Position2.X + Size2.X / 2;
-	float MinY2 = Position2.Y - Size2.Y / 2;
-	float MaxY2 = Position2.Y + Size2.Y / 2;
-
-	if (MaxX2 < MinX1
-		|| MaxX1 < MinX2
-		|| MaxY1 < MinY2
-		|| MaxY2 < MinY1)
-	{
-		return false;
-	}
-
-	return true;
+	RECT Intersect{};
+	return ::IntersectRect(&Intersect, &Rect1, &Rect2);
 }
 
 bool Collider::OnCollision(SphereCollider* Sphere, BoxCollider* Box)
 {
-	// TODO.
 	return false;
 }
 
@@ -76,4 +62,14 @@ bool Collider::OnCollision(SphereCollider* Sphere1, SphereCollider* Sphere2)
 	float Distance = (Position1 - Position2).GetMagnitude();
 
 	return Distance <= Radius1 + Radius2;
+}
+
+void Collider::AddCollisionFlagLayer(ECollideLayer InLayer)
+{
+	CollisionFlag |= (1 << static_cast<uint32>(InLayer));
+}
+
+void Collider::RemoveCollisionFlagLayer(ECollideLayer InLayer)
+{
+	CollisionFlag &= ~(1 << static_cast<uint32>(InLayer));
 }

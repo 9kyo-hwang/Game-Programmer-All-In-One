@@ -12,6 +12,7 @@
 #include <format>
 #include <filesystem>
 #include <functional>  // For Callback Function
+#include <cassert>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -31,3 +32,9 @@ namespace fs = std::filesystem;
 #endif
 
 #pragma comment(lib, "msimg32.lib")  // TransparentBlt 함수 사용을 위해 필요한 라이브러리
+
+// 자체 지원 Sound System
+#include <mmsystem.h>
+#include <dsound.h>
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "dsound.lib")

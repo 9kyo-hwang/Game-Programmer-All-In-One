@@ -7,11 +7,11 @@ class EditorScene : public Scene
 
 public:
 	EditorScene();
-	virtual ~EditorScene() override;
+	~EditorScene() override;
 
-	virtual void Initialize() override;
-	virtual void Update() override;
-	virtual void Render(HDC InDC) override;
+	void Initialize() override;
+	void Update(float DeltaTime) override;
+	void Render(HDC InDC) override;
 
 private:
 	vector<pair<POINT, POINT>> Lines;

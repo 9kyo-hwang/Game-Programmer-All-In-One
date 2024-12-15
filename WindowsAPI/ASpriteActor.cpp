@@ -17,7 +17,7 @@ void ASpriteActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ASpriteActor::Tick()
+void ASpriteActor::Tick(float DeltaTime)
 {
 	Super::Tick();
 }

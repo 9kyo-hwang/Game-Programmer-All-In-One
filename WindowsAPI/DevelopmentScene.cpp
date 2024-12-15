@@ -4,11 +4,13 @@
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "APlayer.h"
-#include "Button.h"
 #include "CollisionManager.h"
 #include "Flipbook.h"
-#include "SphereCollider.h"
-#include "TestPanel.h"
+#include "InputManager.h"
+#include "Tilemap.h"
+#include "TilemapActor.h"
+#include "Sound.h"
+#include "BoxCollider.h"
 
 DevelopmentScene::DevelopmentScene()
 {
@@ -29,11 +31,14 @@ void DevelopmentScene::Initialize()
 	//ResourceManager::Get()->LoadTexture(L"Sword", L"Sprite\\Item\\Sword.bmp");
 	//ResourceManager::Get()->LoadTexture(L"Potion", L"Sprite\\UI\\Potion.bmp");
 	Texture* Stage01 = ResourceManager::Get()->LoadTexture(L"Stage01", L"Sprite\\Map\\Stage01.bmp");
+	Texture* Tile = ResourceManager::Get()->LoadTexture(L"Tile", L"Sprite\\Map\\Tile.bmp", RGB(128, 128, 128));
 	Texture* Start = ResourceManager::Get()->LoadTexture(L"Start", L"Sprite\\UI\\Start.bmp");
 	Texture* Edit = ResourceManager::Get()->LoadTexture(L"Edit", L"Sprite\\UI\\Edit.bmp");
 	Texture* Exit = ResourceManager::Get()->LoadTexture(L"Exit", L"Sprite\\UI\\Exit.bmp"); 
 
 	Sprite* BackgroundSprite = ResourceManager::Get()->CreateSprite(L"Stage01", Stage01);
+	Sprite* TileO = ResourceManager::Get()->CreateSprite(L"Tile_O", Tile, 0, 0, 48, 48);
+	Sprite* TileX = ResourceManager::Get()->CreateSprite(L"Tile_X", Tile, 48, 0, 48, 48);
 	ResourceManager::Get()->CreateSprite(L"Start_Off", Start, 0, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Start_On", Start, 150, 0, 150, 150);
 	ResourceManager::Get()->CreateSprite(L"Edit_Off", Edit, 0, 0, 150, 150);
@@ -66,14 +71,17 @@ void DevelopmentScene::Initialize()
 		ASpriteActor* Background = new ASpriteActor();
 		Background->SetSprite(BackgroundSprite);
 		Background->SetPosition({ static_cast<float>(BackgroundSprite->GetSize().X / 2), static_cast<float>(BackgroundSprite->GetSize().Y / 2) });
-		Background->SetLayer(ELayerType::Background);
+		Background->SetLayer(ERenderLayer::Background);
 
 		AddActor(Background);
 	}
 	{
 		APlayer* Player = new APlayer();
-		SphereCollider* Collider = new SphereCollider();
-		Collider->Radius = 50.0f;
+
+		BoxCollider* Collider = new BoxCollider();
+		Collider->Size = {64, 64};
+		Collider->SetCollideLayer(ECollideLayer::Object);
+		Collider->AddCollisionFlagLayer(ECollideLayer::Ground);
 		CollisionManager::Get()->AddCollider(Collider);  // 임시로 하드 코딩
 		Player->AddComponent(Collider);
 
@@ -81,82 +89,62 @@ void DevelopmentScene::Initialize()
 	}
 	{
 		AActor* Actor = new AActor();
-		SphereCollider* Collider = new SphereCollider();
-		Collider->Radius = 50.0f;
+		Actor->SetLayer(ERenderLayer::Object);
+		Actor->SetPosition({ 200, 400 });
+
+		BoxCollider* Collider = new BoxCollider();
+		Collider->Size = { 10000, 100 };
+		Collider->SetCollideLayer(ECollideLayer::Ground);
 		CollisionManager::Get()->AddCollider(Collider);  // Actor의 AddComponent에서 수행하는 게 가장 적합할 듯...?
 		Actor->AddComponent(Collider);
-		Actor->SetPosition({ 400, 300 });
 
 		AddActor(Actor);
 	}
 	{
-		UIs.push_back(new TestPanel());
-	}
-
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
-	{
-		for (AActor* Actor : ActorsOnLayer)
+		// 충돌 처리 등을 수행할 특수한 액터 -> 캐싱
+		TilemapActor* NewTilemapActor = new TilemapActor();
+		AddActor(NewTilemapActor);
+		MyTilemapActor = NewTilemapActor;
 		{
-			Actor->BeginPlay();
+			Tilemap* Tilemap01 = ResourceManager::Get()->CreateTilemap(L"Tilemap_01");
+			Tilemap01->SetMapSize({ 63, 43 });
+			Tilemap01->SetTileSize(48);
+
+			MyTilemapActor->SetTilemap(Tilemap01);
+			MyTilemapActor->SetShowDebug(false);
 		}
 	}
 
-	for (UI* Item : UIs)
+	ResourceManager::Get()->LoadSound(L"BGM", L"Sound\\BGM.wav");
 	{
-		Item->BeginPlay();
+		// 현재 방식은 하나의 리소스를 돌려쓰는 방식
+		// A에서 재생시킨 BGM이 다 끝나지 않았을 때 B가 BGM을 다시 재생하면 중간에 강제로 끊고 다시 재생
+		// FMOD 같은 라이브러리는 이를 해결하기 위해 "채널링" 개념 도입
+
+		//Sound* BGM = ResourceManager::Get()->GetSound(L"BGM");
+		//BGM->Play(true);  // 검 휘두르기 같은 BGM은 loop을 false로 두면 됨
+		//SoundManager::Get()->Play(L"BGM");  // 위와 동일한 기능
 	}
+
+	Super::Initialize();
 }
 
-void DevelopmentScene::Update()
+void DevelopmentScene::Update(float DeltaTime)
 {
-	//float DeltaTime = TimerManager::Get()->GetDeltaTime();
+	Super::Update();
 
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
+	if (InputManager::Get()->GetButtonDown(EKeyCode::Q))
 	{
-		for (AActor* Actor : ActorsOnLayer)
-		{
-			Actor->Tick();
-		}
+		ResourceManager::Get()->SaveTilemap(L"Tilemap_01", L"Tilemap\\Tilemap01.txt");
 	}
-
-	for (UI* Item : UIs)
+	else if (InputManager::Get()->GetButtonDown(EKeyCode::E))
 	{
-		Item->Tick();
+		ResourceManager::Get()->LoadTilemap(L"Tilemap_01", L"Tilemap\\Tilemap01.txt");
 	}
-
-	// 보통 LateUpdate에서 수행
-	CollisionManager::Get()->Update();
 }
 
 void DevelopmentScene::Render(HDC DeviceContextHandle)
 {
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
-	{
-		for (AActor* Actor : ActorsOnLayer)
-		{
-			Actor->Render(DeviceContextHandle);
-		}
-	}
-
-	for (UI* Item : UIs)
-	{
-		Item->Render(DeviceContextHandle);
-	}
-}
-
-void DevelopmentScene::AddActor(AActor* NewActor)
-{
-	if (NewActor)
-	{
-		Actors[static_cast<int32>(NewActor->GetLayer())].push_back(NewActor);
-	}
-}
-
-void DevelopmentScene::RemoveActor(AActor* TargetActor)
-{
-	if (TargetActor)
-	{
-		std::erase(Actors[static_cast<int32>(TargetActor->GetLayer())], TargetActor);
-	}
+	Super::Render(DeviceContextHandle);
 }
 

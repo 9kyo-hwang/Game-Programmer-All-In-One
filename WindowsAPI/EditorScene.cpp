@@ -15,7 +15,7 @@ void EditorScene::Initialize()
 {
 }
 
-void EditorScene::Update()
+void EditorScene::Update(float DeltaTime)
 {
 	if (InputManager::Get()->GetButtonDown(EKeyCode::LeftMouseButton))
 	{

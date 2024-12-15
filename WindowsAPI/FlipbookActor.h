@@ -13,7 +13,7 @@ public:
 	~FlipbookActor() override;
 
 	void BeginPlay() override;
-	void Tick() override;
+	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
 	void SetFlipbook(Flipbook* NewFlipbook);
