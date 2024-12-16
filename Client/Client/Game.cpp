@@ -18,22 +18,22 @@ Game::~Game()
 	_CrtDumpMemoryLeaks();  // 사실 마지막에 넣어야...
 }
 
-void Game::Initialize(HWND InWindowHandle)
+void Game::Initialize(HWND GameWindowHandle)
 {
-	WindowHandle = InWindowHandle;
-	DeviceContextHandle = ::GetDC(InWindowHandle);
+	WindowHandle = GameWindowHandle;
+	DeviceContextHandle = ::GetDC(GameWindowHandle);
 
 	::GetClientRect(WindowHandle, &Rectangle);
 	BackDC = ::CreateCompatibleDC(DeviceContextHandle);  // 기존 DC와 호환되는 새 DC 생성
 	BackBitmap = ::CreateCompatibleBitmap(DeviceContextHandle, Rectangle.right, Rectangle.bottom);  // 기존 DC에 호환되는 Bmp 생성
-	HBITMAP PrevBitmap = (HBITMAP)::SelectObject(BackDC, BackBitmap);  // 새로운 DC와 Bmp를 사용하도록 설정, 사용하지 않게 된 구형 Bitmap 반환
+	HBITMAP PrevBitmap = static_cast<HBITMAP>(::SelectObject(BackDC, BackBitmap));  // 새로운 DC와 Bmp를 사용하도록 설정, 사용하지 않게 된 구형 Bitmap 반환
 	::DeleteObject(PrevBitmap);  // 반환받은 구형 Bitmap 제거
 
 	TimerManager::Get()->Initialize();
-	InputManager::Get()->Initialize(InWindowHandle);
+	InputManager::Get()->Initialize(GameWindowHandle);
 	SceneManager::Get()->Initialize();
-	ResourceManager::Get()->Initialize(InWindowHandle, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Resources"));
-	SoundManager::Get()->Initialize(InWindowHandle);
+	ResourceManager::Get()->Initialize(GameWindowHandle, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Client\\Resources"));
+	SoundManager::Get()->Initialize(GameWindowHandle);
 	// 최초로 호출되는 씬
 	SceneManager::Get()->LoadScene(ESceneType::Development);
 }

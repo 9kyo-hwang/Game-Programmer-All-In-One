@@ -7,7 +7,7 @@ public:
 	~Game();
 
 public:
-	void Initialize(HWND InWindowHandle);
+	void Initialize(HWND GameWindowHandle);
 	void Update();
 	void Render();
 
@@ -17,8 +17,8 @@ private:
 
 	// for Back Buffering
 private:
-	RECT Rectangle;
-	HDC BackDC;
-	HBITMAP BackBitmap;
+	RECT Rectangle{};
+	HDC BackDC = nullptr;
+	HBITMAP BackBitmap = nullptr;
 };
 
