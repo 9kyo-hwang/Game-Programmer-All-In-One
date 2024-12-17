@@ -10,61 +10,71 @@
 
 int main()
 {
-	WSADATA SocketData;
-	if (::WSAStartup(/*Version Request: 2.2*/0x202, &SocketData))  // MAKEWORD(2, 2)와 동일
-	{
-		return 0;
-	}
+	FSocketManager::Initialize();
 
-	/**
-	 * 1. 소켓 생성
-	 * af: AF_INET(IPv4), AF_INET6(IPv6)
-	 * type: SOCK_STREAM(TCP), SOCK_DGRAM(UDP)
-	 * protocol: 0
-	 * return: descriptor
-	 */
-	//int32 ErrorCode = ::WSAGetLastError();
-	SOCKET ListenSocket = ::socket(/*IPv4 vs IPv6*/AF_INET, /*TCP vs UDP*/SOCK_DGRAM, /*Protocol*/IPPROTO_UDP);
+	SOCKET ListenSocket = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (ListenSocket == INVALID_SOCKET)
 	{
-		cout << "Listen Socket Create Failed :(" << endl;
 		return 0;
 	}
-	
 
-	/**
-	 * 2. 주소/포트 바인딩
-	 */
-	SOCKADDR_IN ServerAddr{};
+	// https://learn.microsoft.com/ko-kr/windows/win32/api/winsock/nf-winsock-ioctlsocket
+	u_long Mode = 1;  // Non-blocking Socket
+	if (::ioctlsocket(ListenSocket, FIONBIO, &Mode) == INVALID_SOCKET)
 	{
-		ServerAddr.sin_family = AF_INET;
-		ServerAddr.sin_port = ::htons(7777);  // 80: HTTP
-		ServerAddr.sin_addr.s_addr = ::htonl(INADDR_ANY);
-	};
-	if (::bind(ListenSocket, reinterpret_cast<SOCKADDR*>(&ServerAddr), sizeof(ServerAddr)) == SOCKET_ERROR)
-	{
-		cout << "Listen Socket Binding Failed :(" << endl;
 		return 0;
 	}
+
+	FSocketManager::SetReuseAddr(ListenSocket, true);
+	if (!FSocketManager::Bind(ListenSocket, 7777))
+	{
+		return 0;
+	}
+
+	if (!FSocketManager::Listen(ListenSocket))
+	{
+		return 0;
+	}
+
+	SOCKADDR_IN ClientAddr;
+	int32 AddrLen = sizeof(ClientAddr);
 
 	while (true)
 	{
-		SOCKADDR_IN ClientAddr{};
-		int32 ClientAddrLen = sizeof(ClientAddr);
-
-		char RecvBuffer[100];
-		int32 RecvLength = ::recvfrom(ListenSocket, RecvBuffer, sizeof(RecvBuffer), 0, reinterpret_cast<SOCKADDR*>(&ClientAddr), &ClientAddrLen);
-		if (RecvLength <= 0)
+		SOCKET ClientSocket = ::accept(ListenSocket, reinterpret_cast<SOCKADDR*>(&ClientAddr), &AddrLen);
+		if (ClientSocket == INVALID_SOCKET)
 		{
-			return 0;
+			if (::WSAGetLastError() == WSAEWOULDBLOCK)
+			{
+				// https://learn.microsoft.com/ko-kr/windows/win32/winsock/windows-sockets-error-codes-2
+				cout << "접속한 클라이언트가 없습니다." << endl;
+				continue;
+			}
 		}
 
-		cout << "Server Received Data: " << RecvBuffer << endl;
-		cout << "Server Received Data Length: " << RecvLength << endl;
+		cout << "클라이언트 접속!" << endl;
+
+		while (true)
+		{
+			char RecvBuffer[1000];
+			int32 RecvLen = ::recv(ClientSocket, RecvBuffer, sizeof(RecvBuffer), 0);
+			if (RecvLen == SOCKET_ERROR)
+			{
+				if (::WSAGetLastError() == WSAEWOULDBLOCK)
+				{
+					cout << "클라이언트가 아직 데이터를 전송하지 않았습니다." << endl;
+					continue;
+				}
+
+				break;
+			}
+
+			cout << "전달받은 데이터: " << RecvBuffer << endl;
+			cout << "데이터 길이: " << RecvLen << endl;
+		}
 	}
 
-	::closesocket(ListenSocket);
-	::WSACleanup();
+	FSocketManager::Clear();
 
 	return 0;
 }
