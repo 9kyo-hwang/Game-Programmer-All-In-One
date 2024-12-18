@@ -27,15 +27,10 @@ void FSocketManager::Clear()
 bool FSocketManager::BindWindowsFunction(SOCKET Socket, GUID Guid, LPVOID* Function)
 {
 	DWORD OutBytes = 0;
-	if (::WSAIoctl(Socket, SIO_GET_EXTENSION_FUNCTION_POINTER, 
+	return SOCKET_ERROR != ::WSAIoctl(Socket, SIO_GET_EXTENSION_FUNCTION_POINTER,
 		&Guid, sizeof(Guid),
 		Function, sizeof(*Function),
-		&OutBytes, nullptr, nullptr) == SOCKET_ERROR)
-	{
-		return false;
-	}
-
-	return true;
+		&OutBytes, nullptr, nullptr);
 }
 
 SOCKET FSocketManager::CreateSocket()
@@ -88,12 +83,7 @@ bool FSocketManager::SetUpdateAcceptContext(SOCKET AcceptSocket, SOCKET ListenSo
 
 bool FSocketManager::Bind(SOCKET Socket, SOCKADDR_IN Addr)
 {
-	if (::bind(Socket, reinterpret_cast<SOCKADDR*>(&Addr), sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
-	{
-		return false;
-	}
-
-	return true;
+	return SOCKET_ERROR != ::bind(Socket, reinterpret_cast<SOCKADDR*>(&Addr), sizeof(SOCKADDR_IN));
 }
 
 bool FSocketManager::Bind(SOCKET Socket, uint16 Port)
@@ -103,22 +93,12 @@ bool FSocketManager::Bind(SOCKET Socket, uint16 Port)
 	Address.sin_port = ::htons(Port);
 	Address.sin_addr.s_addr = ::htonl(INADDR_ANY);
 
-	if (::bind(Socket, reinterpret_cast<const SOCKADDR*>(&Address), sizeof(Address)) == SOCKET_ERROR)
-	{
-		return false;
-	}
-	
-	return true;
+	return SOCKET_ERROR != ::bind(Socket, reinterpret_cast<const SOCKADDR*>(&Address), sizeof(Address));
 }
 
 bool FSocketManager::Listen(SOCKET Socket, int32 MaxBacklog)
 {
-	if (::listen(Socket, MaxBacklog) == SOCKET_ERROR)
-	{
-		return false;
-	}
-
-	return true;
+	return SOCKET_ERROR != ::listen(Socket, MaxBacklog);
 }
 
 void FSocketManager::Close(SOCKET& Socket)
@@ -126,6 +106,7 @@ void FSocketManager::Close(SOCKET& Socket)
 	if (Socket != INVALID_SOCKET)
 	{
 		::closesocket(Socket);
-		Socket = INVALID_SOCKET;
 	}
+
+	Socket = INVALID_SOCKET;
 }
