@@ -11,6 +11,12 @@ using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
 
+#define Size16(val) static_cast<int16>(sizeof(val))
+#define Size32(val) static_cast<int32>(sizeof(val))
+#define Len16(arr) static_cast<int16>(sizeof(arr) / sizeof(arr[0]))
+#define Len32(arr) static_cast<int32>(sizeof(arr) / sizeof(arr[0]))
+
+
 template<typename T>
 using TAtomic = std::atomic<T>;
 using FCriticalSection = std::mutex;
