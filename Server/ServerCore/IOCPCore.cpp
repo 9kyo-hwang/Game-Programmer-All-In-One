@@ -2,8 +2,6 @@
 #include "IOCPCore.h"
 #include "IOCPEvent.h"
 
-IOCPCore GIOCPCore;
-
 IOCPCore::IOCPCore()
 {
 	// IOCP Queue Create
@@ -16,30 +14,31 @@ IOCPCore::~IOCPCore()
 	::CloseHandle(Handle);
 }
 
-bool IOCPCore::Register(IOCPObject* Object)
+bool IOCPCore::Register(TSharedPtr<IOCPObject> Object) const
 {
 	// Session을 CP에 등록하는 것
 	return ::CreateIoCompletionPort(
 		Object->GetHandle(),
 		Handle,
-		reinterpret_cast<ULONG_PTR>(Object),  // 오브젝트 주소 키
+		0,  // 오브젝트 주소 키는 스마트포인터로 변경하면서 사용하는 쪽으로 방식 변경
 		0
 	);
 }
 
-bool IOCPCore::Dispatch(uint32 Timeout)
+bool IOCPCore::Dispatch(uint32 Timeout) const
 {
 	DWORD NumOfBytes = 0;
-	IOCPObject* Object = nullptr;  // Key
-	IOCPEvent* Event = nullptr;    // OverlappedEx
+	ULONG_PTR CompletionKey = 0;
+	IOCPEvent* Event = nullptr;    // OverlappedEx 이것에 의해 어떤 오브젝트인지 확인 가능
 
 	if (::GetQueuedCompletionStatus(
 		Handle, 
 		OUT &NumOfBytes, 
-		OUT reinterpret_cast<PULONG_PTR>(&Object), 
+		OUT &CompletionKey, // 더 이상 Object 주소를 Key로 사용하지 않음
 		OUT reinterpret_cast<LPOVERLAPPED*>(&Event), 
 		Timeout))
 	{
+		TSharedPtr<IOCPObject> Object = Event->Owner;
 		Object->Dispatch(Event, NumOfBytes);
 	}
 	else
@@ -50,6 +49,7 @@ bool IOCPCore::Dispatch(uint32 Timeout)
 			return false;
 		default:
 			// TODO: Print Log
+			TSharedPtr<IOCPObject> Object = Event->Owner;
 			Object->Dispatch(Event, NumOfBytes);
 			break;
 		}

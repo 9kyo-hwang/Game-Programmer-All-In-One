@@ -26,3 +26,9 @@ using FUniqueLock = std::unique_lock<std::mutex>;
 
 template<typename T>
 using TUniquePtr = std::unique_ptr<T>;
+template<typename T>
+using TSharedPtr = std::shared_ptr<T>;
+template<typename T>
+using TWeakPtr = std::weak_ptr<T>;
+template<typename T>
+using TSharedFromThis = std::enable_shared_from_this<T>;

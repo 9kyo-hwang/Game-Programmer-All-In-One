@@ -19,5 +19,6 @@ struct IOCPEvent : public OVERLAPPED
 	void Initialize();
 
 	ENetworkEvents Type;
-	class IOCPSession* Session = nullptr;  // Accept Only
+	TSharedPtr<class IOCPObject> Owner = nullptr;  // Ref Counting을 하기 위해
+	TSharedPtr<class IOCPSession> Session = nullptr;  // Accept Only
 };

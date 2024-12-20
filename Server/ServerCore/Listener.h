@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IOCPCore.h"
-#include "IPAddress.h"
 
 // 서버 문지기
 class IOCPListener : public IOCPObject
@@ -12,7 +11,7 @@ public:
 
 public:
 	// 외부에서 사용
-	bool Accept(FInternetAddr Addr);
+	bool Accept(TSharedPtr<class ServerService> InService);
 	void Close();
 
 public:
@@ -26,5 +25,6 @@ private:
 protected:
 	SOCKET Socket = INVALID_SOCKET;
 	vector<IOCPEvent*> Events;
+	TSharedPtr<ServerService> Service;
 };
 

@@ -2,6 +2,7 @@
 #include "Listener.h"
 #include "IOCPEvent.h"
 #include "IOCPSession.h"
+#include "Service.h"
 
 IOCPListener::~IOCPListener()
 {
@@ -13,15 +14,22 @@ IOCPListener::~IOCPListener()
 	}
 }
 
-bool IOCPListener::Accept(FInternetAddr Addr)
+bool IOCPListener::Accept(TSharedPtr<ServerService> InService)
 {
+	Service = InService;
+	if (!Service)
+	{
+		return false;
+	}
+
 	Socket = FSocketManager::CreateSocket();
 	if (Socket == INVALID_SOCKET)
 	{
 		return false;
 	}
 
-	if (!GIOCPCore.Register(this))
+	// 각 Service가 들고 있는 Core에 맞는 Register
+	if (!Service->GetCore()->Register(shared_from_this()))
 	{
 		return false;
 	}
@@ -36,7 +44,7 @@ bool IOCPListener::Accept(FInternetAddr Addr)
 		return false;
 	}
 
-	if (!FSocketManager::Bind(Socket, Addr))
+	if (!FSocketManager::Bind(Socket, Service->GetAddr()))
 	{
 		return false;
 	}
@@ -51,11 +59,12 @@ bool IOCPListener::Accept(FInternetAddr Addr)
 	for (int32 i = 0; i < AcceptCount; ++i)
 	{
 		IOCPEvent* Event = new IOCPEvent(ENetworkEvents::Accept);
+		Event->Owner = shared_from_this();  // 반드시 Owner를 세팅해줘야 Event가 살아있는 동안 Owner를 삭제하지 않게 됨
 		Events.push_back(Event);
 		Register(Event);
 	}
 
-	return false;
+	return true;
 }
 
 void IOCPListener::Close()
@@ -78,7 +87,8 @@ void IOCPListener::Dispatch(IOCPEvent* Event, int32 NumOfBytes)
 // 낚싯대를 던지는 과정
 void IOCPListener::Register(IOCPEvent* Event)
 {
-	IOCPSession* Session = new IOCPSession();
+	TSharedPtr<IOCPSession> Session = make_shared<IOCPSession>();
+
 	Event->Initialize();  // 초기값을 밀어줘야 함
 	Event->Session = Session;
 
@@ -107,7 +117,7 @@ void IOCPListener::Register(IOCPEvent* Event)
 
 void IOCPListener::Process(IOCPEvent* Event)
 {
-	IOCPSession* Session = Event->Session;
+	TSharedPtr<IOCPSession> Session = Event->Session;
 	if (!FSocketManager::SetUpdateAcceptContext(Session->GetSocket(), Socket))
 	{
 		Register(Event);
