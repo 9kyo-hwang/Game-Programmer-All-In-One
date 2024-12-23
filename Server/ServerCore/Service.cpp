@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Service.h"
 
-Service::Service(EServices InType, FInternetAddr InAddr, TSharedPtr<IOCPCore> InCore, SessionFactory InFactory,
+ServiceBase::ServiceBase(EServices InType, FInternetAddr InAddr, TSharedPtr<IOCPCore> InCore, SessionFactory InFactory,
 	int32 InMaxSessionCount)
 		: Type(InType)
 		, Addr(InAddr)
@@ -11,18 +11,20 @@ Service::Service(EServices InType, FInternetAddr InAddr, TSharedPtr<IOCPCore> In
 {
 }
 
-Service::~Service()
+ServiceBase::~ServiceBase()
 {
 }
 
-void Service::Close()
+void ServiceBase::Close()
 {
 	// TODO
 }
 
-TSharedPtr<IOCPSession> Service::CreateSession()
+TSharedPtr<IOCPSession> ServiceBase::CreateSession()
 {
 	TSharedPtr<IOCPSession> Session = Factory();
+	Session->SetService(shared_from_this());  // 나 자신을 만들어진 세션 서비스로 등록해야 함
+
 	if (Core->Register(Session))
 	{
 		return Session;
@@ -31,14 +33,14 @@ TSharedPtr<IOCPSession> Service::CreateSession()
 	return nullptr;
 }
 
-void Service::AddSession(TSharedPtr<IOCPSession> Session)
+void ServiceBase::AddSession(TSharedPtr<IOCPSession> Session)
 {
 	LOCK;
 	SessionCount++;
 	Sessions.insert(Session);
 }
 
-void Service::ReleaseSession(TSharedPtr<IOCPSession> Session)
+void ServiceBase::ReleaseSession(TSharedPtr<IOCPSession> Session)
 {
 	LOCK;
 	assert(Sessions.erase(Session) != 0);  // the number of elements erased

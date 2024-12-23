@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "SocketManager.h"
-#include "Listener.h"
+#include "IOCPListener.h"
 #include "ThreadManager.h"
 #include "IOCPSession.h"
 #include "Service.h"
@@ -9,6 +9,22 @@ class GameSession : public IOCPSession
 {
 public:
 	// TODO
+	~GameSession() override
+	{
+		cout << "~GameSession()" << endl;
+	}
+
+	int32 OnRecv(BYTE* Buffer, int32 Len) override
+	{
+		cout << "OnRecv Len = " << Len << endl;
+		Send(Buffer, Len);  // 우리가 받은 걸 그대로 다시 돌려줌
+		return Len;
+	}
+
+	void OnSend(int32 Len) override
+	{
+		cout << "OnSend Len = " << Len << endl;
+	}
 };
 
 int main()

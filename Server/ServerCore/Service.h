@@ -2,7 +2,7 @@
 #include <functional>
 #include "IOCPCore.h"
 #include "IOCPSession.h"
-#include "Listener.h"
+#include "IOCPListener.h"
 
 enum class EServices : uint8
 {
@@ -18,11 +18,11 @@ enum class EServices : uint8
 using SessionFactory = function<TSharedPtr<IOCPSession>(void)>;
 
 // Smart Pointer를 this로 넘길 수 있도록
-class Service : public TSharedFromThis<Service>
+class ServiceBase : public TSharedFromThis<ServiceBase>
 {
 public:
-	Service(EServices InType, FInternetAddr InAddr, TSharedPtr<IOCPCore> InCore, SessionFactory InFactory, int32 InMaxSessionCount = 1);
-	virtual ~Service();
+	ServiceBase(EServices InType, FInternetAddr InAddr, TSharedPtr<IOCPCore> InCore, SessionFactory InFactory, int32 InMaxSessionCount = 1);
+	virtual ~ServiceBase();
 
 	virtual bool Start() abstract;  // Client, Server에 따라 다르게 구현
 	bool CanStart() const { return Factory != nullptr; }
@@ -53,9 +53,9 @@ protected:
 	SessionFactory Factory;
 };
 
-class ClientService : public Service
+class ClientService : public ServiceBase
 {
-	using Super = Service;
+	using Super = ServiceBase;
 
 public:
 	ClientService(FInternetAddr InAddr, TSharedPtr<IOCPCore> InCore, SessionFactory InFactory, int32 InMaxSessionCount = 1);
@@ -64,9 +64,9 @@ public:
 	bool Start() override;
 };
 
-class ServerService : public Service
+class ServerService : public ServiceBase
 {
-	using Super = Service;
+	using Super = ServiceBase;
 
 public:
 	ServerService(FInternetAddr InAddr, TSharedPtr<IOCPCore> InCore, SessionFactory InFactory, int32 InMaxSessionCount = 1);

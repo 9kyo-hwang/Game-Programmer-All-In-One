@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Listener.h"
+#include "IOCPListener.h"
 #include "IOCPEvent.h"
 #include "IOCPSession.h"
 #include "Service.h"
@@ -87,7 +87,7 @@ void IOCPListener::Dispatch(IOCPEvent* Event, int32 NumOfBytes)
 // 낚싯대를 던지는 과정
 void IOCPListener::Register(IOCPEvent* Event)
 {
-	TSharedPtr<IOCPSession> Session = make_shared<IOCPSession>();
+	TSharedPtr<IOCPSession> Session = Service->CreateSession();  // 얘를 호출해야 SetService가 수행됨
 
 	Event->Initialize();  // 초기값을 밀어줘야 함
 	Event->Session = Session;
@@ -133,7 +133,6 @@ void IOCPListener::Process(IOCPEvent* Event)
 	}
 
 	Session->SetIp(FInternetAddr(Addr));
-	cout << "Client Connected!" << endl;
-
+	Session->ProcessConnect();  // Listener는 Accept 과정에서 이미 준비가 다 된 상태라 Register를 건너뛰고 바로 Process를 호출할 수 있음
 	Register(Event);
 }
