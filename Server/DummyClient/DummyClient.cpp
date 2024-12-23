@@ -1,68 +1,82 @@
 ﻿#include "pch.h"
+#include "IOCPSession.h"
+#include "Service.h"
+#include "ThreadManager.h"
 
-/**
- * 소켓 생성
- * 서버에 연결 요청(TCP only)
- * 통신
- */
+// 이제 클라이언트 별 보낼 데이터 관리만 해주면 준비 완료
+char SendData[] = "Hello, I am Client!";
+
+// 클라이언트 입장에서는 서버 세션이 됨
+class ServerSession : public IOCPSession
+{
+public:
+	~ServerSession() override
+	{
+		cout << "~ServerSession()" << endl;
+	}
+
+	void OnConnected() override
+	{
+		cout << "Connected To Server" << endl;
+
+		TSharedPtr<SendBuffer> Buffer = make_shared<SendBuffer>(4096);
+		Buffer->Copy(SendData, sizeof(SendData));
+		Send(Buffer);
+	}
+
+	int32 OnRecv(BYTE* InBuffer, int32 Len) override
+	{
+		cout << "OnRecv Len = " << Len << endl;
+
+		this_thread::sleep_for(0.1s);
+
+		TSharedPtr<SendBuffer> Buffer = make_shared<SendBuffer>(4096);
+		Buffer->Copy(SendData, sizeof(SendData));
+		Send(Buffer);
+
+		return Len;
+	}
+
+	void OnSend(int32 Len) override
+	{
+		cout << "OnSend Len = " << Len << endl;
+	}
+
+	void OnDisconnected() override
+	{
+		cout << "Disconnected" << endl;
+	}
+
+};
 
 int main()
 {
 	FSocketManager::Initialize();
 
-	SOCKET ClientSocket = ::socket(AF_INET, SOCK_STREAM, 0);
-	if (ClientSocket == INVALID_SOCKET)
-	{
-		return 0;
-	}
+	this_thread::sleep_for(1s);
 
-	u_long Mode = 1;  // Non-blocking Socket
-	if (::ioctlsocket(ClientSocket, FIONBIO, &Mode) == INVALID_SOCKET)
-	{
-		return 0;
-	}
+	TSharedPtr<ClientService> Service = make_shared<ClientService>(
+		FInternetAddr(L"127.0.0.1", 7777),
+		make_shared<IOCPCore>(),
+		[] { return make_shared<ServerSession>(); },  // TODO: SessionManager
+		5
+	);
 
-	SOCKADDR_IN ServerAddr{};
-	ServerAddr.sin_family = AF_INET;
-	::inet_pton(AF_INET, "127.0.0.1", &ServerAddr.sin_addr);
-	ServerAddr.sin_port = ::htons(7777);
+	assert(Service->Start());
 
-	while (true)
+	for (int32 i = 0; i < 5; ++i)
 	{
-		if (::connect(ClientSocket, reinterpret_cast<SOCKADDR*>(&ServerAddr), sizeof(ServerAddr)) == SOCKET_ERROR)
-		{
-			if (::WSAGetLastError() == WSAEWOULDBLOCK)
+		GThreadManager->Launch([=]
 			{
-				cout << "아직 서버에 접속하지 못했습니다." << endl;
-				continue;
-			}
-
-			if (::WSAGetLastError() == WSAEISCONN)
-			{
-				cout << "이미 연결된 상태입니다." << endl;
-				break;
-			}
-		}
+				while (true)
+				{
+					Service->GetCore()->Dispatch();
+					this_thread::sleep_for(1s);
+				}
+			});
 	}
 
-	while (true)
-	{
-		char SendBuffer[100] = "Hello, I am a Client!";
-		int32 SendLen = sizeof(SendBuffer);
-
-		if (::send(ClientSocket, SendBuffer, SendLen, 0) == SOCKET_ERROR)
-		{
-			if (::WSAGetLastError() == WSAEWOULDBLOCK)
-			{
-				cout << "넌블록킹...?" << endl;
-				continue;
-			}
-		}
-
-		cout << "전송한 데이터 길이: " << SendLen << endl;
-		this_thread::sleep_for(1s);
-	}
-
+	GThreadManager->Join();
 	FSocketManager::Clear();
 
 	return 0;

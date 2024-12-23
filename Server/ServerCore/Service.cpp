@@ -59,7 +59,22 @@ ClientService::~ClientService()
 
 bool ClientService::Start()
 {
-	// TODO
+	if (!CanStart())
+	{
+		return false;
+	}
+
+	const int32 SessionCount = GetMaxSessionCount();
+	for (int32 i = 0; i < SessionCount; ++i)
+	{
+		// 요청한 세션 개수만큼 만들어서 Connect 
+		TSharedPtr<IOCPSession> Session = CreateSession();
+		if (!Session->Connect())
+		{
+			return false;
+		}
+	}
+
 	return true;
 }
 

@@ -22,5 +22,7 @@ struct IOCPEvent : public OVERLAPPED
 	TSharedPtr<class IOCPObject> Owner = nullptr;  // Ref Counting을 하기 위해
 	TSharedPtr<class IOCPSession> Session = nullptr;  // Accept Only
 
+	// TEMP
 	vector<BYTE> Buffer;  // Session의 SendEvent를 위한 TEMP
+	vector<TSharedPtr<class SendBuffer>> SendBufferList;
 };

@@ -99,7 +99,7 @@ void IOCPListener::Register(IOCPEvent* Event)
 	if (!FSocketManager::AcceptEx(
 		Socket, 
 		Session->GetSocket(), 
-		Session->RecvBuffer, 
+		Session->RecvBuffer.GetWritePos(), 
 		0, 
 		sizeof(SOCKADDR_IN) + 16, 
 		sizeof(SOCKADDR_IN) + 16, 

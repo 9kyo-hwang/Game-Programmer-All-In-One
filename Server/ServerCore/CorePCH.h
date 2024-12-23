@@ -20,5 +20,6 @@ using namespace std;
 #include "CoreTLS.h"
 #include "CoreGlobal.h"
 #include "SocketManager.h"
+#include "SendBuffer.h"
 
 #pragma comment(lib, "ws2_32.lib")
