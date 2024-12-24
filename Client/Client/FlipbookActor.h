@@ -4,13 +4,13 @@
 class Flipbook;
 
 // Unity¿« Animator...? AnimatorController...?
-class FlipbookActor : public AActor
+class AFlipbook : public AActor
 {
 	using Super = AActor;
 
 public:
-	FlipbookActor();
-	~FlipbookActor() override;
+	AFlipbook();
+	~AFlipbook() override;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;

@@ -4,25 +4,25 @@
 #include "SceneManager.h"
 #include "Sprite.h"
 
-ASpriteActor::ASpriteActor()
+ASprite::ASprite()
 {
 }
 
-ASpriteActor::~ASpriteActor()
+ASprite::~ASprite()
 {
 }
 
-void ASpriteActor::BeginPlay()
+void ASprite::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ASpriteActor::Tick(float DeltaTime)
+void ASprite::Tick(float DeltaTime)
 {
 	Super::Tick();
 }
 
-void ASpriteActor::Render(HDC InDC)
+void ASprite::Render(HDC InDC)
 {
 	Super::Render(InDC);
 

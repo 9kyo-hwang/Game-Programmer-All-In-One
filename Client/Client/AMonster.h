@@ -1,13 +1,13 @@
 #pragma once
 #include "APawn.h"
 
-class APlayer : public APawn
+class AMonster : public APawn
 {
 	using Super = APawn;
 
 public:
-	APlayer();
-	~APlayer() override;
+	AMonster();
+	~AMonster() override;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;
@@ -20,8 +20,6 @@ protected:
 	void UpdateAnimation() override;
 
 protected:
-	vector<vector<Flipbook*>> Flipbooks{};
-	bool bKeyPressed = false;
-	static const Vector2Int Offset[4];
+	// TODO
 };
 

@@ -5,20 +5,20 @@
 #include "SceneManager.h"
 #include "Texture.h"
 
-FlipbookActor::FlipbookActor()
+AFlipbook::AFlipbook()
 {
 }
 
-FlipbookActor::~FlipbookActor()
+AFlipbook::~AFlipbook()
 {
 }
 
-void FlipbookActor::BeginPlay()
+void AFlipbook::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void FlipbookActor::Tick(float DeltaTime)
+void AFlipbook::Tick(float DeltaTime)
 {
 	Super::Tick();
 
@@ -44,7 +44,7 @@ void FlipbookActor::Tick(float DeltaTime)
 	}
 }
 
-void FlipbookActor::Render(HDC DeviceContextHandle)
+void AFlipbook::Render(HDC DeviceContextHandle)
 {
 	Super::Render(DeviceContextHandle);
 
@@ -65,7 +65,7 @@ void FlipbookActor::Render(HDC DeviceContextHandle)
 		Info.MyTexture->GetTransparent());
 }
 
-void FlipbookActor::SetFlipbook(Flipbook* NewFlipbook)
+void AFlipbook::SetFlipbook(Flipbook* NewFlipbook)
 {
 	if (NewFlipbook && MyFlipbook == NewFlipbook)
 	{
@@ -76,7 +76,7 @@ void FlipbookActor::SetFlipbook(Flipbook* NewFlipbook)
 	Reset();
 }
 
-void FlipbookActor::Reset()
+void AFlipbook::Reset()
 {
 	ElapsedTime = 0.0f;
 	Index = 0;  // 인덱스를 0으로 초기화하기 때문에 TransparentBlt로 그릴 때 (Begin + Index)으로 계산해야 함

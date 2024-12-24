@@ -84,7 +84,7 @@ void DevelopmentScene::Initialize()
 	}
 
 	{
-		ASpriteActor* Stage01SpriteActor = new ASpriteActor();
+		ASprite* Stage01SpriteActor = new ASprite();
 		Stage01SpriteActor->SetSprite(Stage01Sprite);
 		Stage01SpriteActor->SetLayer(ERenderLayer::Background);
 		const Vector2Int Stage01SpriteSize = Stage01Sprite->GetSize();
@@ -110,17 +110,17 @@ void DevelopmentScene::Initialize()
 		}
 	}
 
-	ResourceManager::Get()->LoadSound(L"BGM", L"Sound\\BGM.wav");
-	{
-		// 현재 방식은 하나의 리소스를 돌려쓰는 방식
-		// A에서 재생시킨 BGM이 다 끝나지 않았을 때 B가 BGM을 다시 재생하면 중간에 강제로 끊고 다시 재생
-		// FMOD 같은 라이브러리는 이를 해결하기 위해 "채널링" 개념 도입
+	//ResourceManager::Get()->LoadSound(L"BGM", L"Sound\\BGM.wav");
+	//{
+	//	// 현재 방식은 하나의 리소스를 돌려쓰는 방식
+	//	// A에서 재생시킨 BGM이 다 끝나지 않았을 때 B가 BGM을 다시 재생하면 중간에 강제로 끊고 다시 재생
+	//	// FMOD 같은 라이브러리는 이를 해결하기 위해 "채널링" 개념 도입
 
-		Sound* BGM = ResourceManager::Get()->GetSound(L"BGM");
-		BGM->Play(true);
-	}
+	//	Sound* BGM = ResourceManager::Get()->GetSound(L"BGM");
+	//	BGM->Play(true);
+	//}
 
-	ResourceManager::Get()->LoadSound(L"Attack", L"Sound\\Sword.wav");
+	//ResourceManager::Get()->LoadSound(L"Attack", L"Sound\\Sword.wav");
 
 	Super::Initialize();
 }

@@ -1,13 +1,13 @@
 #pragma once
-#include "APawn.h"
+#include "AProjectile.h"
 
-class APlayer : public APawn
+class AArrow : public AProjectile
 {
-	using Super = APawn;
+	using Super = AProjectile;
 
 public:
-	APlayer();
-	~APlayer() override;
+	AArrow();
+	~AArrow() override;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;
@@ -18,10 +18,5 @@ protected:
 	void OnTickMove(float DeltaTime) override;
 	void OnTickAttack(float DeltaTime) override;
 	void UpdateAnimation() override;
-
-protected:
-	vector<vector<Flipbook*>> Flipbooks{};
-	bool bKeyPressed = false;
-	static const Vector2Int Offset[4];
 };
 
