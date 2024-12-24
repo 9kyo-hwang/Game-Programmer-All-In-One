@@ -84,3 +84,22 @@ private:  // 세션 당 IOCPEvent를 들고 있도록
 	IOCPEvent RecvEvent{ ENetworkEvents::Recv };
 	IOCPEvent SendEvent{ ENetworkEvents::Send };  // 사실 Send도 하나만 들고 있는 것이 더 편리
 };
+
+struct PacketHeader
+{
+	uint16 Size;	// 해킹의 위험이...
+	uint16 ID;		// 프로토콜 ID(1=로그인, 2=이동요청, ...)
+};
+
+class PacketSession : public IOCPSession
+{
+public:
+	PacketSession();
+	~PacketSession() override;
+
+	TSharedPtr<PacketSession> GetPacketSession() { return static_pointer_cast<PacketSession>(shared_from_this()); }
+
+protected:
+	int32 OnRecv(BYTE* InBuffer, int32 Len) sealed;  // PacketSession 이후로는 이 함수를 사용하지 못하도록 가리기
+	virtual void OnRecvPacket(BYTE* InBuffer, int32 Len) abstract;  // 패킷 조립이 완료된 것을 넘겨줌
+};

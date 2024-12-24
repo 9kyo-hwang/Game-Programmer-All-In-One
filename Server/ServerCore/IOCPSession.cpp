@@ -326,6 +326,43 @@ void IOCPSession::HandleError(int32 ErrorCode)
 	}
 }
 
+PacketSession::PacketSession()
+{
+}
+
+PacketSession::~PacketSession()
+{
+}
+
+// [size(2byte)][id(2byte)][data...][size(2byte)][id(2byte)][data...]
+// 패킷 조립 시도
+int32 PacketSession::OnRecv(BYTE* InBuffer, int32 Len)
+{
+	int32 ProcessLen = 0;
+	while (true)
+	{
+		int32 DataSize = Len - ProcessLen;
+		if (DataSize < sizeof(PacketHeader))  // 헤더(4바이트)보다 작으면 파싱 불가능
+		{
+			break;
+		}
+
+		// ProcessLen 지점부터의 주소를 PacketHeader로 간주하겠음
+		// 이 때 주소를 PacketHeader의 포인터로 캐스팅, 그것의 값(맨 앞 *)을 꺼내옴
+		PacketHeader Header = *reinterpret_cast<PacketHeader*>(&InBuffer[ProcessLen]);
+		if (DataSize < Header.Size)  // 헤더에 기록된 패킷 크기를 파싱할 수 있어야 함
+		{
+			break;
+		}
+
+		OnRecvPacket(&InBuffer[ProcessLen], Header.Size);  // 컨텐츠단에서 처리
+
+		ProcessLen += Header.Size;
+	}
+
+	return ProcessLen;
+}
+
 HANDLE IOCPSession::GetHandle()
 {
 	return reinterpret_cast<HANDLE>(Socket);

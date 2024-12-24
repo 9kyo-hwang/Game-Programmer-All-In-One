@@ -21,5 +21,6 @@ using namespace std;
 #include "CoreGlobal.h"
 #include "SocketManager.h"
 #include "SendBuffer.h"
+#include "IOCPSession.h"
 
 #pragma comment(lib, "ws2_32.lib")

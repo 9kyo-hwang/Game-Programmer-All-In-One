@@ -12,19 +12,15 @@ void GameSession::OnDisconnected()
 	GSessionManager.Remove(static_pointer_cast<GameSession>(shared_from_this()));
 }
 
-int32 GameSession::OnRecv(BYTE* InBuffer, int32 Len)
+void GameSession::OnRecvPacket(BYTE* InBuffer, int32 Len)
 {
-	cout << "OnRecv Len = " << Len << endl;
+	PacketHeader Header = *reinterpret_cast<PacketHeader*>(InBuffer);
+	cout << "Packet [ID: " << Header.ID << ", Size: " << Header.Size << "]" << endl;
 
-	// ECHO
-	TSharedPtr<SendBuffer> Buffer = make_shared<SendBuffer>(4096);
-	Buffer->Copy(InBuffer, Len);
-	GSessionManager.Broadcast(Buffer);
-
-	return Len;
+	// TODO: 패킷 ID에 따른 분기 처리
 }
 
 void GameSession::OnSend(int32 Len)
 {
-	cout << "OnSend Len = " << Len << endl;
+	//cout << "OnSend Len = " << Len << endl;
 }

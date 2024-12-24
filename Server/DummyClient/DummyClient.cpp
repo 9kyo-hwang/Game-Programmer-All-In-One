@@ -1,4 +1,6 @@
 ﻿#include "pch.h"
+
+#include "ClientPacketHandler.h"
 #include "IOCPSession.h"
 #include "Service.h"
 #include "ThreadManager.h"
@@ -7,7 +9,7 @@
 char SendData[] = "Hello, I am Client!";
 
 // 클라이언트 입장에서는 서버 세션이 됨
-class ServerSession : public IOCPSession
+class ServerSession : public PacketSession
 {
 public:
 	~ServerSession() override
@@ -18,23 +20,13 @@ public:
 	void OnConnected() override
 	{
 		cout << "Connected To Server" << endl;
-
-		TSharedPtr<SendBuffer> Buffer = make_shared<SendBuffer>(4096);
-		Buffer->Copy(SendData, sizeof(SendData));
-		Send(Buffer);
 	}
 
-	int32 OnRecv(BYTE* InBuffer, int32 Len) override
+	void OnRecvPacket(BYTE* InBuffer, int32 Len) override
 	{
 		cout << "OnRecv Len = " << Len << endl;
-
-		this_thread::sleep_for(0.1s);
-
-		TSharedPtr<SendBuffer> Buffer = make_shared<SendBuffer>(4096);
-		Buffer->Copy(SendData, sizeof(SendData));
-		Send(Buffer);
-
-		return Len;
+		// 이제 패킷 핸들러에게 패킷을 넘겨줌
+		ClientPacketHandler::HandlePacket(InBuffer, Len);
 	}
 
 	void OnSend(int32 Len) override
