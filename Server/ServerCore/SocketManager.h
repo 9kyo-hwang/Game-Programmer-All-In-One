@@ -1,4 +1,5 @@
 #pragma once
+#include "IPAddress.h"
 
 class FSocketManager
 {
@@ -21,6 +22,7 @@ public:
 	static bool SetNoDelay(SOCKET Socket, bool bIsNoDelay);
 	static bool SetUpdateAcceptContext(SOCKET AcceptSocket, SOCKET ListenSocket);
 
+	static bool Bind(SOCKET Socket, FInternetAddr Addr);
 	static bool Bind(SOCKET Socket, SOCKADDR_IN Addr);
 	static bool Bind(SOCKET Socket, uint16 Port);
 	static bool Listen(SOCKET Socket, int32 MaxBacklog = SOMAXCONN);

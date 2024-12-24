@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SocketManager.h"
 
+// 넌블로킹-비동기 방식 함수
 LPFN_CONNECTEX FSocketManager::ConnectEx = nullptr;
 LPFN_DISCONNECTEX FSocketManager::DisconnectEx = nullptr;
 LPFN_ACCEPTEX FSocketManager::AcceptEx = nullptr;
@@ -79,6 +80,11 @@ bool FSocketManager::SetNoDelay(SOCKET Socket, bool bIsNoDelay)
 bool FSocketManager::SetUpdateAcceptContext(SOCKET AcceptSocket, SOCKET ListenSocket)
 {
 	return SetSocketOption(AcceptSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, ListenSocket);
+}
+
+bool FSocketManager::Bind(SOCKET Socket, FInternetAddr Addr)
+{
+	return SOCKET_ERROR != ::bind(Socket, reinterpret_cast<const SOCKADDR*>(&Addr.GetAddr()), sizeof(SOCKADDR_IN));
 }
 
 bool FSocketManager::Bind(SOCKET Socket, SOCKADDR_IN Addr)
