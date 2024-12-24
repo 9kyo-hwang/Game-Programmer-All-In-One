@@ -18,23 +18,28 @@ void ServerPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
 }
 
 // [Size | ID][Id, Hp, Attack]
-TSharedPtr<SendBuffer> ServerPacketHandler::Make_S_TEST(uint64 Id, uint32 Hp, uint16 Attack, vector<BufferData> Buffers)
+TSharedPtr<SendBuffer> ServerPacketHandler::Make_S_TEST(uint64 Id, uint32 Hp, uint16 Attack, vector<BuffData> Buffs)
 {
-	TSharedPtr<SendBuffer> Buffer = make_shared<SendBuffer>(4096);
-	BufferedWriter Writer(Buffer->GetData(), Buffer->Max());
-	PacketHeader* Header = Writer.Reserve<PacketHeader>();
-
-	Writer << Id << Hp << Attack;
-	Writer << static_cast<uint16>(Buffers.size());
-	for (BufferData& Data : Buffers)
+	Protocol::S_TEST Packet;
+	Packet.set_id(10);
+	Packet.set_hp(100);
+	Packet.set_attack(10);
 	{
-		Writer << Data.BufferID << Data.RemainTime;
+		Protocol::BuffData* Data = Packet.add_buffs();
+		Data->set_buffid(100);
+		Data->set_remaintime(1.2f);
+		{
+			Data->add_victims(10);
+		}
+	}
+	{
+		Protocol::BuffData* Data = Packet.add_buffs();
+		Data->set_buffid(200);
+		Data->set_remaintime(2.2f);
+		{
+			Data->add_victims(20);
+		}
 	}
 
-	Header->Size = Writer.GetSize();
-	Header->ID = S_TEST;  // 1;
-
-	Buffer->Close(Writer.GetSize());
-
-	return Buffer;
+	return MakeSendBuffer(Packet, S_TEST);
 }
