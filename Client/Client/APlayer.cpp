@@ -9,61 +9,65 @@ const Vector2Int APlayer::Offset[]{ {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
 
 APlayer::APlayer()
 {
-	Flipbooks.resize(
-		static_cast<size_t>(EObjectStates::END),
-		vector<Flipbook*>(static_cast<size_t>(EMovementDirection::END))
-	);
+	IdleFlipbooks[static_cast<int32>(EMovementDirection::Up)] = ResourceManager::Get()->GetFlipbook(L"FB_IdleUp");
+	IdleFlipbooks[static_cast<int32>(EMovementDirection::Down)] = ResourceManager::Get()->GetFlipbook(L"FB_IdleDown");
+	IdleFlipbooks[static_cast<int32>(EMovementDirection::Left)] = ResourceManager::Get()->GetFlipbook(L"FB_IdleLeft");
+	IdleFlipbooks[static_cast<int32>(EMovementDirection::Right)] = ResourceManager::Get()->GetFlipbook(L"FB_IdleRight");
 
-	Flipbooks[static_cast<size_t>(EObjectStates::Idle)][static_cast<size_t>(EMovementDirection::Up)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_IdleUp");
-	Flipbooks[static_cast<size_t>(EObjectStates::Idle)][static_cast<size_t>(EMovementDirection::Down)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_IdleDown");
-	Flipbooks[static_cast<size_t>(EObjectStates::Idle)][static_cast<size_t>(EMovementDirection::Left)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_IdleLeft");
-	Flipbooks[static_cast<size_t>(EObjectStates::Idle)][static_cast<size_t>(EMovementDirection::Right)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_IdleRight");
+	MoveFlipbooks[static_cast<int32>(EMovementDirection::Up)]= ResourceManager::Get()->GetFlipbook(L"FB_MoveUp");
+	MoveFlipbooks[static_cast<int32>(EMovementDirection::Down)]= ResourceManager::Get()->GetFlipbook(L"FB_MoveDown");
+	MoveFlipbooks[static_cast<int32>(EMovementDirection::Left)]= ResourceManager::Get()->GetFlipbook(L"FB_MoveLeft");
+	MoveFlipbooks[static_cast<int32>(EMovementDirection::Right)]= ResourceManager::Get()->GetFlipbook(L"FB_MoveRight");
+	 
+	SwordFlipbooks[static_cast<int32>(EMovementDirection::Up)]= ResourceManager::Get()->GetFlipbook(L"FB_AttackUp");
+	SwordFlipbooks[static_cast<int32>(EMovementDirection::Down)]= ResourceManager::Get()->GetFlipbook(L"FB_AttackDown");
+	SwordFlipbooks[static_cast<int32>(EMovementDirection::Left)]= ResourceManager::Get()->GetFlipbook(L"FB_AttackLeft");
+	SwordFlipbooks[static_cast<int32>(EMovementDirection::Right)]= ResourceManager::Get()->GetFlipbook(L"FB_AttackRight");
 
-	Flipbooks[static_cast<size_t>(EObjectStates::Move)][static_cast<size_t>(EMovementDirection::Up)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_MoveUp");
-	Flipbooks[static_cast<size_t>(EObjectStates::Move)][static_cast<size_t>(EMovementDirection::Down)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_MoveDown");
-	Flipbooks[static_cast<size_t>(EObjectStates::Move)][static_cast<size_t>(EMovementDirection::Left)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_MoveLeft");
-	Flipbooks[static_cast<size_t>(EObjectStates::Move)][static_cast<size_t>(EMovementDirection::Right)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_MoveRight");
+	BowFlipbooks[static_cast<int32>(EMovementDirection::Up)] = ResourceManager::Get()->GetFlipbook(L"FB_BowUp");
+	BowFlipbooks[static_cast<int32>(EMovementDirection::Down)] = ResourceManager::Get()->GetFlipbook(L"FB_BowDown");
+	BowFlipbooks[static_cast<int32>(EMovementDirection::Left)] = ResourceManager::Get()->GetFlipbook(L"FB_BowLeft");
+	BowFlipbooks[static_cast<int32>(EMovementDirection::Right)] = ResourceManager::Get()->GetFlipbook(L"FB_BowRight");
 
-	Flipbooks[static_cast<size_t>(EObjectStates::Attack)][static_cast<size_t>(EMovementDirection::Up)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_AttackUp");
-	Flipbooks[static_cast<size_t>(EObjectStates::Attack)][static_cast<size_t>(EMovementDirection::Down)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_AttackDown");
-	Flipbooks[static_cast<size_t>(EObjectStates::Attack)][static_cast<size_t>(EMovementDirection::Left)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_AttackLeft");
-	Flipbooks[static_cast<size_t>(EObjectStates::Attack)][static_cast<size_t>(EMovementDirection::Right)]
-		= ResourceManager::Get()->GetFlipbook(L"FB_AttackRight");
+	StaffFlipbooks[static_cast<int32>(EMovementDirection::Up)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffUp");
+	StaffFlipbooks[static_cast<int32>(EMovementDirection::Down)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffDown");
+	StaffFlipbooks[static_cast<int32>(EMovementDirection::Left)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffLeft");
+	StaffFlipbooks[static_cast<int32>(EMovementDirection::Right)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffRight");
 
 	AddComponent(new CameraComponent());
 }
 
 APlayer::~APlayer()
 {
-	for (vector<Flipbook*> FlipbooksByState : Flipbooks)
+	for (Flipbook* Idle : IdleFlipbooks)
 	{
-		for (Flipbook* FlipbookByDirection : FlipbooksByState)
-		{
-			SAFE_DELETE(FlipbookByDirection);
-		}
-
-		FlipbooksByState.clear();
+		SAFE_DELETE(Idle);
 	}
 
-	Flipbooks.clear();
+	for (Flipbook* Move : MoveFlipbooks)
+	{
+		SAFE_DELETE(Move);
+	}
+
+	for (Flipbook* Sword : SwordFlipbooks)
+	{
+		SAFE_DELETE(Sword);
+	}
+
+	for (Flipbook* Bow : BowFlipbooks)
+	{
+		SAFE_DELETE(Bow);
+	}
+
+	for (Flipbook* Staff : StaffFlipbooks)
+	{
+		SAFE_DELETE(Staff);
+	}
 }
 
 void APlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	MoveTo({ 5, 5 }, true);
 }
 
 void APlayer::Tick(float DeltaTime)
@@ -82,18 +86,42 @@ void APlayer::OnTickIdle(float DeltaTime)
 	if (InputManager::Get()->GetButton(EKeyCode::W))
 	{
 		RotateTo(EMovementDirection::Up);
+		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
+		if (CanMoveTo(Dest))
+		{
+			MoveTo(Dest);
+			TransitionTo(EObjectStates::Move);
+		}
 	}
 	else if (InputManager::Get()->GetButton(EKeyCode::S))
 	{
 		RotateTo(EMovementDirection::Down);
+		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
+		if (CanMoveTo(Dest))
+		{
+			MoveTo(Dest);
+			TransitionTo(EObjectStates::Move);
+		}
 	}
 	else if (InputManager::Get()->GetButton(EKeyCode::A))
 	{
 		RotateTo(EMovementDirection::Left);
+		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
+		if (CanMoveTo(Dest))
+		{
+			MoveTo(Dest);
+			TransitionTo(EObjectStates::Move);
+		}
 	}
 	else if (InputManager::Get()->GetButton(EKeyCode::D))
 	{
 		RotateTo(EMovementDirection::Right);
+		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
+		if (CanMoveTo(Dest))
+		{
+			MoveTo(Dest);
+			TransitionTo(EObjectStates::Move);
+		}
 	}
 	else
 	{
@@ -102,15 +130,24 @@ void APlayer::OnTickIdle(float DeltaTime)
 		{
 			UpdateAnimation();
 		}
-
-		return;
 	}
 
-	Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
-	if (CanMoveTo(Dest))
+	if (InputManager::Get()->GetButtonDown(EKeyCode::Alpha1))
 	{
-		MoveTo(Dest);
-		TransitionTo(EObjectStates::Move);
+		ChangeWeapon(EWeapons::Sword);
+	}
+	else if (InputManager::Get()->GetButtonDown(EKeyCode::Alpha2))
+	{
+		ChangeWeapon(EWeapons::Bow);
+	}
+	else if (InputManager::Get()->GetButtonDown(EKeyCode::Alpha3))
+	{
+		ChangeWeapon(EWeapons::Staff);
+	}
+
+	if (InputManager::Get()->GetButton(EKeyCode::Space))
+	{
+		TransitionTo(EObjectStates::Attack);
 	}
 }
 
@@ -143,7 +180,18 @@ void APlayer::OnTickMove(float DeltaTime)
 
 void APlayer::OnTickAttack(float DeltaTime)
 {
+	// 애니메이션 재생이 끝났는 지 확인 후 State Change
+	// 서버에서는 재생 시간을 기반으로 끝을 판별해야 하나, 클라이언트에서는 이벤트 키를 기반으로 해도 OK(타이밍에 맞게 이펙트 재생 가능)
+	if (!CurrentFlipbook)
+	{
+		return;
+	}
 
+	if (HasAnimationFinished())
+	{
+		// TODO: 피격 판정
+		TransitionTo(EObjectStates::Idle);
+	}
 }
 
 void APlayer::UpdateAnimation()
@@ -152,14 +200,25 @@ void APlayer::UpdateAnimation()
 	{
 	case EObjectStates::Idle:
 		bKeyPressed
-			? SetFlipbook(Flipbooks[static_cast<size_t>(EObjectStates::Move)][static_cast<size_t>(CurrentDirection)])
-			: SetFlipbook(Flipbooks[static_cast<size_t>(EObjectStates::Idle)][static_cast<size_t>(CurrentDirection)]);
+			? ChangeFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)])
+			: ChangeFlipbook(IdleFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		break;
 	case EObjectStates::Move:
-		SetFlipbook(Flipbooks[static_cast<size_t>(EObjectStates::Move)][static_cast<size_t>(CurrentDirection)]);
+		ChangeFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		break;
 	case EObjectStates::Attack:
-		SetFlipbook(Flipbooks[static_cast<size_t>(EObjectStates::Attack)][static_cast<size_t>(CurrentDirection)]);
+		if (CurrentWeapon == EWeapons::Sword)
+		{
+			ChangeFlipbook(SwordFlipbooks[static_cast<size_t>(CurrentDirection)]);
+		}
+		else if (CurrentWeapon == EWeapons::Bow)
+		{
+			ChangeFlipbook(BowFlipbooks[static_cast<size_t>(CurrentDirection)]);
+		}
+		else if (CurrentWeapon == EWeapons::Staff)
+		{
+			ChangeFlipbook(StaffFlipbooks[static_cast<size_t>(CurrentDirection)]);
+		}
 		break;
 	}
 }

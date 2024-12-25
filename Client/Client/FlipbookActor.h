@@ -16,11 +16,13 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
-	void SetFlipbook(Flipbook* NewFlipbook);
+	void ChangeFlipbook(Flipbook* NewFlipbook);
 	void Reset();
 
+	bool HasAnimationFinished() const;
+
 protected:
-	Flipbook* MyFlipbook = nullptr;
+	Flipbook* CurrentFlipbook = nullptr;
 	int32 Index = 0;
 	float ElapsedTime = 0.f;
 };

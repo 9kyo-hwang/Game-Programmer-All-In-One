@@ -65,8 +65,12 @@ void Tilemap::SetTileSize(int32 NewTileSize)
 }
 
 
-Tile* Tilemap::GetTileAt(Vector2Int Position)
+Tile* Tilemap::GetTileAt(Vector2Int Cell)
 {
-	assert(0 <= Position.X && Position.X < MapSize.X && 0 <= Position.Y && Position.Y < MapSize.Y);
-	return &Tiles[Position.Y][Position.X];
+	if (0 <= Cell.X && Cell.X < MapSize.X && 0 <= Cell.Y && Cell.Y < MapSize.Y)
+	{
+		return &Tiles[Cell.Y][Cell.X];
+	}
+
+	return nullptr;
 }

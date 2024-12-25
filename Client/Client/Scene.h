@@ -17,6 +17,8 @@ public:
 	void AddActor(AActor* NewActor);
 	void RemoveActor(AActor* TargetActor);
 
+	class APawn* GetPawnAt(Vector2Int Cell) const;
+
 protected:
 	vector<AActor*> Actors[static_cast<int32>(ERenderLayer::End)];
 	vector<UI*> UIs;

@@ -25,6 +25,7 @@ public:
 	bool HasReachedDest() const;
 	bool CanMoveTo(Vector2Int Dest);
 	void MoveTo(Vector2Int Dest, bool bTeleport = false);
+	Vector2Int GetCellPosition() const { return CellPosition; }
 
 protected:
 	Vector2Int CellPosition;  // float position to int position

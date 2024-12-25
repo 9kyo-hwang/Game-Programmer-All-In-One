@@ -15,6 +15,17 @@ enum class EKeyCode : uint8
 	RightArrow = VK_RIGHT,
 	Space = VK_SPACE,
 
+	Alpha0 = '0',
+	Alpha1 = '1',
+	Alpha2 = '2',
+	Alpha3 = '3',
+	Alpha4 = '4',
+	Alpha5 = '5',
+	Alpha6 = '6',
+	Alpha7 = '7',
+	Alpha8 = '8',
+	Alpha9 = '9',
+
 	W = 'W',
 	A = 'A',
 	S = 'S',

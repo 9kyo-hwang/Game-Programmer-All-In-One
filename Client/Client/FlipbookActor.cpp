@@ -22,12 +22,12 @@ void AFlipbook::Tick(float DeltaTime)
 {
 	Super::Tick();
 
-	if (!MyFlipbook)
+	if (!CurrentFlipbook)
 	{
 		return;
 	}
 
-	const FlipbookInfo& Info = MyFlipbook->GetInfo();
+	const FlipbookInfo& Info = CurrentFlipbook->GetInfo();
 	if (!Info.bLoop && Index == Info.End)
 	{
 		return;
@@ -48,13 +48,13 @@ void AFlipbook::Render(HDC DeviceContextHandle)
 {
 	Super::Render(DeviceContextHandle);
 
-	if (!MyFlipbook)
+	if (!CurrentFlipbook)
 	{
 		return;
 	}
 
 	Vector2 Camera = SceneManager::Get()->GetCameraPosition();
-	const FlipbookInfo& Info = MyFlipbook->GetInfo();
+	const FlipbookInfo& Info = CurrentFlipbook->GetInfo();
 
 	::TransparentBlt(DeviceContextHandle, 
 		CurrentPosition.X - Info.Size.X / 2 - (Camera.X - GWinSizeX / 2), CurrentPosition.Y - Info.Size.Y / 2 - (Camera.Y - GWinSizeY / 2),  // 보통 카메라 영역은 중심을 좌표로 잡으므로
@@ -65,14 +65,14 @@ void AFlipbook::Render(HDC DeviceContextHandle)
 		Info.MyTexture->GetTransparent());
 }
 
-void AFlipbook::SetFlipbook(Flipbook* NewFlipbook)
+void AFlipbook::ChangeFlipbook(Flipbook* NewFlipbook)
 {
-	if (NewFlipbook && MyFlipbook == NewFlipbook)
+	if (NewFlipbook && CurrentFlipbook == NewFlipbook)
 	{
 		return;
 	}
 
-	MyFlipbook = NewFlipbook;
+	CurrentFlipbook = NewFlipbook;
 	Reset();
 }
 
@@ -80,4 +80,20 @@ void AFlipbook::Reset()
 {
 	ElapsedTime = 0.0f;
 	Index = 0;  // 인덱스를 0으로 초기화하기 때문에 TransparentBlt로 그릴 때 (Begin + Index)으로 계산해야 함
+}
+
+bool AFlipbook::HasAnimationFinished() const
+{
+	if (!CurrentFlipbook)
+	{
+		return true;
+	}
+
+	const FlipbookInfo& Info = CurrentFlipbook->GetInfo();
+	if (!Info.bLoop && Index == Info.End)
+	{
+		return true;
+	}
+
+	return false;
 }

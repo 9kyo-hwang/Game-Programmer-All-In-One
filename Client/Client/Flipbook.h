@@ -11,7 +11,7 @@ struct FlipbookInfo
 	int32 End;
 	int32 Line;
 	float Duration = 1.0f;
-	uint8 bLoop = true;
+	bool bLoop = true;
 };
 
 // Unity의 Animation에 대응

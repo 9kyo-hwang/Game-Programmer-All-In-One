@@ -13,15 +13,25 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
-protected:
+private:
 	void OnTickIdle(float DeltaTime) override;
 	void OnTickMove(float DeltaTime) override;
 	void OnTickAttack(float DeltaTime) override;
 	void UpdateAnimation() override;
 
-protected:
-	vector<vector<Flipbook*>> Flipbooks{};
-	bool bKeyPressed = false;
+	EWeapons GetCurrentWeapon() const { return CurrentWeapon; }
+	void ChangeWeapon(EWeapons NewWeapon) { CurrentWeapon = NewWeapon; }
+
+private:
 	static const Vector2Int Offset[4];
+
+	Flipbook* IdleFlipbooks[4]{};
+	Flipbook* MoveFlipbooks[4]{};
+	Flipbook* SwordFlipbooks[4]{};
+	Flipbook* BowFlipbooks[4]{};
+	Flipbook* StaffFlipbooks[4]{};
+
+	bool bKeyPressed = false;
+	EWeapons CurrentWeapon = EWeapons::Sword;
 };
 

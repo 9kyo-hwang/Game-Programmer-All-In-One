@@ -21,5 +21,6 @@ protected:
 
 protected:
 	// TODO
+	Flipbook* MoveFlipbooks[4]{};
 };
 

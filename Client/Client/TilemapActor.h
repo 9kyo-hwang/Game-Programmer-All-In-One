@@ -3,13 +3,13 @@
 
 class Tilemap;
 
-class TilemapActor : public AActor
+class ATilemap : public AActor
 {
 	using Super = AActor;
 
 public:
-	TilemapActor();
-	~TilemapActor() override;
+	ATilemap();
+	~ATilemap() override;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;
@@ -20,10 +20,10 @@ public:
 	Tilemap* GetTilemap() const { return MyTilemap; }
 	void SetTilemap(Tilemap* NewTilemap) { MyTilemap = NewTilemap; }
 
-	void SetShowDebug(bool bOption) { bShowDebug = bOption; }
+	void SetShowDebug(bool bShow) { bShowDebug = bShow; }
 
 protected:
 	Tilemap* MyTilemap = nullptr;
-	uint8 bShowDebug = false;
+	bool bShowDebug = false;
 };
 

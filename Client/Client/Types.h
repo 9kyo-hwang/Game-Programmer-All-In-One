@@ -131,6 +131,16 @@ struct Vector2Int
 		Y -= Other.Y;
 	}
 
+	bool operator==(const Vector2Int& Other) const
+	{
+		return X == Other.X && Y == Other.Y;
+	}
+
+	bool operator!=(const Vector2Int& Other) const
+	{
+		return !(*this == Other);
+	}
+
 	int32 GetMagnitudeSquared() const
 	{
 		return X * X + Y * Y;

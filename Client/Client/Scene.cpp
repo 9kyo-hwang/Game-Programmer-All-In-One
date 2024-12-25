@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Scene.h"
 #include "AActor.h"
+#include "APawn.h"
 #include "CollisionManager.h"
 #include "UI.h"
 
@@ -40,6 +41,13 @@ void Scene::Update(float DeltaTime)
 
 void Scene::Render(HDC DeviceContextHandle)
 {
+	// Y축이 작은 쪽을 먼저 그리자
+	ranges::sort(Actors[static_cast<int32>(ERenderLayer::Object)], 
+		[=](const AActor* Lhs, const AActor* Rhs)
+		{
+			return Lhs->GetCurrentPosition().Y < Rhs->GetCurrentPosition().Y;
+		});
+
 	for (const vector<AActor*>& ActorsOnLayer : Actors)
 	{
 		for (AActor* Actor : ActorsOnLayer)
@@ -70,4 +78,20 @@ void Scene::RemoveActor(AActor* TargetActor)
 	{
 		std::erase(Actors[static_cast<int32>(TargetActor->GetLayer())], TargetActor);
 	}
+}
+
+APawn* Scene::GetPawnAt(Vector2Int Cell) const
+{
+	for (AActor* Actor : Actors[static_cast<int32>(ERenderLayer::Object)])
+	{
+		if (APawn* Pawn = dynamic_cast<APawn*>(Actor))
+		{
+			if (Pawn->GetCellPosition() == Cell)
+			{
+				return Pawn;
+			}
+		}
+	}
+
+	return nullptr;
 }
