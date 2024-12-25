@@ -23,7 +23,8 @@ void Scene::Initialize()
 
 void Scene::Update(float DeltaTime)
 {
-	for (const vector<AActor*>& ActorsOnLayer : Actors)
+	// Effect같은 것들은 수시로 생성되고 지워지기 때문에 참조로 돌면 큰일남
+	for (const vector<AActor*> ActorsOnLayer : Actors)
 	{
 		for (AActor* Actor : ActorsOnLayer)
 		{

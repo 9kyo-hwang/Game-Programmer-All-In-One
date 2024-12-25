@@ -23,8 +23,6 @@ private:
 	void ChangeWeapon(EWeapons NewWeapon) { CurrentWeapon = NewWeapon; }
 
 private:
-	static const Vector2Int Offset[4];
-
 	Flipbook* IdleFlipbooks[4]{};
 	Flipbook* MoveFlipbooks[4]{};
 	Flipbook* SwordFlipbooks[4]{};

@@ -1,8 +1,13 @@
 #include "pch.h"
 #include "AEffect.h"
 
+#include "ResourceManager.h"
+#include "Scene.h"
+#include "SceneManager.h"
+
 AEffect::AEffect()
 {
+	SetLayer(ERenderLayer::Effect);
 }
 
 AEffect::~AEffect()
@@ -12,11 +17,18 @@ AEffect::~AEffect()
 void AEffect::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UpdateAnimation();
 }
 
 void AEffect::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (HasAnimationFinished())
+	{
+		SceneManager::Get()->GetActiveScene()->RemoveActor(this);
+	}
 }
 
 void AEffect::Render(HDC DeviceContextHandle)
@@ -26,5 +38,5 @@ void AEffect::Render(HDC DeviceContextHandle)
 
 void AEffect::UpdateAnimation()
 {
-	Super::UpdateAnimation();
+	SetFlipbook(ResourceManager::Get()->GetFlipbook(L"FB_Hit"));
 }

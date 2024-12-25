@@ -68,11 +68,32 @@ void DevelopmentScene::Initialize()
 void DevelopmentScene::Update(float DeltaTime)
 {
 	Super::Update();
+
+	SpawnMonster();
 }
 
 void DevelopmentScene::Render(HDC DeviceContextHandle)
 {
 	Super::Render(DeviceContextHandle);
+}
+
+// Monster Count를 관리하기 위해 Add/Remove를 virtual - override
+void DevelopmentScene::AddActor(AActor* NewActor)
+{
+	Super::AddActor(NewActor);
+	if (AMonster* Monster = dynamic_cast<AMonster*>(NewActor))
+	{
+		CurrentMonsterCount++;
+	}
+}
+
+void DevelopmentScene::RemoveActor(AActor* TargetActor)
+{
+	Super::RemoveActor(TargetActor);
+	if (AMonster* Monster = dynamic_cast<AMonster*>(TargetActor))
+	{
+		CurrentMonsterCount--;
+	}
 }
 
 bool DevelopmentScene::CanMoveTo(Vector2Int Dest) const
@@ -119,6 +140,36 @@ Vector2 DevelopmentScene::CellToWorld(Vector2Int Cell) const
 		TilemapPosition.X + Cell.X * NumTile + NumTile / 2,
 		TilemapPosition.Y + Cell.Y * NumTile + NumTile / 2
 	};
+}
+
+bool DevelopmentScene::GetRandomEmptyCell(Vector2Int& OutCell) const
+{
+	if (!ActiveTilemapActor)
+	{
+		return false;
+	}
+
+	Tilemap* ActiveTilemap = ActiveTilemapActor->GetTilemap();
+	if (!ActiveTilemap)
+	{
+		return false;
+	}
+
+	Vector2Int MapSize = ActiveTilemap->GetMapSize();
+	while (true)
+	{
+		int32 X = rand() % MapSize.X;
+		int32 Y = rand() % MapSize.Y;
+
+		// 모든 칸이 이동 불가라면...? -> loop 횟수에 제한을 두는 것도...
+		if (CanMoveTo({X, Y}))
+		{
+			OutCell = { X, Y };
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void DevelopmentScene::LoadMap(Texture* Stage01Texture)
@@ -254,26 +305,24 @@ void DevelopmentScene::LoadEffect(Texture* Hit)
 	assert(nullptr != Hit);
 	{
 		Flipbook* FB_Hit = ResourceManager::Get()->CreateFlipbook(L"FB_Hit");
-		FB_Hit->SetInfo({ Hit, L"FB_Hit", {50, 47}, 0, 50, 0, 0.5f, false });
+		FB_Hit->SetInfo({ Hit, L"FB_Hit", {50, 47}, 0, 5, 0, 0.5f, false });
 	}
 }
 
 void DevelopmentScene::LoadTilemap()
 {
+	ATilemap* NewTilemapActor = new ATilemap();
+	AddActor(NewTilemapActor);
+	ActiveTilemapActor = NewTilemapActor;
 	{
-		ATilemap* NewTilemapActor = new ATilemap();
-		AddActor(NewTilemapActor);
-		ActiveTilemapActor = NewTilemapActor;
-		{
-			Tilemap* Tilemap01 = ResourceManager::Get()->CreateTilemap(L"Tilemap_01");
-			Tilemap01->SetMapSize({ 63, 43 });
-			Tilemap01->SetTileSize(48);
+		Tilemap* Tilemap01 = ResourceManager::Get()->CreateTilemap(L"Tilemap_01");
+		Tilemap01->SetMapSize({ 63, 43 });
+		Tilemap01->SetTileSize(48);
 
-			ResourceManager::Get()->LoadTilemap(L"Tilemap_01", L"Tilemap\\Tilemap01.txt");
+		ResourceManager::Get()->LoadTilemap(L"Tilemap_01", L"Tilemap\\Tilemap01.txt");
 
-			ActiveTilemapActor->SetTilemap(Tilemap01);
-			ActiveTilemapActor->SetShowDebug(false);
-		}
+		ActiveTilemapActor->SetTilemap(Tilemap01);
+		ActiveTilemapActor->SetShowDebug(false);
 	}
 }
 
@@ -294,5 +343,14 @@ void DevelopmentScene::LoadSound(Sound* BGM, Sound* SwordFx)
 	// FMOD 같은 라이브러리는 이를 해결하기 위해 "채널링" 개념 도입
 
 	//BGM->Play(true);
+}
+
+// 일종의 몬스터 SpawningPool
+void DevelopmentScene::SpawnMonster()
+{
+	if (CurrentMonsterCount < DesiredMonsterCount)
+	{
+		NewObject<AMonster>();
+	}
 }
 

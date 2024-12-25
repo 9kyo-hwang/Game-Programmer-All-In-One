@@ -16,7 +16,7 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
-	void ChangeFlipbook(Flipbook* NewFlipbook);
+	void SetFlipbook(Flipbook* NewFlipbook);
 	void Reset();
 
 	bool HasAnimationFinished() const;

@@ -3,6 +3,8 @@
 #include "DevelopmentScene.h"
 #include "SceneManager.h"
 
+const Vector2Int UObject::Offset[]{ {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+
 UObject::UObject()
 {
 }
@@ -88,5 +90,22 @@ void UObject::MoveTo(Vector2Int Dest, bool bTeleport)
 		{
 			CurrentPosition = DestinationPosition;
 		}
+	}
+}
+
+Vector2Int UObject::GetFrontCell() const
+{
+	switch (CurrentDirection)
+	{
+	case EMovementDirection::Up:
+		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Up)];
+	case EMovementDirection::Down:
+		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Down)];
+	case EMovementDirection::Left:
+		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Left)];
+	case EMovementDirection::Right:
+		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Right)];
+	default:
+		return CellPosition;
 	}
 }

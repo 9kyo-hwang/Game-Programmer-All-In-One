@@ -13,6 +13,8 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
+	virtual void TakeDamage(APawn* Instigator);
+
 protected:
 	void OnTickIdle(float DeltaTime) override {}
 	void OnTickMove(float DeltaTime) override {}

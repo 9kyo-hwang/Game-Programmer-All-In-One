@@ -65,7 +65,7 @@ void AFlipbook::Render(HDC DeviceContextHandle)
 		Info.MyTexture->GetTransparent());
 }
 
-void AFlipbook::ChangeFlipbook(Flipbook* NewFlipbook)
+void AFlipbook::SetFlipbook(Flipbook* NewFlipbook)
 {
 	if (NewFlipbook && CurrentFlipbook == NewFlipbook)
 	{

@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "APlayer.h"
+
+#include "AEffect.h"
 #include "CameraComponent.h"
+#include "DevelopmentScene.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "Flipbook.h"
-
-const Vector2Int APlayer::Offset[]{ {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+#include "SceneManager.h"
 
 APlayer::APlayer()
 {
@@ -35,6 +37,11 @@ APlayer::APlayer()
 	StaffFlipbooks[static_cast<int32>(EMovementDirection::Right)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffRight");
 
 	AddComponent(new CameraComponent());
+
+	AttributeSet.Hp = 100;
+	AttributeSet.MaxHp = 100;
+	AttributeSet.Attack = 30;
+	AttributeSet.Defence = 5;
 }
 
 APlayer::~APlayer()
@@ -86,40 +93,40 @@ void APlayer::OnTickIdle(float DeltaTime)
 	if (InputManager::Get()->GetButton(EKeyCode::W))
 	{
 		RotateTo(EMovementDirection::Up);
-		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
-		if (CanMoveTo(Dest))
+		Vector2Int FrontCell = GetFrontCell();
+		if (CanMoveTo(FrontCell))
 		{
-			MoveTo(Dest);
+			MoveTo(FrontCell);
 			TransitionTo(EObjectStates::Move);
 		}
 	}
 	else if (InputManager::Get()->GetButton(EKeyCode::S))
 	{
 		RotateTo(EMovementDirection::Down);
-		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
-		if (CanMoveTo(Dest))
+		Vector2Int FrontCell = GetFrontCell();
+		if (CanMoveTo(FrontCell))
 		{
-			MoveTo(Dest);
+			MoveTo(FrontCell);
 			TransitionTo(EObjectStates::Move);
 		}
 	}
 	else if (InputManager::Get()->GetButton(EKeyCode::A))
 	{
 		RotateTo(EMovementDirection::Left);
-		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
-		if (CanMoveTo(Dest))
+		Vector2Int FrontCell = GetFrontCell();
+		if (CanMoveTo(FrontCell))
 		{
-			MoveTo(Dest);
+			MoveTo(FrontCell);
 			TransitionTo(EObjectStates::Move);
 		}
 	}
 	else if (InputManager::Get()->GetButton(EKeyCode::D))
 	{
 		RotateTo(EMovementDirection::Right);
-		Vector2Int Dest = CellPosition + Offset[static_cast<int32>(CurrentDirection)];
-		if (CanMoveTo(Dest))
+		Vector2Int FrontCell = GetFrontCell();
+		if (CanMoveTo(FrontCell))
 		{
-			MoveTo(Dest);
+			MoveTo(FrontCell);
 			TransitionTo(EObjectStates::Move);
 		}
 	}
@@ -190,6 +197,25 @@ void APlayer::OnTickAttack(float DeltaTime)
 	if (HasAnimationFinished())
 	{
 		// TODO: 피격 판정
+		if (DevelopmentScene* Scene = dynamic_cast<DevelopmentScene*>(SceneManager::Get()->GetActiveScene()))
+		{
+			switch (CurrentWeapon)
+			{
+				// 상대가 진짜 적인지 판별하는 로직 후 공격 수행
+			case EWeapons::Sword:
+				if (APawn* Pawn = Scene->GetPawnAt(GetFrontCell()))
+				{
+					Scene->NewObject<AEffect>(GetFrontCell());
+					Pawn->TakeDamage(this);  // 피격 처리는 피해자가 처리하는 것이 합리적
+				}
+				break;
+			case EWeapons::Bow:
+				break;
+			case EWeapons::Staff:
+				break;
+			}
+		}
+
 		TransitionTo(EObjectStates::Idle);
 	}
 }
@@ -200,24 +226,24 @@ void APlayer::UpdateAnimation()
 	{
 	case EObjectStates::Idle:
 		bKeyPressed
-			? ChangeFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)])
-			: ChangeFlipbook(IdleFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			? SetFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)])
+			: SetFlipbook(IdleFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		break;
 	case EObjectStates::Move:
-		ChangeFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)]);
+		SetFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		break;
 	case EObjectStates::Attack:
 		if (CurrentWeapon == EWeapons::Sword)
 		{
-			ChangeFlipbook(SwordFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			SetFlipbook(SwordFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		}
 		else if (CurrentWeapon == EWeapons::Bow)
 		{
-			ChangeFlipbook(BowFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			SetFlipbook(BowFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		}
 		else if (CurrentWeapon == EWeapons::Staff)
 		{
-			ChangeFlipbook(StaffFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			SetFlipbook(StaffFlipbooks[static_cast<size_t>(CurrentDirection)]);
 		}
 		break;
 	}

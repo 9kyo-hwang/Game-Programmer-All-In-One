@@ -26,8 +26,11 @@ public:
 	bool CanMoveTo(Vector2Int Dest);
 	void MoveTo(Vector2Int Dest, bool bTeleport = false);
 	Vector2Int GetCellPosition() const { return CellPosition; }
+	Vector2Int GetFrontCell() const;
 
 protected:
+	static const Vector2Int Offset[4];
+
 	Vector2Int CellPosition;  // float position to int position
 	EObjectStates CurrentState = EObjectStates::Idle;
 	EMovementDirection CurrentDirection = EMovementDirection::Down;
