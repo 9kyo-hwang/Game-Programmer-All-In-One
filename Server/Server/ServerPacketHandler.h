@@ -2,7 +2,8 @@
 
 enum
 {
-	S_TEST = 1
+	S_TEST = 1,
+	S_EnterGame = 2
 };
 
 struct BuffData
@@ -17,6 +18,7 @@ class ServerPacketHandler
 public:
 	static void HandlePacket(BYTE* Buffer, int32 Len);
 	static TSharedPtr<SendBuffer> Make_S_TEST(uint64 Id, uint32 Hp, uint16 Attack, vector<BuffData> Buffs);
+	static TSharedPtr<SendBuffer> Make_S_EnterGame();
 
 	template<typename T>
 	static TSharedPtr<SendBuffer> MakeSendBuffer(T& Packet, uint16 PacketId);

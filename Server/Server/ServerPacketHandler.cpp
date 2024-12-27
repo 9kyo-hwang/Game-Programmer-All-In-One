@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ServerPacketHandler.h"
 #include "BufferReader.h"
-#include "BufferWriter.h"
 #include "IOCPSession.h"
 
 void ServerPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
@@ -10,6 +9,7 @@ void ServerPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
 	PacketHeader Header;
 	Reader.Peek(&Header);
 
+	// Client로부터 받은 패킷이 어떤 것이냐에 따라 분기 처리
 	switch (Header.ID)
 	{
 	default:
@@ -42,4 +42,13 @@ TSharedPtr<SendBuffer> ServerPacketHandler::Make_S_TEST(uint64 Id, uint32 Hp, ui
 	}
 
 	return MakeSendBuffer(Packet, S_TEST);
+}
+
+TSharedPtr<SendBuffer> ServerPacketHandler::Make_S_EnterGame()
+{
+	Protocol::S_EnterGame Packet;
+	Packet.set_success(true);
+	Packet.set_accountid(0);  // from DB
+
+	return MakeSendBuffer(Packet, S_EnterGame);
 }

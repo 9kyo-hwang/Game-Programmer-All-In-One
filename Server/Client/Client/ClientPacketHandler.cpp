@@ -14,6 +14,8 @@ void ClientPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
 	case S_TEST:
 		Handle_S_TEST(Buffer, Len);
 		break;
+	case S_EnterGame:
+		Handle_S_EnterGame(Buffer, Len);
 	default:
 		break;
 	}
@@ -63,4 +65,17 @@ void ClientPacketHandler::Handle_S_TEST(BYTE* Buffer, int32 Len)
 	}
 
 	// TODO: GameLogic
+}
+
+void ClientPacketHandler::Handle_S_EnterGame(BYTE* Buffer, int32 Len)
+{
+	// 반복되는 파트를 따로 떼버리거나 툴로 만들면 참 좋을텐데...
+	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
+	uint16 Size = Header->Size;
+
+	Protocol::S_EnterGame Packet;
+	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
+
+	bool bSuccess = Packet.success();
+	uint64 AccountId = Packet.accountid();
 }

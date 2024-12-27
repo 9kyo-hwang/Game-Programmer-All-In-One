@@ -19,6 +19,7 @@ public:
 	{
 		//cout << "OnRecv Len = " << Len << endl;
 		// 이제 패킷 핸들러에게 패킷을 넘겨줌
+		// 서버가 보낸 패킷은 이곳으로 들어오게 됨
 		ClientPacketHandler::HandlePacket(InBuffer, Len);
 	}
 

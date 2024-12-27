@@ -36,22 +36,6 @@ int main()
 			});
 	}
 
-	// 컨텐츠 코드. AI 로직 등을 작성해서 패킷 작성 후 Broadcast
-	while (true)
-	{
-		vector<BuffData> Data
-		{
-			BuffData{100, 1.5f},
-			BuffData{200, 2.3f},
-			BuffData{300, 0.7f}
-		};
-
-		TSharedPtr<SendBuffer> Buffer = ServerPacketHandler::Make_S_TEST(1001, 100, 10, Data);
-		GSessionManager.Broadcast(Buffer);
-
-		this_thread::sleep_for(250ms);
-	}
-
 	GThreadManager->Join();
 
 	FSocketManager::Clear();

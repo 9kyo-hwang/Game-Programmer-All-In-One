@@ -2,7 +2,8 @@
 
 enum
 {
-	S_TEST = 1
+	S_TEST = 1,
+	S_EnterGame = 2
 };
 
 class ClientPacketHandler
@@ -10,6 +11,7 @@ class ClientPacketHandler
 public:
 	static void HandlePacket(BYTE* Buffer, int32 Len);
 	static void Handle_S_TEST(BYTE* Buffer, int32 Len);
+	static void Handle_S_EnterGame(BYTE* Buffer, int32 Len);
 
 	template<typename T>
 	static TSharedPtr<SendBuffer> MakeSendBuffer(T& Packet, uint16 PacketId);
