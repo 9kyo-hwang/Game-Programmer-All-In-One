@@ -27,7 +27,7 @@ void AEffect::Tick(float DeltaTime)
 
 	if (HasAnimationFinished())
 	{
-		SceneManager::Get()->GetActiveScene()->RemoveActor(this);
+		SceneManager::Get()->GetActiveScene()->DestroyActor(this);
 	}
 }
 

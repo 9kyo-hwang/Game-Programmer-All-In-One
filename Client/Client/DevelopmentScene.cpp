@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "DevelopmentScene.h"
 
+#include <queue>
+
 #include "AMonster.h"
 #include "ASpriteActor.h"
 #include "ResourceManager.h"
@@ -62,6 +64,9 @@ void DevelopmentScene::Initialize()
 		ResourceManager::Get()->LoadSound(L"Attack", L"Sound\\Sword.wav")
 	);
 
+	NewObject<APlayer>({ 5, 5 });
+	NewObject<AMonster>({ 7, 7 });
+
 	Super::Initialize();
 }
 
@@ -78,19 +83,19 @@ void DevelopmentScene::Render(HDC DeviceContextHandle)
 }
 
 // Monster Count를 관리하기 위해 Add/Remove를 virtual - override
-void DevelopmentScene::AddActor(AActor* NewActor)
+void DevelopmentScene::SpawnActor(AActor* Target)
 {
-	Super::AddActor(NewActor);
-	if (AMonster* Monster = dynamic_cast<AMonster*>(NewActor))
+	Super::SpawnActor(Target);
+	if (AMonster* Monster = dynamic_cast<AMonster*>(Target))
 	{
 		CurrentMonsterCount++;
 	}
 }
 
-void DevelopmentScene::RemoveActor(AActor* TargetActor)
+void DevelopmentScene::DestroyActor(AActor* Target)
 {
-	Super::RemoveActor(TargetActor);
-	if (AMonster* Monster = dynamic_cast<AMonster*>(TargetActor))
+	Super::DestroyActor(Target);
+	if (AMonster* Monster = dynamic_cast<AMonster*>(Target))
 	{
 		CurrentMonsterCount--;
 	}
@@ -172,6 +177,144 @@ bool DevelopmentScene::GetRandomEmptyCell(Vector2Int& OutCell) const
 	return false;
 }
 
+APlayer* DevelopmentScene::FindNearestPlayerFrom(Vector2Int Cell)
+{
+	float NearestDistance = FLT_MAX;
+	APlayer* NearestPlayer = nullptr;
+
+	// 여러 플레이어에 대응되는 방식
+	for (AActor* Actor : Actors[static_cast<int32>(ERenderLayer::Object)])
+	{
+		if (APlayer* Player = dynamic_cast<APlayer*>(Actor))
+		{
+			Vector2Int Direction = Cell - Player->GetCellPosition();
+			float Distance = Direction.GetMagnitudeSquared();
+			if (Distance < NearestDistance)
+			{
+				NearestDistance = Distance;
+				NearestPlayer = Player;
+			}
+		}
+	}
+
+	return NearestPlayer;
+}
+
+// F = G(Start -> Point) + H(Point -> Dest)
+bool DevelopmentScene::FindPath(Vector2Int Src, Vector2Int Dest, vector<Vector2Int>& OutPath, int32 MaxDepth) const
+{
+	// 너무 멀리 있는 적은 탐색 후보에서 제외
+	int32 Depth = abs(Src.Y - Dest.Y) + abs(Src.X - Dest.X);
+	if (Depth >= MaxDepth)
+	{
+		return false;
+	}
+
+	priority_queue<AStarNode, vector<AStarNode>, greater<AStarNode>> Queue;
+	map<Vector2Int, int32> BestCost;
+	map<Vector2Int, Vector2Int> PrevPos;
+
+	// 초기값
+	{
+		int32 Distance = abs(Dest.X - Src.X) + abs(Dest.Y - Src.Y);
+		Queue.emplace(Distance, Src);
+		BestCost[Src] = Distance;
+		PrevPos[Src] = Src;
+	}
+
+	const Vector2Int Offset[4]
+	{
+		{0, -1},
+		{0, 1},
+		{-1, 0},
+		{1, 0}
+	};
+
+	bool bFound = false;
+	while (!Queue.empty())
+	{
+		AStarNode Current = Queue.top(); Queue.pop();
+
+		// 기존에 알고 있는 비용이 더 좋다면 skip
+		if (BestCost[Current.Pos] < Current.Cost)
+		{
+			continue;
+		}
+
+		if (Current.Pos == Dest)
+		{
+			bFound = true;
+			break;
+		}
+
+		for (const Vector2Int& Front : Offset)
+		{
+			Vector2Int NextPos = Current.Pos + Front;
+			if (!CanMoveTo(NextPos))
+			{
+				continue;
+			}
+
+			Depth = abs(Src.Y - NextPos.Y) + abs(Src.X - NextPos.X);
+			if (Depth >= MaxDepth)
+			{
+				continue;
+			}
+
+			int32 NewCost = abs(Dest.X - NextPos.X) + abs(Dest.Y - NextPos.Y);
+			if (BestCost.contains(NextPos) && BestCost[NextPos] <= NewCost)
+			{
+				continue;
+			}
+
+			BestCost[NextPos] = NewCost;
+			Queue.emplace(NewCost, NextPos);
+			PrevPos[NextPos] = Current.Pos;
+		}
+	}
+
+	if (!bFound)
+	{
+		// 맨 마지막 탐색때 플레이어의 존재로 인해 CanMoveTo가 false를 반환. 이에 대한 핸들링
+		float BestScore = FLT_MAX;
+		for (const auto& [Pos, Score] : BestCost)
+		{
+			// 동점의 경우 가장 덜 이동한 쪽으로
+			if (BestScore == Score)
+			{
+				int32 Src2Dest = abs(Dest.X - Src.X) + abs(Dest.Y - Src.Y);
+				int32 Src2Cur = abs(Pos.X - Src.X) + abs(Pos.Y - Src.Y);
+
+				if (Src2Dest > Src2Cur)
+				{
+					Dest = Pos;
+				}
+			}
+			else if (BestScore > Score)
+			{
+				Dest = Pos;
+				BestScore = Score;
+			}
+		}
+	}
+
+	OutPath.clear();
+	Vector2Int Current = Dest;
+	while (true)
+	{
+		OutPath.push_back(Current);
+		if (Current == PrevPos[Current])
+		{
+			break;
+		}
+
+		Current = PrevPos[Current];
+	}
+
+	ranges::reverse(OutPath);
+	return true;
+}
+
 void DevelopmentScene::LoadMap(Texture* Stage01Texture)
 {
 	assert(nullptr != Stage01Texture);
@@ -185,7 +328,7 @@ void DevelopmentScene::LoadMap(Texture* Stage01Texture)
 		const Vector2Int StageSize = Stage01Sprite->GetSize();
 		Stage01->SetCurrentPosition(Vector2(StageSize.X / 2, StageSize.Y / 2));
 
-		AddActor(Stage01);
+		SpawnActor(Stage01);
 	}
 }
 
@@ -260,8 +403,6 @@ void DevelopmentScene::LoadPlayer(Texture* PlayerUp, Texture* PlayerDown, Textur
 		FB_Left->SetInfo({ PlayerLeft, L"FB_StaffLeft", {200, 200}, 0, 10, 6, 0.5f, false });
 		FB_Right->SetInfo({ PlayerRight, L"FB_StaffRight", {200, 200}, 0, 10, 6, 0.5f, false });
 	}
-
-	NewObject<APlayer>({ 5, 5 });
 }
 
 void DevelopmentScene::LoadMonster(Texture* Snake)
@@ -279,8 +420,6 @@ void DevelopmentScene::LoadMonster(Texture* Snake)
 		FB_Left->SetInfo({ Snake, L"FB_SnakeLeft", {100, 100}, 0, 3, 2, 0.5f });
 		FB_Right->SetInfo({ Snake, L"FB_SnakeRight", {100, 100}, 0, 3, 1, 0.5f });
 	}
-
-	NewObject<AMonster>({ 7, 7 });
 }
 
 void DevelopmentScene::LoadProjectile(Texture* Arrow)
@@ -312,7 +451,7 @@ void DevelopmentScene::LoadEffect(Texture* Hit)
 void DevelopmentScene::LoadTilemap()
 {
 	ATilemap* NewTilemapActor = new ATilemap();
-	AddActor(NewTilemapActor);
+	SpawnActor(NewTilemapActor);
 	ActiveTilemapActor = NewTilemapActor;
 	{
 		Tilemap* Tilemap01 = ResourceManager::Get()->CreateTilemap(L"Tilemap_01");

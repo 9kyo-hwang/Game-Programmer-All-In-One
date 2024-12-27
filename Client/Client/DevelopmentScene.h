@@ -4,12 +4,28 @@
 class Texture;
 class Sound;
 class UObject;
+class APlayer;
 
 class DevelopmentScene final : public Scene
 {
 	using Super = Scene;
 
 public:
+	struct AStarNode
+	{
+		AStarNode(int32 InCost, Vector2Int InPos)
+			: Cost(InCost)
+			, Pos(InPos)
+		{}
+
+		bool operator<(const AStarNode& Other) const { return Cost < Other.Cost; }
+		bool operator>(const AStarNode& Other) const { return Cost > Other.Cost; }
+		bool operator==(const AStarNode& Other) const { return Cost == Other.Cost; }
+
+		int32 Cost;
+		Vector2Int Pos;
+	};
+
 	DevelopmentScene();
 	~DevelopmentScene() override;
 
@@ -17,12 +33,15 @@ public:
 	void Update(float DeltaTime) override;  // ÇÊ¿ä¿¡ µû¶ó FixedUpdate¸¦ µÖµµ µÊ
 	void Render(HDC DeviceContextHandle) override;
 
-	void AddActor(AActor* NewActor) override;
-	void RemoveActor(AActor* TargetActor) override;
+	void SpawnActor(AActor* Target) override;
+	void DestroyActor(AActor* Target) override;
 
 	bool CanMoveTo(Vector2Int Dest) const;
 	Vector2 CellToWorld(Vector2Int Cell) const;
 	bool GetRandomEmptyCell(Vector2Int& OutCell) const;
+
+	APlayer* FindNearestPlayerFrom(Vector2Int Cell);
+	bool FindPath(Vector2Int Src, Vector2Int Dest, vector<Vector2Int>& OutPath, int32 MaxDepth = 10) const;
 
 	template<class ObjectType> requires std::is_base_of_v<UObject, ObjectType>
 	ObjectType* NewObject()
@@ -42,7 +61,7 @@ public:
 	{
 		ObjectType* Object = new ObjectType();
 		Object->MoveTo(Position, true);
-		AddActor(Object);
+		SpawnActor(Object);
 
 		Object->BeginPlay();
 
@@ -62,7 +81,7 @@ private:
 	void SpawnMonster();
 
 private:
-	const int32 DesiredMonsterCount = 40;
+	const int32 DesiredMonsterCount = 20;
 	int32 CurrentMonsterCount = 0;
 
 	class ATilemap* ActiveTilemapActor = nullptr;

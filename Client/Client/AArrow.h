@@ -16,7 +16,9 @@ public:
 protected:
 	void OnTickIdle(float DeltaTime) override;
 	void OnTickMove(float DeltaTime) override;
-	void OnTickAttack(float DeltaTime) override;
 	void UpdateAnimation() override;
+
+private:
+	Flipbook* MoveFlipbooks[4]{};
 };
 

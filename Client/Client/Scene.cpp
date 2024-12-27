@@ -65,7 +65,7 @@ void Scene::Render(HDC DeviceContextHandle)
 	CollisionManager::Get()->Update();
 }
 
-void Scene::AddActor(AActor* NewActor)
+void Scene::SpawnActor(AActor* NewActor)
 {
 	if (NewActor)
 	{
@@ -73,7 +73,7 @@ void Scene::AddActor(AActor* NewActor)
 	}
 }
 
-void Scene::RemoveActor(AActor* TargetActor)
+void Scene::DestroyActor(AActor* TargetActor)
 {
 	if (TargetActor)
 	{

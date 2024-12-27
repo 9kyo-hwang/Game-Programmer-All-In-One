@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "APlayer.h"
 
+#include "AArrow.h"
 #include "AEffect.h"
 #include "CameraComponent.h"
 #include "DevelopmentScene.h"
@@ -210,6 +211,11 @@ void APlayer::OnTickAttack(float DeltaTime)
 				}
 				break;
 			case EWeapons::Bow:
+				{
+					AArrow* Arrow = Scene->NewObject<AArrow>(GetCellPosition());
+					Arrow->RotateTo(CurrentDirection);
+
+				}
 				break;
 			case EWeapons::Staff:
 				break;

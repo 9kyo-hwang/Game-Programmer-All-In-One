@@ -45,7 +45,7 @@ void APawn::TakeDamage(APawn* Instigator)
 	{
 		if (Scene* ActiveScene = SceneManager::Get()->GetActiveScene())
 		{
-			ActiveScene->RemoveActor(this);
+			ActiveScene->DestroyActor(this);
 		}
 	}
 }

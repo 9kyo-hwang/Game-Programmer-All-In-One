@@ -18,5 +18,8 @@ protected:
 	void OnTickMove(float DeltaTime) override;
 	void OnTickAttack(float DeltaTime) override;
 	void UpdateAnimation() override;
+
+protected:
+	class APawn* Owner = nullptr;  // raw pointer 매우 위험!!!
 };
 

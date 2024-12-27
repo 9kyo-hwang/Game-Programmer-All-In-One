@@ -14,8 +14,8 @@ public:
 	virtual void Update(float DeltaTime = TimerManager::Get()->GetDeltaTime());
 	virtual void Render(HDC DeviceContextHandle);
 
-	virtual void AddActor(AActor* NewActor);
-	virtual void RemoveActor(AActor* TargetActor);
+	virtual void SpawnActor(AActor* NewActor);
+	virtual void DestroyActor(AActor* TargetActor);
 
 	class APawn* GetPawnAt(Vector2Int Cell) const;
 

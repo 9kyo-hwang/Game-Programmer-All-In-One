@@ -109,3 +109,24 @@ Vector2Int UObject::GetFrontCell() const
 		return CellPosition;
 	}
 }
+
+EMovementDirection UObject::FindLookAtDirection(Vector2Int TargetPosition) const
+{
+	Vector2Int Direction = TargetPosition - GetCellPosition();
+	if (Direction.X < 0)
+	{
+		return EMovementDirection::Left;
+	}
+	else if (Direction.X > 0)
+	{
+		return EMovementDirection::Right;
+	}
+	else if (Direction.Y < 0)
+	{
+		return EMovementDirection::Up;
+	}
+	else if (Direction.Y > 0)
+	{
+		return EMovementDirection::Down;
+	}
+}

@@ -141,6 +141,16 @@ struct Vector2Int
 		return !(*this == Other);
 	}
 
+	bool operator<(const Vector2Int& Other) const
+	{
+		return X != Other.X ? X < Other.X : Y < Other.Y;
+	}
+
+	bool operator>(const Vector2Int& Other) const
+	{
+		return X != Other.X ? X > Other.X : Y > Other.Y;
+	}
+
 	int32 GetMagnitudeSquared() const
 	{
 		return X * X + Y * Y;

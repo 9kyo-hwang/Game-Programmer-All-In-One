@@ -22,5 +22,7 @@ protected:
 protected:
 	// TODO
 	Flipbook* MoveFlipbooks[4]{};
+	class APlayer* Target = nullptr;  // 매우 위험! smart_pointer로 바꾸던가 ID를 발급하라!
+	float WaitSecs = 0.f;
 };
 
