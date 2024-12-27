@@ -1,5 +1,10 @@
 #pragma once
 
+#include "CorePCH.h"  // 윈도우 네트워크 라이브러리가 "최우선" 선언돼야 함
+#include "Protocol.pb.h"
+#include "Enum.pb.h"
+#include "Struct.pb.h"
+
 #include <windows.h>
 #include <vector>
 #include <list>
@@ -39,3 +44,11 @@ namespace fs = std::filesystem;
 #include <dsound.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "dsound.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "ServerCore\\Debug\\ServerCore.lib")
+#pragma comment(lib, "Protobuf\\Debug\\libprotobufd.lib")
+#else
+#pragma comment(lib, "ServerCore\\Release\\ServerCore.lib")
+#pragma comment(lib, "Protobuf\\Release\\libprotobuf.lib)
+#endif

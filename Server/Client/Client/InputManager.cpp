@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "InputManager.h"
 
-void InputManager::Initialize(HWND InHandleWindow)
+void InputManager::Initialize(HWND InWindowHandle)
 {
-	HandleWindow = InHandleWindow;
+	WindowHandle = InWindowHandle;
 	KeyStates.resize(KEY_CODE_COUNT, EKeyState::None);
 }
 
@@ -45,5 +45,5 @@ void InputManager::Update()
 	}
 
 	::GetCursorPos(&MousePosition);
-	::ScreenToClient(HandleWindow, &MousePosition);  // window 기준 좌표로 변환
+	::ScreenToClient(WindowHandle, &MousePosition);  // window 기준 좌표로 변환
 }

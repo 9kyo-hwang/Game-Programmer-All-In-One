@@ -4,6 +4,8 @@
 class TimerManager : public Singleton<TimerManager>
 {
 public:
+	~TimerManager() override {}
+
 	void Initialize();
 	void Update();
 

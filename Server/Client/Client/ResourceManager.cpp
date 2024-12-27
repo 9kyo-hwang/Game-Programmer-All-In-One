@@ -13,9 +13,9 @@ ResourceManager::~ResourceManager()
 	Clear();
 }
 
-void ResourceManager::Initialize(HWND InWindow, fs::path InResourcePath)
+void ResourceManager::Initialize(HWND InWindowHandle, fs::path InResourcePath)
 {
-	Window = InWindow;
+	WindowHandle = InWindowHandle;
 	ResourcePath = InResourcePath;
 }
 
@@ -60,7 +60,7 @@ Texture* ResourceManager::LoadTexture(const wstring& Name, const wstring& Path, 
 	fs::path TexturePath = ResourcePath / Path;
 
 	Texture* NewTexture = new Texture();
-	NewTexture->LoadTexture(Window, TexturePath.wstring());
+	NewTexture->LoadTexture(WindowHandle, TexturePath.wstring());
 	NewTexture->SetTransparent(Transparent);
 
 	return Textures[Name] = NewTexture;

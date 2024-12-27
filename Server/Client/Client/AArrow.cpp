@@ -53,7 +53,7 @@ void AArrow::OnTickIdle(float DeltaTime)
 			if (APawn* Pawn = Scene->GetPawnAt(NextPosition))
 			{
 				Scene->NewObject<AEffect>(NextPosition);
-				Pawn->TakeDamage();  // 공격자는 Pawn만 받는데... 투사체는? -> Owner를 갖고 오자!
+				//Pawn->TakeDamage();  // 공격자는 Pawn만 받는데... 투사체는? -> Owner를 갖고 오자!
 			}
 
 			Scene->DestroyActor(this);

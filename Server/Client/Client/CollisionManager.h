@@ -6,6 +6,7 @@ class Collider;
 class CollisionManager : public Singleton<CollisionManager>
 {
 public:
+	~CollisionManager() override {}
 	void Initialize();
 	void Update();
 

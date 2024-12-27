@@ -5,6 +5,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "SoundManager.h"
+#include "NetworkManager.h"
 
 Game::Game()
 {
@@ -32,10 +33,11 @@ void Game::Initialize(HWND GameWindowHandle)
 	TimerManager::Get()->Initialize();
 	InputManager::Get()->Initialize(GameWindowHandle);
 	SceneManager::Get()->Initialize();
-	ResourceManager::Get()->Initialize(GameWindowHandle, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Client\\Resources"));
+	ResourceManager::Get()->Initialize(GameWindowHandle, fs::path(L"E:\\Github\\Game-Programmer-All-In-One\\Server\\Client\\Resources"));
 	SoundManager::Get()->Initialize(GameWindowHandle);
 	// 최초로 호출되는 씬
 	SceneManager::Get()->LoadScene(ESceneType::Development);
+	NetworkManager::Get()->Initialize();  // 통상 로그인으로 WebServer 인증을 거친 후 GameServer에 붙음
 }
 
 void Game::Update()
@@ -43,6 +45,7 @@ void Game::Update()
 	TimerManager::Get()->Update();
 	InputManager::Get()->Update();
 	SceneManager::Get()->Update();
+	NetworkManager::Get()->Update();  // Dispatch -> IOCPEvent(Send, Recv 등) -> Session
 }
 
 void Game::Render()

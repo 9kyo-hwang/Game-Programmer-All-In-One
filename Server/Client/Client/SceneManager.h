@@ -13,9 +13,10 @@ class Scene;
 class SceneManager : public Singleton<SceneManager>
 {
 public:
+	~SceneManager() override {}
 	void Initialize();
 	void Update();
-	void Render(HDC InDC);
+	void Render(HDC InDeviceContextHandle);
 
 public:
 	void LoadScene(ESceneType NewType);

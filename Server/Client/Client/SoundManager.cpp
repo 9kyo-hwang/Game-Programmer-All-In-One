@@ -12,7 +12,7 @@ SoundManager::~SoundManager()
 	}
 }
 
-void SoundManager::Initialize(HWND WindowHandle)
+void SoundManager::Initialize(HWND InWindowHandle)
 {
 	if (FAILED(::DirectSoundCreate(nullptr, &Device, nullptr)))
 	{
@@ -20,7 +20,7 @@ void SoundManager::Initialize(HWND WindowHandle)
 		return;
 	}
 
-	if (FAILED(Device->SetCooperativeLevel(WindowHandle, DSSCL_PRIORITY)))
+	if (FAILED(Device->SetCooperativeLevel(InWindowHandle, DSSCL_PRIORITY)))
 	{
 		::MessageBox(nullptr, L"[SoundManager::Initialize] Failed to Set Cooperative Level", L"System Error", MB_OK);
 		return;

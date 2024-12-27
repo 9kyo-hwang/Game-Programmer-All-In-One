@@ -49,7 +49,8 @@ constexpr int32 KEY_STATE_COUNT = static_cast<int32>(EKeyState::End);
 class InputManager : public Singleton<InputManager>
 {
 public:
-	void Initialize(HWND InHandleWindow);
+	~InputManager() override {}
+	void Initialize(HWND InWindowHandle);
 	void Update();
 
 	bool GetButton(EKeyCode Key) const { return GetKeyState(Key) == EKeyState::Hold; }
@@ -61,7 +62,7 @@ private:
 	EKeyState GetKeyState(EKeyCode Key) const { return KeyStates[static_cast<uint8>(Key)]; }
 
 private:
-	HWND HandleWindow = nullptr;
+	HWND WindowHandle = nullptr;
 	vector<EKeyState> KeyStates;
 	POINT MousePosition{};
 };

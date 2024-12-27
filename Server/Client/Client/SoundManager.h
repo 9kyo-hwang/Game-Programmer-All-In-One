@@ -5,9 +5,9 @@
 class SoundManager : public Singleton<SoundManager>
 {
 public:
-	~SoundManager();
+	~SoundManager() override;
 
-	void Initialize(HWND WindowHandle);
+	void Initialize(HWND InWindowHandle);
 	void Play(const wstring& Name, bool bLoop = false);
 	LPDIRECTSOUND GetSoundCard() const { return Device; }
 

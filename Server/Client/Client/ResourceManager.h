@@ -10,9 +10,8 @@ class Sound;
 class ResourceManager : public Singleton<ResourceManager>
 {
 public:
-	~ResourceManager();
-
-	void Initialize(HWND InWindow, fs::path InResourcePath);
+	~ResourceManager() override;
+	void Initialize(HWND InWindowHandle, fs::path InResourcePath);
 	void Clear();
 
 	const fs::path& ResourceDir() { return ResourcePath; }
@@ -35,7 +34,7 @@ public:
 	Sound* LoadSound(const wstring& Name, const wstring& Path);
 
 private:
-	HWND Window{};
+	HWND WindowHandle{};
 	fs::path ResourcePath{};
 	unordered_map<wstring, Texture*> Textures;
 	unordered_map<wstring, Sprite*> Sprites;
