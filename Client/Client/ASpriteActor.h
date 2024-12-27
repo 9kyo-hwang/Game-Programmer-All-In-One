@@ -3,13 +3,13 @@
 
 class Sprite;
 
-class ASpriteActor : public AActor
+class ASprite : public AActor
 {
 	using Super = AActor;
 
 public:
-	ASpriteActor();
-	~ASpriteActor() override;
+	ASprite();
+	~ASprite() override;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;

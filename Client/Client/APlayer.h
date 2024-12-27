@@ -1,19 +1,9 @@
 #pragma once
-#include "FlipbookActor.h"
+#include "APawn.h"
 
-class BoxCollider;
-
-enum class EPlayerState : uint8
+class APlayer : public APawn
 {
-	Idle,
-	Move,
-	Attack,
-	END
-};
-
-class APlayer : public FlipbookActor
-{
-	using Super = FlipbookActor;
+	using Super = APawn;
 
 public:
 	APlayer();
@@ -23,29 +13,23 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
-protected:
-	virtual void OnIdle(float DeltaTime);
-	virtual void OnMove(float DeltaTime);
-	virtual void OnAttack(float DeltaTime);
+private:
+	void OnTickIdle(float DeltaTime) override;
+	void OnTickMove(float DeltaTime) override;
+	void OnTickAttack(float DeltaTime) override;
+	void UpdateAnimation() override;
+
+	EWeapons GetCurrentWeapon() const { return CurrentWeapon; }
+	void ChangeWeapon(EWeapons NewWeapon) { CurrentWeapon = NewWeapon; }
 
 private:
-	void TransitionTo(EPlayerState NewState);
-	void RotateTo(EMovementDirection NewDirection);
+	Flipbook* IdleFlipbooks[4]{};
+	Flipbook* MoveFlipbooks[4]{};
+	Flipbook* SwordFlipbooks[4]{};
+	Flipbook* BowFlipbooks[4]{};
+	Flipbook* StaffFlipbooks[4]{};
 
-	void UpdateAnimation();
-
-	bool HasReachedDest() const;
-	bool CanMoveTo(Vector2Int Dest);
-	void MoveTo(Vector2Int Dest, bool bTeleport = false);
-
-private:
-	vector<vector<Flipbook*>> Flipbooks;
-
-	Vector2Int CellPosition;  // float position to int position
-	EPlayerState CurrentState = EPlayerState::Idle;
-	EMovementDirection CurrentDirection = EMovementDirection::Down;
-	uint8 bKeyPressed = false;
-
-	static const Vector2Int Offset[4];
+	bool bKeyPressed = false;
+	EWeapons CurrentWeapon = EWeapons::Sword;
 };
 

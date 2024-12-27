@@ -7,27 +7,27 @@
 #include "Sprite.h"
 #include "Tilemap.h"
 
-TilemapActor::TilemapActor()
+ATilemap::ATilemap()
 {
 }
 
-TilemapActor::~TilemapActor()
+ATilemap::~ATilemap()
 {
 }
 
-void TilemapActor::BeginPlay()
+void ATilemap::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void TilemapActor::Tick(float DeltaTime)
+void ATilemap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	PickTile();  // 매 틱마다 감지
 }
 
-void TilemapActor::Render(HDC DeviceContextHandle)
+void ATilemap::Render(HDC DeviceContextHandle)
 {
 	Super::Render(DeviceContextHandle);
 
@@ -104,7 +104,7 @@ void TilemapActor::Render(HDC DeviceContextHandle)
 	}
 }
 
-void TilemapActor::PickTile()
+void ATilemap::PickTile()
 {
 	if (InputManager::Get()->GetButtonDown(EKeyCode::LeftMouseButton))
 	{

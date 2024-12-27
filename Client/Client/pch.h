@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <functional>  // For Callback Function
 #include <cassert>
+#include <queue>
 
 using namespace std;
 namespace fs = std::filesystem;

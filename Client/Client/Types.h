@@ -131,6 +131,26 @@ struct Vector2Int
 		Y -= Other.Y;
 	}
 
+	bool operator==(const Vector2Int& Other) const
+	{
+		return X == Other.X && Y == Other.Y;
+	}
+
+	bool operator!=(const Vector2Int& Other) const
+	{
+		return !(*this == Other);
+	}
+
+	bool operator<(const Vector2Int& Other) const
+	{
+		return X != Other.X ? X < Other.X : Y < Other.Y;
+	}
+
+	bool operator>(const Vector2Int& Other) const
+	{
+		return X != Other.X ? X > Other.X : Y > Other.Y;
+	}
+
 	int32 GetMagnitudeSquared() const
 	{
 		return X * X + Y * Y;
@@ -153,4 +173,14 @@ struct Vector2Int
 
 	int32 X = 0;
 	int32 Y = 0;
+};
+
+struct UAttributeSet
+{
+	// 각각의 요소가 AttributeData
+	int32 Hp = 0;
+	int32 MaxHp = 0;
+	int32 Attack = 0;
+	int32 Defence = 0;
+	float Speed = 0.f;
 };

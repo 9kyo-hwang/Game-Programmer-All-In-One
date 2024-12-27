@@ -4,13 +4,13 @@
 class Flipbook;
 
 // Unity¿« Animator...? AnimatorController...?
-class FlipbookActor : public AActor
+class AFlipbook : public AActor
 {
 	using Super = AActor;
 
 public:
-	FlipbookActor();
-	~FlipbookActor() override;
+	AFlipbook();
+	~AFlipbook() override;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;
@@ -19,8 +19,10 @@ public:
 	void SetFlipbook(Flipbook* NewFlipbook);
 	void Reset();
 
+	bool HasAnimationFinished() const;
+
 protected:
-	Flipbook* MyFlipbook = nullptr;
+	Flipbook* CurrentFlipbook = nullptr;
 	int32 Index = 0;
 	float ElapsedTime = 0.f;
 };

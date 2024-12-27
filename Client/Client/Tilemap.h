@@ -28,7 +28,7 @@ public:
 	int32 GetNumTile() const { return NumTile; }
 	void SetTileSize(int32 NewTileSize);
 
-	Tile* GetTileAt(Vector2Int Position);
+	Tile* GetTileAt(Vector2Int Cell);
 	vector<vector<Tile>>& GetTiles() { return Tiles; }
 
 private:
