@@ -13,3 +13,7 @@
 #pragma comment(lib, "ServerCore\\Release\\ServerCore.lib")
 #pragma comment(lib, "Protobuf\\Release\\libprotobuf.lib)
 #endif
+
+using SessionRef = TSharedPtr<class GameSession>;
+
+#include "ServerPacketHandler.h" 

@@ -3,6 +3,7 @@
 
 #include <queue>
 
+#include "ALocalPlayer.h"
 #include "AMonster.h"
 #include "ASpriteActor.h"
 #include "ResourceManager.h"
@@ -64,7 +65,8 @@ void DevelopmentScene::Initialize()
 		ResourceManager::Get()->LoadSound(L"Attack", L"Sound\\Sword.wav")
 	);
 
-	NewObject<APlayer>({ 5, 5 });
+	// TODO : 서버에서 요청이 왔을 때 스폰
+	NewObject<ALocalPlayer>({ 5, 5 });
 	NewObject<AMonster>({ 7, 7 });
 
 	Super::Initialize();

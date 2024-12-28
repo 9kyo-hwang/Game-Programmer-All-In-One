@@ -25,6 +25,9 @@ void GameSession::OnRecvPacket(BYTE* InBuffer, int32 Len)
 	cout << "Packet [ID: " << Header.ID << ", Size: " << Header.Size << "]" << endl;
 
 	// TODO: 패킷 ID에 따른 분기 처리
+	// Session 정보, 즉 This를 넘겨줘야 하는데 SmartPointer로 관리하고 있으므로 shared_from_this()
+	// 그런데 현재 변환이 IOCPObject로 시도하고 있어서 static_pointer_cast로 GameSession 재변환
+	ServerPacketHandler::HandlePacket(GetGameSession(), InBuffer, Len);
 }
 
 void GameSession::OnSend(int32 Len)

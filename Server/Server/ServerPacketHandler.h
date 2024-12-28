@@ -16,7 +16,11 @@ struct BuffData
 class ServerPacketHandler
 {
 public:
-	static void HandlePacket(BYTE* Buffer, int32 Len);
+	static void HandlePacket(SessionRef Session, BYTE* Buffer, int32 Len);
+
+	// 패킷 받기
+
+	// 패킷 보내기
 	static TSharedPtr<SendBuffer> Make_S_TEST(uint64 Id, uint32 Hp, uint16 Attack, vector<BuffData> Buffs);
 	static TSharedPtr<SendBuffer> Make_S_EnterGame();
 
@@ -40,5 +44,4 @@ TSharedPtr<SendBuffer> ServerPacketHandler::MakeSendBuffer(T& Packet, uint16 Pac
 	Buffer->Close(PacketSize);
 
 	return Buffer;
-}
-
+}  

@@ -117,7 +117,7 @@ void AMonster::OnTickMove(float DeltaTime)
 		RotateTo(Direction.Y < 0 ? EMovementDirection::Up : EMovementDirection::Down);
 	}
 
-	switch (CurrentDirection)
+	switch (GetCurrentDirection())
 	{
 	case EMovementDirection::Up:
 		CurrentPosition.Y -= 50 * DeltaTime;
@@ -165,5 +165,5 @@ void AMonster::OnTickAttack(float DeltaTime)
 
 void AMonster::UpdateAnimation()
 {
-	SetFlipbook(MoveFlipbooks[static_cast<int32>(CurrentDirection)]);
+	SetFlipbook(MoveFlipbooks[static_cast<int32>(GetCurrentDirection())]);
 }

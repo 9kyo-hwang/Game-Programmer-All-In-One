@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "ClientPacketHandler.h"
 #include "BufferReader.h"
+#include "ServerSession.h"
 
-void ClientPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
+void ClientPacketHandler::HandlePacket(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	BufferedReader Reader(Buffer, Len);
 	PacketHeader Header;
@@ -12,10 +13,10 @@ void ClientPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
 	switch (Header.ID)
 	{
 	case S_TEST:
-		Handle_S_TEST(Buffer, Len);
+		Handle_S_TEST(Session, Buffer, Len);
 		break;
 	case S_EnterGame:
-		Handle_S_EnterGame(Buffer, Len);
+		Handle_S_EnterGame(Session, Buffer, Len);
 	default:
 		break;
 	}
@@ -38,7 +39,7 @@ struct S_TEST
 	vector<BuffData> Data;
 };
 
-void ClientPacketHandler::Handle_S_TEST(BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Handle_S_TEST(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
 	uint16 Size = Header->Size;
@@ -67,7 +68,7 @@ void ClientPacketHandler::Handle_S_TEST(BYTE* Buffer, int32 Len)
 	// TODO: GameLogic
 }
 
-void ClientPacketHandler::Handle_S_EnterGame(BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Handle_S_EnterGame(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	// 반복되는 파트를 따로 떼버리거나 툴로 만들면 참 좋을텐데...
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
@@ -78,4 +79,7 @@ void ClientPacketHandler::Handle_S_EnterGame(BYTE* Buffer, int32 Len)
 
 	bool bSuccess = Packet.success();
 	uint64 AccountId = Packet.accountid();
+
+	// 만약 서버에 즉시 회신하고 싶다면 아래와 같이 수행
+	// Session->Send()
 }

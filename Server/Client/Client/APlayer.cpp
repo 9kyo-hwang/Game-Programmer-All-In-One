@@ -3,7 +3,6 @@
 
 #include "AArrow.h"
 #include "AEffect.h"
-#include "CameraComponent.h"
 #include "DevelopmentScene.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
@@ -36,13 +35,6 @@ APlayer::APlayer()
 	StaffFlipbooks[static_cast<int32>(EMovementDirection::Down)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffDown");
 	StaffFlipbooks[static_cast<int32>(EMovementDirection::Left)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffLeft");
 	StaffFlipbooks[static_cast<int32>(EMovementDirection::Right)] = ResourceManager::Get()->GetFlipbook(L"FB_StaffRight");
-
-	AddComponent(new CameraComponent());
-
-	AttributeSet.Hp = 100;
-	AttributeSet.MaxHp = 100;
-	AttributeSet.Attack = 30;
-	AttributeSet.Defence = 5;
 }
 
 APlayer::~APlayer()
@@ -90,73 +82,7 @@ void APlayer::Render(HDC DeviceContextHandle)
 
 void APlayer::OnTickIdle(float DeltaTime)
 {
-	bKeyPressed = true;
-	if (InputManager::Get()->GetButton(EKeyCode::W))
-	{
-		RotateTo(EMovementDirection::Up);
-		Vector2Int FrontCell = GetFrontCell();
-		if (CanMoveTo(FrontCell))
-		{
-			MoveTo(FrontCell);
-			TransitionTo(EObjectStates::Move);
-		}
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::S))
-	{
-		RotateTo(EMovementDirection::Down);
-		Vector2Int FrontCell = GetFrontCell();
-		if (CanMoveTo(FrontCell))
-		{
-			MoveTo(FrontCell);
-			TransitionTo(EObjectStates::Move);
-		}
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::A))
-	{
-		RotateTo(EMovementDirection::Left);
-		Vector2Int FrontCell = GetFrontCell();
-		if (CanMoveTo(FrontCell))
-		{
-			MoveTo(FrontCell);
-			TransitionTo(EObjectStates::Move);
-		}
-	}
-	else if (InputManager::Get()->GetButton(EKeyCode::D))
-	{
-		RotateTo(EMovementDirection::Right);
-		Vector2Int FrontCell = GetFrontCell();
-		if (CanMoveTo(FrontCell))
-		{
-			MoveTo(FrontCell);
-			TransitionTo(EObjectStates::Move);
-		}
-	}
-	else
-	{
-		bKeyPressed = false;
-		if (CurrentState == EObjectStates::Idle)
-		{
-			UpdateAnimation();
-		}
-	}
-
-	if (InputManager::Get()->GetButtonDown(EKeyCode::Alpha1))
-	{
-		ChangeWeapon(EWeapons::Sword);
-	}
-	else if (InputManager::Get()->GetButtonDown(EKeyCode::Alpha2))
-	{
-		ChangeWeapon(EWeapons::Bow);
-	}
-	else if (InputManager::Get()->GetButtonDown(EKeyCode::Alpha3))
-	{
-		ChangeWeapon(EWeapons::Staff);
-	}
-
-	if (InputManager::Get()->GetButton(EKeyCode::Space))
-	{
-		TransitionTo(EObjectStates::Attack);
-	}
+	// 입력과 이동 처리가 LocalPlayer로 이관되었음
 }
 
 // 여기서는 부드러운 움직임을 보여주기 위한 로직 처리
@@ -169,7 +95,7 @@ void APlayer::OnTickMove(float DeltaTime)
 		return;
 	}
 
-	switch (CurrentDirection)
+	switch (GetCurrentDirection())
 	{
 	case EMovementDirection::Up:
 		CurrentPosition.Y -= 200 * DeltaTime;
@@ -213,7 +139,7 @@ void APlayer::OnTickAttack(float DeltaTime)
 			case EWeapons::Bow:
 				{
 					AArrow* Arrow = Scene->NewObject<AArrow>(GetCellPosition());
-					Arrow->RotateTo(CurrentDirection);
+					Arrow->RotateTo(GetCurrentDirection());
 
 				}
 				break;
@@ -228,28 +154,26 @@ void APlayer::OnTickAttack(float DeltaTime)
 
 void APlayer::UpdateAnimation()
 {
-	switch (CurrentState)
+	switch (GetCurrentState())
 	{
 	case EObjectStates::Idle:
-		bKeyPressed
-			? SetFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)])
-			: SetFlipbook(IdleFlipbooks[static_cast<size_t>(CurrentDirection)]);
+		SetFlipbook(IdleFlipbooks[static_cast<size_t>(GetCurrentDirection())]);
 		break;
 	case EObjectStates::Move:
-		SetFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)]);
+		SetFlipbook(MoveFlipbooks[static_cast<size_t>(GetCurrentDirection())]);
 		break;
 	case EObjectStates::Attack:
 		if (CurrentWeapon == EWeapons::Sword)
 		{
-			SetFlipbook(SwordFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			SetFlipbook(SwordFlipbooks[static_cast<size_t>(GetCurrentDirection())]);
 		}
 		else if (CurrentWeapon == EWeapons::Bow)
 		{
-			SetFlipbook(BowFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			SetFlipbook(BowFlipbooks[static_cast<size_t>(GetCurrentDirection())]);
 		}
 		else if (CurrentWeapon == EWeapons::Staff)
 		{
-			SetFlipbook(StaffFlipbooks[static_cast<size_t>(CurrentDirection)]);
+			SetFlipbook(StaffFlipbooks[static_cast<size_t>(GetCurrentDirection())]);
 		}
 		break;
 	}

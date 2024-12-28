@@ -3,7 +3,7 @@
 #include "BufferReader.h"
 #include "IOCPSession.h"
 
-void ServerPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
+void ServerPacketHandler::HandlePacket(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	BufferedReader Reader(Buffer, Len);
 	PacketHeader Header;

@@ -25,7 +25,7 @@ void UObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	switch (CurrentState)
+	switch (Info.state())
 	{
 	case EObjectStates::Idle:
 		OnTickIdle(DeltaTime);
@@ -46,18 +46,18 @@ void UObject::Render(HDC DeviceContextHandle)
 
 void UObject::TransitionTo(EObjectStates NewState)
 {
-	if (CurrentState == NewState)
+	if (Info.state() == NewState)
 	{
 		return;
 	}
 
-	CurrentState = NewState;
+	Info.set_state(NewState);
 	UpdateAnimation();
 }
 
 void UObject::RotateTo(EMovementDirection NewDirection)
 {
-	CurrentDirection = NewDirection;
+	Info.set_direction(NewDirection);
 	UpdateAnimation();
 }
 
@@ -80,7 +80,8 @@ bool UObject::CanMoveTo(Vector2Int Dest)
 // 실제 좌표 이동은 여기서 이루어짐
 void UObject::MoveTo(Vector2Int Dest, bool bTeleport)
 {
-	CellPosition = Dest;
+	Info.set_posx(Dest.X);
+	Info.set_posy(Dest.Y);
 
 	if (DevelopmentScene* Scene = dynamic_cast<DevelopmentScene*>(SceneManager::Get()->GetActiveScene()))
 	{
@@ -95,19 +96,19 @@ void UObject::MoveTo(Vector2Int Dest, bool bTeleport)
 
 Vector2Int UObject::GetFrontCell() const
 {
-	switch (CurrentDirection)
+	switch (Info.direction())
 	{
 	case EMovementDirection::Up:
-		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Up)];
+		return GetCellPosition() + Offset[static_cast<int32>(EMovementDirection::Up)];
 	case EMovementDirection::Down:
-		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Down)];
+		return GetCellPosition() + Offset[static_cast<int32>(EMovementDirection::Down)];
 	case EMovementDirection::Left:
-		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Left)];
+		return GetCellPosition() + Offset[static_cast<int32>(EMovementDirection::Left)];
 	case EMovementDirection::Right:
-		return CellPosition + Offset[static_cast<int32>(EMovementDirection::Right)];
-	default:
-		return CellPosition;
+		return GetCellPosition() + Offset[static_cast<int32>(EMovementDirection::Right)];
 	}
+
+	return GetCellPosition();
 }
 
 EMovementDirection UObject::FindLookAtDirection(Vector2Int TargetPosition) const

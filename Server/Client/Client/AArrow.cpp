@@ -73,7 +73,7 @@ void AArrow::OnTickMove(float DeltaTime)
 	}
 
 	// 화살은 한 번 방향이 정해지면 변경되지 않음
-	switch (CurrentDirection)
+	switch (GetCurrentDirection())
 	{
 	case EMovementDirection::Up:
 		CurrentPosition.Y -= 600 * DeltaTime;
@@ -94,5 +94,5 @@ void AArrow::UpdateAnimation()
 {
 	//Super::UpdateAnimation();
 
-	SetFlipbook(MoveFlipbooks[static_cast<size_t>(CurrentDirection)]);
+	SetFlipbook(MoveFlipbooks[static_cast<size_t>(GetCurrentDirection())]);
 }

@@ -13,7 +13,7 @@ public:
 	void Tick(float DeltaTime) override;
 	void Render(HDC DeviceContextHandle) override;
 
-private:
+protected:
 	void OnTickIdle(float DeltaTime) override;
 	void OnTickMove(float DeltaTime) override;
 	void OnTickAttack(float DeltaTime) override;

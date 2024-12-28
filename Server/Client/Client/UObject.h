@@ -25,15 +25,18 @@ public:
 	bool HasReachedDest() const;
 	bool CanMoveTo(Vector2Int Dest);
 	void MoveTo(Vector2Int Dest, bool bTeleport = false);
-	Vector2Int GetCellPosition() const { return CellPosition; }
+
+	EObjectStates GetCurrentState() { return Info.state(); }
+	EMovementDirection GetCurrentDirection() { return Info.direction(); }
+	Vector2Int GetCellPosition() const { return Vector2Int(Info.posx(), Info.posy()); }
 	Vector2Int GetFrontCell() const;
 	EMovementDirection FindLookAtDirection(Vector2Int TargetPosition) const;
 
 protected:
 	static const Vector2Int Offset[4];
 
-	Vector2Int CellPosition;  // float position to int position
-	EObjectStates CurrentState = EObjectStates::Idle;
-	EMovementDirection CurrentDirection = EMovementDirection::Down;
+public:
+	// 이제부터 모든 스탯 데이터는 Packet으로부터 받아오도록 변경
+	Protocol::ObjectInfo Info;
 };
 

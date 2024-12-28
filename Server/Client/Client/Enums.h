@@ -16,22 +16,8 @@ enum class ECollideLayer
 	Wall,
 };
 
-enum class EMovementDirection
-{
-	Up,
-	Down,
-	Left,
-	Right,
-	END
-};
-
-enum class EObjectStates
-{
-	Idle,
-	Move,
-	Attack,
-	END
-};
+using EMovementDirection = Protocol::EDirection;
+using EObjectStates = Protocol::EObjectState;
 
 enum class EWeapons
 {
