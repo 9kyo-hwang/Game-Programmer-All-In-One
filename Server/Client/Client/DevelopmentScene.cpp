@@ -65,9 +65,9 @@ void DevelopmentScene::Initialize()
 		ResourceManager::Get()->LoadSound(L"Attack", L"Sound\\Sword.wav")
 	);
 
-	// TODO : 서버에서 요청이 왔을 때 스폰
-	NewObject<ALocalPlayer>({ 5, 5 });
-	NewObject<AMonster>({ 7, 7 });
+	//TODO: 이제 서버 GameZone에서 지정해준 정보를 토대로, LocalPlayer 정보를 받아 생성
+	//NewObject<ALocalPlayer>({ 5, 5 });
+	//NewObject<AMonster>({ 7, 7 });
 
 	Super::Initialize();
 }

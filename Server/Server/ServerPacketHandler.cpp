@@ -52,3 +52,10 @@ TSharedPtr<SendBuffer> ServerPacketHandler::Make_S_EnterGame()
 
 	return MakeSendBuffer(Packet, S_EnterGame);
 }
+
+TSharedPtr<SendBuffer> ServerPacketHandler::Make_S_LocalPlayer(const Protocol::ObjectInfo& Info)
+{
+	Protocol::S_LocalPlayer Packet;
+	*Packet.mutable_info() = Info;
+	return MakeSendBuffer(Packet, S_LocalPlayer);
+}

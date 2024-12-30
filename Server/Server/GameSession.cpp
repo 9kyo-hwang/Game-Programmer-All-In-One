@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameSession.h"
 #include "GameSessionManager.h"
+#include "GameZone.h"
 #include "ServerPacketHandler.h"
 
 void GameSession::OnConnected()
@@ -12,11 +13,15 @@ void GameSession::OnConnected()
 	Send(ServerPacketHandler::Make_S_EnterGame());
 
 	// TODO: °ÔÀÓ ÀÔÀå(ÄÁÅÙÃ÷)
+	GZone->Enter(GetGameSession());
 }
 
 void GameSession::OnDisconnected()
 {
 	GSessionManager.Remove(static_pointer_cast<GameSession>(shared_from_this()));
+
+	// °ÔÀÓ ÅðÀå
+	GZone->Exit(GetGameSession());
 }
 
 void GameSession::OnRecvPacket(BYTE* InBuffer, int32 Len)

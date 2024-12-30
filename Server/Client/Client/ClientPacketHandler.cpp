@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "ClientPacketHandler.h"
 #include "BufferReader.h"
+#include "DevelopmentScene.h"
+#include "SceneManager.h"
 #include "ServerSession.h"
+#include "ALocalPlayer.h"
 
 void ClientPacketHandler::HandlePacket(SessionRef Session, BYTE* Buffer, int32 Len)
 {
@@ -12,11 +15,18 @@ void ClientPacketHandler::HandlePacket(SessionRef Session, BYTE* Buffer, int32 L
 
 	switch (Header.ID)
 	{
-	case S_TEST:
-		Handle_S_TEST(Session, Buffer, Len);
-		break;
 	case S_EnterGame:
 		Handle_S_EnterGame(Session, Buffer, Len);
+		break;
+	case S_LocalPlayer:
+		Handle_S_LocalPlayer(Session, Buffer, Len);
+		break;
+	case S_SpawnActor:
+		Handle_S_SpawnActor(Session, Buffer, Len);
+		break;
+	case S_DestroyActor:
+		Handle_S_DestroyActor(Session, Buffer, Len);
+		break;
 	default:
 		break;
 	}
@@ -82,4 +92,40 @@ void ClientPacketHandler::Handle_S_EnterGame(SessionRef Session, BYTE* Buffer, i
 
 	// 만약 서버에 즉시 회신하고 싶다면 아래와 같이 수행
 	// Session->Send()
+}
+
+void ClientPacketHandler::Handle_S_LocalPlayer(SessionRef Session, BYTE* Buffer, int32 Len)
+{
+	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
+	uint16 Size = Header->Size;
+
+	Protocol::S_LocalPlayer Packet;
+	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
+
+	const Protocol::ObjectInfo& Info = Packet.info();
+	if (DevelopmentScene* Scene = SceneManager::Get()->GetDevelopmentScene())
+	{
+		// 전달받은 Packet 정보를 이용해 LocalPlayer를 클라이언트 씬에 배치
+		ALocalPlayer* Player = Scene->NewObject<ALocalPlayer>(Vector2Int{ Info.posx(), Info.posy() });
+		Player->Info = Info;
+		SceneManager::Get()->SetLocalPlayer(Player);
+	}
+}
+
+void ClientPacketHandler::Handle_S_SpawnActor(SessionRef Session, BYTE* Buffer, int32 Len)
+{
+	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
+	uint16 Size = Header->Size;
+
+	Protocol::S_SpawnActor Packet;
+	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
+}
+
+void ClientPacketHandler::Handle_S_DestroyActor(SessionRef Session, BYTE* Buffer, int32 Len)
+{
+	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
+	uint16 Size = Header->Size;
+
+	Protocol::S_DestroyActor Packet;
+	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
 }

@@ -3,7 +3,11 @@
 enum
 {
 	S_TEST = 1,
-	S_EnterGame = 2
+	S_EnterGame = 2,
+
+	S_LocalPlayer = 4,
+	S_SpawnActor = 5,
+	S_DestroyActor = 6
 };
 
 class ClientPacketHandler
@@ -13,6 +17,10 @@ public:
 
 	static void Handle_S_TEST(SessionRef Session, BYTE* Buffer, int32 Len);
 	static void Handle_S_EnterGame(SessionRef Session, BYTE* Buffer, int32 Len);
+
+	static void Handle_S_LocalPlayer(SessionRef Session, BYTE* Buffer, int32 Len);
+	static void Handle_S_SpawnActor(SessionRef Session, BYTE* Buffer, int32 Len);
+	static void Handle_S_DestroyActor(SessionRef Session, BYTE* Buffer, int32 Len);
 
 	template<typename T>
 	static TSharedPtr<SendBuffer> MakeSendBuffer(T& Packet, uint16 PacketId);

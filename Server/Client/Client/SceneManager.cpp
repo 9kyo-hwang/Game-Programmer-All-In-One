@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "DevelopmentScene.h"
 #include "EditorScene.h"
+#include "ALocalPlayer.h"
 
 void SceneManager::Initialize()
 {
@@ -54,4 +55,14 @@ void SceneManager::LoadScene(ESceneType NewType)
 void SceneManager::Clear()
 {
 	SAFE_DELETE(ActiveScene);
+}
+
+DevelopmentScene* SceneManager::GetDevelopmentScene() const
+{
+	return dynamic_cast<DevelopmentScene*>(GetActiveScene());
+}
+
+uint64 SceneManager::GetLocalPlayerId() const
+{
+	return Player ? Player->Info.id() : 0;
 }
