@@ -8,6 +8,9 @@ enum
 	S_LocalPlayer = 4,
 	S_SpawnActor = 5,
 	S_DestroyActor = 6,
+
+	C_Move = 10,
+	S_Move = 11,
 };
 
 struct BuffData
@@ -23,13 +26,15 @@ public:
 	static void HandlePacket(SessionRef Session, BYTE* Buffer, int32 Len);
 
 	// 패킷 받기
+	static void Incoming_C_Move(SessionRef Session, BYTE* Buffer, int32 Len);
 
 	// 패킷 보내기
-	static TSharedPtr<SendBuffer> Make_S_TEST(uint64 Id, uint32 Hp, uint16 Attack, vector<BuffData> Buffs);
-	static TSharedPtr<SendBuffer> Make_S_EnterGame();
-	static TSharedPtr<SendBuffer> Make_S_LocalPlayer(const Protocol::ObjectInfo& Info);
-	static TSharedPtr<SendBuffer> Make_S_SpawnActor(const Protocol::S_SpawnActor& Packet) { return MakeSendBuffer(Packet, S_SpawnActor); }
-	static TSharedPtr<SendBuffer> Make_S_DestroyActor(const Protocol::S_DestroyActor& Packet) { return MakeSendBuffer(Packet, S_DestroyActor); }
+	static TSharedPtr<SendBuffer> Outgoing_S_TEST(uint64 Id, uint32 Hp, uint16 Attack, vector<BuffData> Buffs);
+	static TSharedPtr<SendBuffer> Outgoing_S_EnterGame();
+	static TSharedPtr<SendBuffer> Outgoing_S_LocalPlayer(const Protocol::ObjectInfo& Info);
+	static TSharedPtr<SendBuffer> Outgoing_S_SpawnActor(const Protocol::S_SpawnActor& Packet) { return MakeSendBuffer(Packet, S_SpawnActor); }
+	static TSharedPtr<SendBuffer> Outgoing_S_DestroyActor(const Protocol::S_DestroyActor& Packet) { return MakeSendBuffer(Packet, S_DestroyActor); }
+	static TSharedPtr<SendBuffer> Outgoing_S_Move(const Protocol::ObjectInfo& Info);
 
 	template<typename T>
 	static TSharedPtr<SendBuffer> MakeSendBuffer(T& Packet, uint16 PacketId);

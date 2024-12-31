@@ -43,6 +43,8 @@ public:
 	APlayer* FindNearestPlayerFrom(Vector2Int Cell);
 	bool FindPath(Vector2Int Src, Vector2Int Dest, vector<Vector2Int>& OutPath, int32 MaxDepth = 10) const;
 
+	UObject* FindObjectBy(uint64 Id) const;
+
 	template<class ObjectType> requires std::is_base_of_v<UObject, ObjectType>
 	ObjectType* NewObject()
 	{
@@ -67,6 +69,10 @@ public:
 
 		return Object;
 	}
+
+public:
+	void Handle_S_SpawnActor(const Protocol::S_SpawnActor& Packet);
+	void Handle_S_DestroyActor(const Protocol::S_DestroyActor& Packet);
 
 private:
 	void LoadMap(Texture* Stage01Texture);

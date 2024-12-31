@@ -33,7 +33,11 @@ public:
 	EMovementDirection FindLookAtDirection(Vector2Int TargetPosition) const;
 
 protected:
+	bool GetDirtyFlag() const { return bDirty; }
+	void SetDirtyFlag(bool InDirty) { bDirty = InDirty; }
+
 	static const Vector2Int Offset[4];
+	bool bDirty = false;  // 변화가 있을 때 Flip되는 플래그
 
 public:
 	// 이제부터 모든 스탯 데이터는 Packet으로부터 받아오도록 변경

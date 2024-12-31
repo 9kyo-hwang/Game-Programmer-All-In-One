@@ -18,6 +18,10 @@ public:
 	TSharedPtr<AActor> FindActorBy(uint64 Id);
 
 public:
+	// PacketHandler
+	void Incoming_C_Move(const Protocol::C_Move& Packet);
+
+public:
 	void AddActor(TSharedPtr<AActor> New);
 	void RemoveActor(uint64 Id);
 	void Broadcast(const TSharedPtr<SendBuffer>& SendBuffer);

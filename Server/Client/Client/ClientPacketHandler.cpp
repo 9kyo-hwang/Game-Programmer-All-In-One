@@ -16,16 +16,19 @@ void ClientPacketHandler::HandlePacket(SessionRef Session, BYTE* Buffer, int32 L
 	switch (Header.ID)
 	{
 	case S_EnterGame:
-		Handle_S_EnterGame(Session, Buffer, Len);
+		Incoming_S_EnterGame(Session, Buffer, Len);
 		break;
 	case S_LocalPlayer:
-		Handle_S_LocalPlayer(Session, Buffer, Len);
+		Incoming_S_LocalPlayer(Session, Buffer, Len);
 		break;
 	case S_SpawnActor:
-		Handle_S_SpawnActor(Session, Buffer, Len);
+		Incoming_S_SpawnActor(Session, Buffer, Len);
 		break;
 	case S_DestroyActor:
-		Handle_S_DestroyActor(Session, Buffer, Len);
+		Incoming_S_DestroyActor(Session, Buffer, Len);
+		break;
+	case S_Move:
+		Incoming_S_Move(Session, Buffer, Len);
 		break;
 	default:
 		break;
@@ -49,7 +52,7 @@ struct S_TEST
 	vector<BuffData> Data;
 };
 
-void ClientPacketHandler::Handle_S_TEST(SessionRef Session, BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Incoming_S_TEST(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
 	uint16 Size = Header->Size;
@@ -78,7 +81,7 @@ void ClientPacketHandler::Handle_S_TEST(SessionRef Session, BYTE* Buffer, int32 
 	// TODO: GameLogic
 }
 
-void ClientPacketHandler::Handle_S_EnterGame(SessionRef Session, BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Incoming_S_EnterGame(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	// 반복되는 파트를 따로 떼버리거나 툴로 만들면 참 좋을텐데...
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
@@ -94,7 +97,7 @@ void ClientPacketHandler::Handle_S_EnterGame(SessionRef Session, BYTE* Buffer, i
 	// Session->Send()
 }
 
-void ClientPacketHandler::Handle_S_LocalPlayer(SessionRef Session, BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Incoming_S_LocalPlayer(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
 	uint16 Size = Header->Size;
@@ -112,20 +115,68 @@ void ClientPacketHandler::Handle_S_LocalPlayer(SessionRef Session, BYTE* Buffer,
 	}
 }
 
-void ClientPacketHandler::Handle_S_SpawnActor(SessionRef Session, BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Incoming_S_SpawnActor(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
 	uint16 Size = Header->Size;
 
 	Protocol::S_SpawnActor Packet;
 	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
+
+	if (DevelopmentScene* Scene = SceneManager::Get()->GetDevelopmentScene())
+	{
+		// 여러 클라이언트가 접근할 수 있어서, DevelopmentScene에 Packet을 처리하는 메서드 추가
+		Scene->Handle_S_SpawnActor(Packet);
+	}
 }
 
-void ClientPacketHandler::Handle_S_DestroyActor(SessionRef Session, BYTE* Buffer, int32 Len)
+void ClientPacketHandler::Incoming_S_DestroyActor(SessionRef Session, BYTE* Buffer, int32 Len)
 {
 	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
 	uint16 Size = Header->Size;
 
 	Protocol::S_DestroyActor Packet;
 	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
+
+	if (DevelopmentScene* Scene = SceneManager::Get()->GetDevelopmentScene())
+	{
+		// 여러 클라이언트가 접근할 수 있어서, DevelopmentScene에 Packet을 처리하는 메서드 추가
+		Scene->Handle_S_DestroyActor(Packet);
+	}
+}
+
+void ClientPacketHandler::Incoming_S_Move(SessionRef Session, BYTE* Buffer, int32 Len)
+{
+	PacketHeader* Header = reinterpret_cast<PacketHeader*>(Buffer);
+	uint16 Size = Header->Size;
+
+	Protocol::S_Move Packet;
+	Packet.ParseFromArray(&Header[1], Size - sizeof(PacketHeader));
+
+	const Protocol::ObjectInfo& Info = Packet.info();
+	if (DevelopmentScene* Scene = SceneManager::Get()->GetDevelopmentScene())
+	{
+		uint64 LocalPlayerId = SceneManager::Get()->GetLocalPlayerId();
+		if (Info.id() == LocalPlayerId)
+		{
+			return;
+		}
+
+		if (UObject* Object = Scene->FindObjectBy(Info.id()))
+		{
+			Object->RotateTo(Info.direction());
+			Object->TransitionTo(Info.state());
+			Object->MoveTo(Vector2Int{ Info.posx(), Info.posy() });
+		}
+	}
+}
+
+TSharedPtr<SendBuffer> ClientPacketHandler::Outgoing_C_Move()
+{
+	// 원래라면 플레이어 정보를 인자로 받아야 하지만, 클라는 매니저를 통해 정보를 쉽게 얻을 수 있어서 바로 작업
+	Protocol::C_Move Packet;
+
+	ALocalPlayer* Player = SceneManager::Get()->GetLocalPlayer();
+	*Packet.mutable_info() = Player->Info;
+	return MakeSendBuffer(Packet, C_Move);
 }

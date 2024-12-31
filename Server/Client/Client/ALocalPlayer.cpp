@@ -2,7 +2,9 @@
 #include "ALocalPlayer.h"
 
 #include "CameraComponent.h"
+#include "ClientPacketHandler.h"
 #include "InputManager.h"
+#include "NetworkManager.h"
 
 ALocalPlayer::ALocalPlayer()
 {
@@ -22,6 +24,7 @@ void ALocalPlayer::BeginPlay()
 void ALocalPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	SynchronizeToServer();  // 매 프레임마다 DirtyFlag 체크
 }
 
 void ALocalPlayer::Render(HDC DeviceContextHandle)
@@ -104,4 +107,15 @@ void ALocalPlayer::OnTickMove(float DeltaTime)
 void ALocalPlayer::OnTickAttack(float DeltaTime)
 {
 	Super::OnTickAttack(DeltaTime);
+}
+
+void ALocalPlayer::SynchronizeToServer() const
+{
+	// 게임 스타일마다 적당한 싱크 주기를 찾아야 함
+	// DirtyFlag가 True일 때마다 서버와의 동기화
+	if (GetDirtyFlag())
+	{
+		TSharedPtr<SendBuffer> Buffer = ClientPacketHandler::Outgoing_C_Move();
+		NetworkManager::Get()->SendPacket(Buffer);
+	}
 }

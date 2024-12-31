@@ -47,7 +47,7 @@ void GameZone::Enter(SessionRef EnterSession)
 
 	// 새로 들어온 클라이언트에게 필요한 정보(자신이 누구인지) 넘겨주기
 	{
-		EnterSession->Send(ServerPacketHandler::Make_S_LocalPlayer(NewPlayer->Info));  // 패킷 생성 후 반환받은 직렬화된 SendBuffer를 Session에 Send
+		EnterSession->Send(ServerPacketHandler::Outgoing_S_LocalPlayer(NewPlayer->Info));  // 패킷 생성 후 반환받은 직렬화된 SendBuffer를 Session에 Send
 	}
 
 	// 주변 클라이언트들에게 새 플레이어가 입장했음을 알려줘야 함
@@ -63,7 +63,7 @@ void GameZone::Enter(SessionRef EnterSession)
 			*Packet.add_actors() = Monster->Info;
 		}
 
-		EnterSession->Send(ServerPacketHandler::Make_S_SpawnActor(Packet));
+		EnterSession->Send(ServerPacketHandler::Outgoing_S_SpawnActor(Packet));
 	}
 
 	AddActor(NewPlayer);
@@ -95,6 +95,22 @@ TSharedPtr<AActor> GameZone::FindActorBy(uint64 Id)
 	return nullptr;
 }
 
+void GameZone::Incoming_C_Move(const Protocol::C_Move& Packet)
+{
+	if (auto Actor = FindActorBy(Packet.info().id()))
+	{
+		// Check Validation(핵 방지)
+		Actor->Info.set_state(Packet.info().state());
+		Actor->Info.set_direction(Packet.info().direction());
+		Actor->Info.set_posx(Packet.info().posx());
+		Actor->Info.set_posy(Packet.info().posy());
+
+		// Client의 변화를 적용했으므로 나머지 클라이언트들에게 S_Move 패킷 전달
+		TSharedPtr<SendBuffer> Buffer = ServerPacketHandler::Outgoing_S_Move(Packet.info());
+		Broadcast(Buffer);
+	}
+}
+
 void GameZone::AddActor(TSharedPtr<AActor> New)
 {
 	uint64 Id = New->Info.id();
@@ -115,7 +131,7 @@ void GameZone::AddActor(TSharedPtr<AActor> New)
 
 	Protocol::S_SpawnActor Packet;
 	*Packet.add_actors() = New->Info;
-	Broadcast(ServerPacketHandler::Make_S_SpawnActor(Packet));
+	Broadcast(ServerPacketHandler::Outgoing_S_SpawnActor(Packet));
 }
 
 void GameZone::RemoveActor(uint64 Id)
@@ -139,7 +155,7 @@ void GameZone::RemoveActor(uint64 Id)
 		// TODO: 액터 삭제 알림
 		Protocol::S_DestroyActor Packet;
 		Packet.add_ids(Id);
-		Broadcast(ServerPacketHandler::Make_S_DestroyActor(Packet));
+		Broadcast(ServerPacketHandler::Outgoing_S_DestroyActor(Packet));
 	}
 }
 

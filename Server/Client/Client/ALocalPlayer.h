@@ -21,6 +21,8 @@ private:
 	void OnTickMove(float DeltaTime) override;
 	void OnTickAttack(float DeltaTime) override;
 
+	void SynchronizeToServer() const;
+
 private:
 	bool bKeyPressed = false;
 };

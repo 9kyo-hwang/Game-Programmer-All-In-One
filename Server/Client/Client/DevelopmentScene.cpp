@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "APlayer.h"
 #include "Flipbook.h"
+#include "SceneManager.h"
 #include "Tilemap.h"
 #include "TilemapActor.h"
 #include "Sound.h"
@@ -315,6 +316,61 @@ bool DevelopmentScene::FindPath(Vector2Int Src, Vector2Int Dest, vector<Vector2I
 
 	ranges::reverse(OutPath);
 	return true;
+}
+
+UObject* DevelopmentScene::FindObjectBy(uint64 Id) const
+{
+	for (AActor* Actor : Actors[static_cast<int32>(ERenderLayer::Object)])
+	{
+		if (UObject* Object = dynamic_cast<UObject*>(Actor))
+		{
+			if (Object->Info.id() == Id)
+			{
+				return Object;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void DevelopmentScene::Handle_S_SpawnActor(const Protocol::S_SpawnActor& Packet)
+{
+	const uint64 LocalPlayerId = SceneManager::Get()->GetLocalPlayerId();
+
+	for (const auto& Info : Packet.actors())
+	{
+		if (LocalPlayerId == Info.id())
+		{
+			continue;
+		}
+
+		if (Info.type() == Protocol::EObjectType::Player)
+		{
+			APlayer* Player = NewObject<APlayer>(Vector2Int{ Info.posx(), Info.posy() });
+			Player->RotateTo(Info.direction());  // 애니메이션 갱신을 위해
+			Player->TransitionTo(Info.state());  // 이들을 호출
+			Player->Info = Info;
+		}
+		else if (Info.type() == Protocol::EObjectType::Monster)
+		{
+			AMonster* Monster = NewObject<AMonster>(Vector2Int{ Info.posx(), Info.posy() });
+			Monster->RotateTo(Info.direction());  // 애니메이션 갱신을 위해
+			Monster->TransitionTo(Info.state());  // 이들을 호출
+			Monster->Info = Info;
+		}
+	}
+}
+
+void DevelopmentScene::Handle_S_DestroyActor(const Protocol::S_DestroyActor& Packet)
+{
+	for (uint64 Id : Packet.ids())
+	{
+		if (UObject* Object = FindObjectBy(Id))
+		{
+			DestroyActor(Object);
+		}
+	}
 }
 
 void DevelopmentScene::LoadMap(Texture* Stage01Texture)

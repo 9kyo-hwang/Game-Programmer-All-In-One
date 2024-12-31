@@ -23,6 +23,10 @@ void UObject::BeginPlay()
 
 void UObject::Tick(float DeltaTime)
 {
+	// 시작은 False
+	// 상태 변화, 방향 변화, 위치 변화가 일어날 때 True
+	SetDirtyFlag(false);
+
 	Super::Tick(DeltaTime);
 
 	switch (Info.state())
@@ -53,12 +57,14 @@ void UObject::TransitionTo(EObjectStates NewState)
 
 	Info.set_state(NewState);
 	UpdateAnimation();
+	SetDirtyFlag(true);
 }
 
 void UObject::RotateTo(EMovementDirection NewDirection)
 {
 	Info.set_direction(NewDirection);
 	UpdateAnimation();
+	SetDirtyFlag(true);
 }
 
 bool UObject::HasReachedDest() const
@@ -91,6 +97,8 @@ void UObject::MoveTo(Vector2Int Dest, bool bTeleport)
 		{
 			CurrentPosition = DestinationPosition;
 		}
+
+		SetDirtyFlag(true);
 	}
 }
 
