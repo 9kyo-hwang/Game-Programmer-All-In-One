@@ -77,7 +77,7 @@ void DevelopmentScene::Update(float DeltaTime)
 {
 	Super::Update();
 
-	SpawnMonster();
+	//SpawnMonster();  몬스터 스폰은 이제 서버의 역할
 }
 
 void DevelopmentScene::Render(HDC DeviceContextHandle)

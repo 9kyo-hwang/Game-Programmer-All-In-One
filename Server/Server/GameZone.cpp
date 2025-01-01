@@ -26,10 +26,21 @@ void GameZone::Initialize()
 	Monster->Info.set_posy(8);
 
 	AddActor(Monster);
+
+	Map.Load(L"E:\\Github\\Game-Programmer-All-In-One\\Server\\Client\\Resources\\Tilemap\\Tilemap01.txt");
 }
 
 void GameZone::Update()
 {
+	for (const auto& Player : Players | views::values)
+	{
+		Player->Update();
+	}
+
+	for (const auto& Monster : Monsters | views::values)
+	{
+		Monster->Update();
+	}
 }
 
 void GameZone::Enter(SessionRef EnterSession)
@@ -165,4 +176,195 @@ void GameZone::Broadcast(const TSharedPtr<SendBuffer>& SendBuffer)
 	{
 		Player->Session->Send(SendBuffer);
 	}
+}
+
+TSharedPtr<APlayer> GameZone::FindNearestPlayerFrom(Vector2Int Cell)
+{
+	float NearestDistance = FLT_MAX;
+	TSharedPtr<APlayer> NearestPlayer = nullptr;
+
+	// 여러 플레이어에 대응되는 방식
+	for (const auto& Player : Players | views::values)
+	{
+		Vector2Int Direction = Cell - Player->GetCellPosition();
+		float Distance = Direction.GetMagnitudeSquared();
+		if (Distance < NearestDistance)
+		{
+			NearestDistance = Distance;
+			NearestPlayer = Player;
+		}
+	}
+
+	return NearestPlayer;
+}
+
+bool GameZone::FindPath(Vector2Int Src, Vector2Int Dest, vector<Vector2Int>& OutPath, int32 MaxDepth)
+{
+	// 너무 멀리 있는 적은 탐색 후보에서 제외
+	int32 Depth = abs(Src.Y - Dest.Y) + abs(Src.X - Dest.X);
+	if (Depth >= MaxDepth)
+	{
+		return false;
+	}
+
+	priority_queue<AStarNode, vector<AStarNode>, greater<AStarNode>> Queue;
+	map<Vector2Int, int32> BestCost;
+	map<Vector2Int, Vector2Int> PrevPos;
+
+	// 초기값
+	{
+		int32 Distance = abs(Dest.X - Src.X) + abs(Dest.Y - Src.Y);
+		Queue.emplace(Distance, Src);
+		BestCost[Src] = Distance;
+		PrevPos[Src] = Src;
+	}
+
+	const Vector2Int Offset[4]
+	{
+		{0, -1},
+		{0, 1},
+		{-1, 0},
+		{1, 0}
+	};
+
+	bool bFound = false;
+	while (!Queue.empty())
+	{
+		AStarNode Current = Queue.top(); Queue.pop();
+
+		// 기존에 알고 있는 비용이 더 좋다면 skip
+		if (BestCost[Current.Pos] < Current.Cost)
+		{
+			continue;
+		}
+
+		if (Current.Pos == Dest)
+		{
+			bFound = true;
+			break;
+		}
+
+		for (const Vector2Int& Front : Offset)
+		{
+			Vector2Int NextPos = Current.Pos + Front;
+			if (!CanMoveTo(NextPos))
+			{
+				continue;
+			}
+
+			Depth = abs(Src.Y - NextPos.Y) + abs(Src.X - NextPos.X);
+			if (Depth >= MaxDepth)
+			{
+				continue;
+			}
+
+			int32 NewCost = abs(Dest.X - NextPos.X) + abs(Dest.Y - NextPos.Y);
+			if (BestCost.contains(NextPos) && BestCost[NextPos] <= NewCost)
+			{
+				continue;
+			}
+
+			BestCost[NextPos] = NewCost;
+			Queue.emplace(NewCost, NextPos);
+			PrevPos[NextPos] = Current.Pos;
+		}
+	}
+
+	if (!bFound)
+	{
+		// 맨 마지막 탐색때 플레이어의 존재로 인해 CanMoveTo가 false를 반환. 이에 대한 핸들링
+		float BestScore = FLT_MAX;
+		for (const auto& [Pos, Score] : BestCost)
+		{
+			// 동점의 경우 가장 덜 이동한 쪽으로
+			if (BestScore == Score)
+			{
+				int32 Src2Dest = abs(Dest.X - Src.X) + abs(Dest.Y - Src.Y);
+				int32 Src2Cur = abs(Pos.X - Src.X) + abs(Pos.Y - Src.Y);
+
+				if (Src2Dest > Src2Cur)
+				{
+					Dest = Pos;
+				}
+			}
+			else if (BestScore > Score)
+			{
+				Dest = Pos;
+				BestScore = Score;
+			}
+		}
+	}
+
+	OutPath.clear();
+	Vector2Int Current = Dest;
+	while (true)
+	{
+		OutPath.push_back(Current);
+		if (Current == PrevPos[Current])
+		{
+			break;
+		}
+
+		Current = PrevPos[Current];
+	}
+
+	ranges::reverse(OutPath);
+	return true;
+}
+
+bool GameZone::CanMoveTo(Vector2Int Dest)
+{
+	// 서버에서도 지형 정보가 필요함
+	Tile* DestTile = Map.GetTileAt(Dest);
+	if (!DestTile)
+	{
+		return false;
+	}
+
+	if (GetPawnAt(Dest))
+	{
+		return false;
+	}
+
+	return DestTile->Value != 1;
+}
+
+bool GameZone::GetRandomEmptyCell(Vector2Int& OutCell)
+{
+	Vector2Int MapSize = Map.GetSize();
+	while (true)
+	{
+		int32 X = rand() % MapSize.X;
+		int32 Y = rand() % MapSize.Y;
+
+		// 모든 칸이 이동 불가라면...? -> loop 횟수에 제한을 두는 것도...
+		if (CanMoveTo({ X, Y }))
+		{
+			OutCell = { X, Y };
+			return true;
+		}
+	}
+
+	return false;
+}
+
+TSharedPtr<APawn> GameZone::GetPawnAt(Vector2Int Cell) const
+{
+	for (const auto& Player : Players | views::values)
+	{
+		if (Player->GetCellPosition() == Cell)
+		{
+			return Player;
+		}
+	}
+
+	for (const auto& Monster : Monsters | views::values)
+	{
+		if (Monster->GetCellPosition() == Cell)
+		{
+			return Monster;
+		}
+	}
+
+	return nullptr;
 }

@@ -47,7 +47,7 @@ int main()
 		// 2. Job/Task 단위를 정의해서 Queue에 넣고 처리하기
 		// 우리는 단순하게 하기 위해 Client처럼 MainThread에서 다 처리
 		Service->GetCore()->Dispatch(0);
-		GZone->Update();
+		GZone->Update();  // 원래는 0.1초마다 한 번씩 업데이트해줘도 충분
 	}
 
 	GThreadManager->Join();

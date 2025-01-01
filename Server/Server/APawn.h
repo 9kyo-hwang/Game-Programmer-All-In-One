@@ -8,5 +8,8 @@ class APawn : public AActor
 public:
 	APawn() {}
 	~APawn() override {}
+
+	void Initialize() override {}
+	void Update() override {}
 };
 

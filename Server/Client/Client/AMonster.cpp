@@ -54,6 +54,8 @@ void AMonster::OnTickIdle(float DeltaTime)
 		return;
 	}
 
+	return;  // 모든 로직은 서버로 이관됨
+
 	if (!Target)
 	{
 		Target = Scene->FindNearestPlayerFrom(GetCellPosition());
