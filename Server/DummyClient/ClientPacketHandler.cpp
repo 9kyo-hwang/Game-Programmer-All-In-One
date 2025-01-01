@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "ClientPacketHandler.h"
-
 #include "BufferReader.h"
 
 void ClientPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
@@ -23,7 +22,7 @@ void ClientPacketHandler::HandlePacket(BYTE* Buffer, int32 Len)
 // 패킷 설계 TEMP
 struct BuffData
 {
-	uint64 BufferID;
+	uint64 BuffId;
 	float RemainTime;
 };
 
